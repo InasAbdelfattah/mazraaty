@@ -1,0 +1,42 @@
+.none-style-ul {
+    list-style: none;
+    padding: 0;
+}
+
+.has-error .help-block, .has-error .control-label, .has-error .radio, .has-error .checkbox, .has-error .radio-inline, .has-error .checkbox-inline, .has-error.radio label, .has-error.checkbox label, .has-error.radio-inline label, .has-error.checkbox-inline label {
+    color: #ff0500;
+    font-size: 12px;
+}
+
+input,
+input::-webkit-input-placeholder {
+    font-size: 12px;
+    /*line-height: 3;*/
+}
+
+.dropify-wrapper .dropify-preview .dropify-render img {
+
+    width: 100%;
+}
+
+.dropify-wrapper .dropify-preview {
+
+    padding: 0px;
+
+}
+
+.table checkbox {
+    margin-bottom: 0 !important;
+}
+
+.radio, .checkbox {
+    position: relative;
+    display: block;
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+}
+
+div.dataTables_filter input {
+    margin-left: 0em;
+    display: inline-block;
+}
