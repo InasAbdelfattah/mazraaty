@@ -16,7 +16,7 @@
 <link href="{{ request()->root() }}/assets/admin/plugins/datatables/scroller.bootstrap.min.css" rel="stylesheet" type="text/css" />
 
 
-<!-- <link href="{{ request()->root() }}/assets/admin/plugins/morris/morris.css" rel="stylesheet" -->>
+<link href="{{ request()->root() }}/assets/admin/plugins/morris/morris.css" rel="stylesheet">
 <link href="{{ request()->root() }}/assets/admin/css/bootstrap-rtl.min.css" rel="stylesheet" type="text/css"/>
 <link href="{{ request()->root() }}/assets/admin/css/core.css" rel="stylesheet" type="text/css"/>
 <link href="{{ request()->root() }}/assets/admin/css/components.css" rel="stylesheet" type="text/css"/>

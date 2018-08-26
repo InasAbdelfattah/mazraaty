@@ -98,7 +98,7 @@
                                     <a id="unsuspendForm{{$user->id}}" onclick="event.preventDefault(); document.getElementById('activeForm').submit();" class="btn btn-success btn-xs btn-trans waves-effect waves-light m-r-5 m-b-10">الغاء الحظر
                                     </a>
 
-                                    <form id="activeForm" action="{{ route('user.suspend') }}" method="POST" onSubmit="event.preventDefault();" data-id="{{ $user->id }}" style="display: none;">
+                                    <form id="activeForm" action="{{ route('user.suspend') }}" method="POST" onsubmit="event.preventDefault();" data-id="{{ $user->id }}" style="display: none;">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="userId" value="{{$user->id}}">
                                     </form>
@@ -515,12 +515,13 @@
             $.ajax({
                 type: 'POST',
                 url: $(this).attr('action'),
+                //url: '{{ route('user.suspend') }}',
                 data: formData,
                 cache: false,
                 contentType: false,
                 processData: false,
                 success: function (data) {
-                        console.log(data.status);
+                        console.log(data.is_suspend);
                     if (data.status == true) {
                         var shortCutFunction = 'success';
                         var msg = data.message;
@@ -535,15 +536,16 @@
                         var $toast = toastr[shortCutFunction](msg, title); // Wire up an event handler to a button in the toast, if it exists
                         $toastlast = $toast;
                         Custombox.close();
-                       
+                       console.log(data.is_suspend);
                         if(data.is_suspend == 1){
                             //$("#currentRow" + data.id).html('الغاء الحظر');
                             $("#unsuspendForm"+ data.id).show();
                             $("#suspendForm"+ data.id).hide();
                         }else if (data.is_suspend == 0){
                             //$("#currentRow" + data.id).html('حظر');
-                            $("#unsuspendForm"+ data.id).hide();
                             $("#suspendForm"+ data.id).show();
+                            $("#unsuspendForm"+ data.id).hide();
+                            
                         }
                         // $tr.find('td').fadeOut(1000, function () {
                         //         $tr.remove();
