@@ -40,7 +40,7 @@ class UsersController extends Controller
 
     public function getSuspendedAdmins()
     {
-        $users = User::with('roles')->where('is_admin',1)->where('is_active',0)->get();
+        $users = User::with('roles')->where('is_admin',1)->where('is_suspend',1)->get();
         
         return view('admin.users.suspended_admins', compact('users'));
     }
@@ -89,8 +89,10 @@ class UsersController extends Controller
             $user->api_token = str_random(60);
             $user->remember_token = csrf_token();
             $user->password = trim($request->password);
-            $user->is_active = $request->is_active;
+            $user->is_active = 1;
             $user->is_admin = 1 ;
+            $user->is_suspend = 0 ;
+            $user->is_new =  1;
             /**
              * @ Store Image With Image Intervention.
              */
@@ -102,7 +104,6 @@ class UsersController extends Controller
 
             $code = rand(10000000, 99999999);
             $code = $user->userCode($code);
-            $user->code = $code;
             $user->action_code = $code;
 
             $user->save();
@@ -114,9 +115,9 @@ class UsersController extends Controller
             }
 
 
-          //  session()->flash('success', 'لقد تم إضافة المستخدم بنجاح.');
+            //session()->flash('success', 'لقد تم إضافة المستخدم بنجاح.');
 
-            return redirect()->back()->with('success', 'لقد تم إضافة المستخدم بنجاح.');
+            return redirect()->route('users.index')->with('success', 'لقد تم إضافة المستخدم بنجاح.');
 
     }
 
@@ -156,13 +157,13 @@ class UsersController extends Controller
             return abort(401);
         }
         
-        if (!auth()->user()) {
-            return abort(401);
-        }
+        // if (!auth()->user()) {
+        //     return abort(401);
+        // }
         
-        if (auth()->user()->id != $id) {
-            return abort(401);
-        }
+        // if (auth()->user()->id != $id) {
+        //     return abort(401);
+        // }
 //      $roles = Role::get()->pluck('name', 'name');
         $roles = Role::get();
         $roles = $roles->reject(function ($q) {

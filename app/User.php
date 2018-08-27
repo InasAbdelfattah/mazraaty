@@ -61,4 +61,15 @@ class User extends Authenticatable
         }
 
     }
+
+    public static function userCode($code)
+    {
+
+        $rand = User::where('action_code', $code)->first();
+        if ($rand) {
+            return $randomCode = rand(1000000000, 9999999999);
+        } else {
+            return $code;
+        }
+    }
 }

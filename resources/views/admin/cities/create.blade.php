@@ -1,5 +1,5 @@
 @extends('admin.layouts.master')
-@section('title','اضافة منطقة رئيسية')
+@section('title','اضافة مدينة')
 @section('content')
 
     <div id="messageError"></div>
@@ -11,89 +11,41 @@
             <div class="col-sm-12">
                 <div class="btn-group pull-right m-t-15">
                     <a href="{{ route('cities.index') }}" type="button" class="btn btn-custom waves-effect waves-light"
-                       aria-expanded="false"> مشاهدة جميع المناطق الرئيسية
+                       aria-expanded="false"> مشاهدة جميع المدن
                         <span class="m-l-5">
                         <i class="fa fa-backward"></i>
                     </span>
                     </a>
 
                 </div>
-                <h4 class="page-title">المناطق الرئيسية</h4>
+                <h4 class="page-title">المدن</h4>
             </div>
         </div>
 
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-lg-12">
                 <div class="card-box">
-                    <h4 class="header-title m-t-0 m-b-30">إضافة منطقة رئيسية</h4>
+                    <h4 class="header-title m-t-0 m-b-30">إضافة مدينة</h4>
 
-                    <div class="form-group{{ $errors->has('name_ar') ? ' has-error' : '' }}">
+                    <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
                         <label for="userName">الاسم*</label>
-                        <input type="text" name="name_ar" parsley-trigger="change" required
-                               placeholder=" عربى ادخل الاسم..." class="form-control title" value="{{ old('name_ar') }}"
+                        <input type="text" name="name" parsley-trigger="change" required
+                               placeholder=" ادخل الاسم..." class="form-control title" value="{{ old('name') }}"
                                id="userName">
 
-                        @if ($errors->has('name_ar'))
+                        @if ($errors->has('name'))
                             <span class="help-block">
-                                <strong>{{ $errors->first('name_ar') }}</strong>
+                                <strong>{{ $errors->first('name') }}</strong>
                             </span>
                         @endif
 
-                    </div>
-
-
-                    <div class="form-group{{ $errors->has('name_en') ? ' has-error' : '' }}">
-                        <label for="userName">الاسم انجليزى*</label>
-                        <input type="text" name="name_en" parsley-trigger="change" required
-                               placeholder=" انجليزى ادخل الاسم..." class="form-control title" value="{{ old('name_en') }}"
-                               id="userName">
-
-                        @if ($errors->has('name_en'))
-                            <span class="help-block">
-                                <strong>{{ $errors->first('name_en') }}</strong>
-                            </span>
-                        @endif
-
-                    </div>
-
-                    <div class="form-group{{ $errors->has('description_ar') ? ' has-error' : '' }}">
-                        <label for="userName"> الوصف باللغة العربية*</label>
-                        <textarea name="description_ar" parsley-trigger="change" required
-                               placeholder=" ادخل الوصف باللغة العربية.." class="form-control description" value="{{ old('description_ar') }}"
-                               id="userName">{{ old('description_ar') }}</textarea>
-
-                        @if ($errors->has('description_ar'))
-                            <span class="help-block">
-                                <strong>{{ $errors->first('description_ar') }}</strong>
-                            </span>
-                        @endif
-
-                    </div>
-
-
-                    <div class="form-group{{ $errors->has('description_en') ? ' has-error' : '' }}">
-                        <label for="userName"> الوصف باللغة الانجليزية*</label>
-                        <textarea name="description_en" parsley-trigger="change" required
-                               placeholder=" ادخل الوصف باللغة الانجليزية..." class="form-control description" value="{{ old('description_en') }}"
-                               id="userName">{{ old('description_en') }}</textarea>
-
-                        @if ($errors->has('description_en'))
-                            <span class="help-block">
-                                <strong>{{ $errors->first('description_en') }}</strong>
-                            </span>
-                        @endif
                     </div>
 
                     <div class="form-group">
                         <label for="pass1">حالة التفعيل*</label>
                         <select class="form-control select2" name="status">
-                            <option value="1">
-                                تفعيل
-                            </option>
-
-                            <option value="0">
-                                تعطيل
-                            </option>                                
+                            <option value="1">تفعيل</option>
+                            <option value="0">تعطيل</option>                                
                         </select>
                     </div>
 
@@ -109,7 +61,7 @@
                 </div>
                 
             </div>
-            <div class="col-lg-4">
+            <!-- <div class="col-lg-4">
             <div class="card-box" style="overflow: hidden;">
 
                 <h4 class="header-title m-t-0 m-b-30">الصورة</h4>
@@ -119,7 +71,7 @@
                 </div>
 
             </div>
-            </div>
+            </div> -->
 
         </div>
         <!-- end row -->

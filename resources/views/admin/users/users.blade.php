@@ -95,10 +95,10 @@
                                 @if($user->id != 1)
                                     
                                     <!-- @if($user->is_suspend == 1) -->
-                                    <a id="unsuspendForm{{$user->id}}" onclick="event.preventDefault(); document.getElementById('activeForm').submit();" class="btn btn-success btn-xs btn-trans waves-effect waves-light m-r-5 m-b-10">الغاء الحظر
+                                    <a id="unsuspendForm{{$user->id}}" onclick="event.preventDefault();" class="btn btn-success btn-xs btn-trans waves-effect waves-light m-r-5 m-b-10">الغاء الحظر
                                     </a>
 
-                                    <form id="activeForm" action="{{ route('user.suspend') }}" method="POST" onsubmit="event.preventDefault();" data-id="{{ $user->id }}" style="display: none;">
+                                    <form id="activeForm2" data-id="{{ $user->id }}">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="userId" value="{{$user->id}}">
                                     </form>
@@ -222,6 +222,7 @@
 @endsection
 
 @section('scripts')
+<script src="http://malsup.github.com/jquery.form.js"></script>
 
     <script>
 
@@ -503,7 +504,6 @@
             e.preventDefault();
 
             var id = $(this).attr('data-id');
-            console.log('ssss');
             var $tr = $($('#currentRowOn' + id)).closest($('#currentRow' + id).parent().parent());
 
             // console.log($tr);
@@ -537,16 +537,14 @@
                         $toastlast = $toast;
                         Custombox.close();
                        console.log(data.is_suspend);
-                        if(data.is_suspend == 1){
+                        //if(data.is_suspend == 0){
                             //$("#currentRow" + data.id).html('الغاء الحظر');
                             $("#unsuspendForm"+ data.id).show();
-                            $("#suspendForm"+ data.id).hide();
-                        }else if (data.is_suspend == 0){
-                            //$("#currentRow" + data.id).html('حظر');
-                            $("#suspendForm"+ data.id).show();
-                            $("#unsuspendForm"+ data.id).hide();
-                            
-                        }
+                            //$("#suspendForm"+ data.id).hide();
+                        // }else if (data.is_suspend == 1){
+                        //     $("#suspendForm"+ data.id).show();
+                        //     $("#unsuspendForm"+ data.id).hide();
+                        // }
                         // $tr.find('td').fadeOut(1000, function () {
                         //         $tr.remove();
                         //     });
@@ -574,6 +572,138 @@
                 }
             });
         });
+user_id = $("#user_id").val();
+   $("#unsuspendForm"+ user_id).on('click', function (e) {
+
+    //$('form#activeForm2').on('submit', function (e) {
+    //document.getElementById('activeForm2').on('submit', function (e) {
+            e.preventDefault();
+
+            $("#activeForm2").ajaxSubmit({url: '{{ route('user.suspend') }}', type: 'post' ,
+             data: {userId : user_id , _token : '{{csrf_token()}}' },
+             cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                        console.log(data.is_suspend);
+                    if (data.status == true) {
+                        var shortCutFunction = 'success';
+                        var msg = data.message;
+                        var title = 'نجاح';
+                        toastr.options = {
+                            positionClass: 'toast-top-center',
+                            onclick: null,
+                            showMethod: 'slideDown',
+                            hideMethod: "slideUp",
+
+                        };
+                        var $toast = toastr[shortCutFunction](msg, title); // Wire up an event handler to a button in the toast, if it exists
+                        $toastlast = $toast;
+                        Custombox.close();
+                       console.log(data.is_suspend);
+                        //if(data.is_suspend == 0){
+                            //$("#currentRow" + data.id).html('الغاء الحظر');
+                        //     $("#unsuspendForm"+ data.id).show();
+                        //     $("#suspendForm"+ data.id).hide();
+                        // }else if (data.is_suspend == 1){
+                            $("#suspendForm"+ data.id).show();
+                            $("#unsuspendForm"+ data.id).hide();
+                        //}
+                        
+                    }
+
+                    if (data.status == false) {
+                        var shortCutFunction = 'error';
+                        var msg = data.message;
+                        var title = 'خطأ';
+                        toastr.options = {
+                            positionClass: 'toast-top-center',
+                            onclick: null,
+                            showMethod: 'slideDown',
+                            hideMethod: "slideUp",
+
+                        };
+                        var $toast = toastr[shortCutFunction](msg, title); // Wire up an event handler to a button in the toast, if it exists
+                        $toastlast = $toast;
+                    }
+
+                },
+                error: function (data) {
+
+                }
+
+        })
+
+
+
+            // var id = $(this).attr('data-id');
+            // var $tr = $($('#currentRowOn' + id)).closest($('#currentRow' + id).parent().parent());
+
+            // console.log($tr);
+
+            // var formData = new FormData(this);
+            // for (var value of formData.values()) {
+            //     console.log(value); 
+            // }
+            // $.ajax({
+            //     type: 'POST',
+            //     //url: $(this).attr('action'),
+            //     url: '{{ route('user.suspend') }}',
+            //     data: formData,
+            //     //data : { foo : 'bar', bar : 'foo' },
+            //     cache: false,
+            //     contentType: false,
+            //     processData: false,
+            //     success: function (data) {
+            //             console.log(data.is_suspend);
+            //         if (data.status == true) {
+            //             var shortCutFunction = 'success';
+            //             var msg = data.message;
+            //             var title = 'نجاح';
+            //             toastr.options = {
+            //                 positionClass: 'toast-top-center',
+            //                 onclick: null,
+            //                 showMethod: 'slideDown',
+            //                 hideMethod: "slideUp",
+
+            //             };
+            //             var $toast = toastr[shortCutFunction](msg, title); // Wire up an event handler to a button in the toast, if it exists
+            //             $toastlast = $toast;
+            //             Custombox.close();
+            //            console.log(data.is_suspend);
+            //             //if(data.is_suspend == 0){
+            //                 //$("#currentRow" + data.id).html('الغاء الحظر');
+            //             //     $("#unsuspendForm"+ data.id).show();
+            //             //     $("#suspendForm"+ data.id).hide();
+            //             // }else if (data.is_suspend == 1){
+            //                 $("#suspendForm"+ data.id).show();
+            //                 $("#unsuspendForm"+ data.id).hide();
+            //             //}
+                        
+            //         }
+
+            //         if (data.status == false) {
+            //             var shortCutFunction = 'error';
+            //             var msg = data.message;
+            //             var title = 'خطأ';
+            //             toastr.options = {
+            //                 positionClass: 'toast-top-center',
+            //                 onclick: null,
+            //                 showMethod: 'slideDown',
+            //                 hideMethod: "slideUp",
+
+            //             };
+            //             var $toast = toastr[shortCutFunction](msg, title); // Wire up an event handler to a button in the toast, if it exists
+            //             $toastlast = $toast;
+            //         }
+
+            //     },
+            //     error: function (data) {
+
+            //     }
+            // });
+        });
+
 
    $('form#deleteForm').on('submit', function (e) {
             e.preventDefault();
@@ -621,8 +751,6 @@
                                 $tr.remove();
                             });
                         //location.reload();
-
-
                     }
 
                     if (data.status == false) {
@@ -639,7 +767,6 @@
                         var $toast = toastr[shortCutFunction](msg, title); // Wire up an event handler to a button in the toast, if it exists
                         $toastlast = $toast;
                     }
-
                 },
                 error: function (data) {
 

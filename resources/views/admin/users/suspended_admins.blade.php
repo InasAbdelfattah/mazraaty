@@ -47,22 +47,23 @@
                 <table id="datatable-fixed-header" class="table  table-striped">
                     <thead>
                     <tr>
-                        <th>
-                            <div class="checkbox checkbox-primary checkbox-single">
+                        <th>م
+                            <!-- <div class="checkbox checkbox-primary checkbox-single">
                                 <input type="checkbox" style="margin-bottom: 0px;" name="check"
                                        onchange="checkSelect(this)"
                                        value="option2"
                                        aria-label="Single checkbox Two">
                                 <label></label>
-                            </div>
+                            </div> -->
                         </th>
-                        <th>الصورة</th>
+                        <!-- <th>الصورة</th> -->
                         <th>الاسم</th>
                         <!--<th>اسم المستخدم</th>-->
                         <th>البريد الإلكتروني</th>
                         <th>رقم الجوال</th>
                         <!-- <th>الصلاحيات</th> -->
                         <th>الحالة</th>
+                        <th>تاريخ التسجيل</th>
                         <th>الخيارات</th>
 
                     </tr>
@@ -85,19 +86,20 @@
                                 <!--#-->
                                 <!--@endif-->
                             </td>
-                            <td style="width: 10%;">
+                            <!-- <td style="width: 10%;">
                                 <a data-fancybox="gallery"
-                                   href="{{ $helper->getDefaultImage(request()->root().'/files/users/'.$user->image, request()->root().'/assets/admin/custom/images/default.png') }}">
+                                   href="{{ getDefaultImage(request()->root().'/files/users/'.$user->image, request()->root().'/assets/admin/custom/images/default.png') }}">
                                     <img style="width: 50%; border-radius: 50%; height: 49px;"
-                                         src="{{ $helper->getDefaultImage(request()->root().'/files/users/'.$user->image, request()->root().'/assets/admin/custom/images/default.png') }}"/>
+                                         src="{{ getDefaultImage(request()->root().'/files/users/'.$user->image, request()->root().'/assets/admin/custom/images/default.png') }}"/>
                                 </a>
 
-                            </td>
+                            </td> -->
 
                             <td>{{ $user->name }}</td>
                             <!--<td>{{ $user->username  }}</td>-->
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->phone }}</td>
+                            <td>{{ $user->created_at }}</td>
                             <!-- <td>
                                 
                                 @forelse($user->roles as $role)
@@ -111,7 +113,7 @@
 
 
                             <td id="is_active{{$user->id}}">
-                                @if($user->is_active == 1)
+                                @if($user->is_suspend == 0)
                                     <label class="label label-success label-xs">مفعل</label>
                                 @else
                                     <label class="label label-danger label-xs">معطل</label>
@@ -141,7 +143,7 @@
                                 @if($user->id != 1)
 
                             
-                                @if($user->is_active == 0)
+                                @if($user->is_suspend == 1)
                                 <a href="#custom-modal{{ $user->id }}"
                                     data-id="{{ $user->id }}" id="currentRow{{ $user->id }}"
                                     class="btn btn-success btn-xs btn-trans waves-effect waves-light m-r-5 m-b-10"
@@ -159,7 +161,7 @@
          
                                                     {{ csrf_field() }}
                                              <input type="hidden" name="userId" value="{{$user->id}}">
-                                             <input type="hidden" name="is_active" value="1">
+                                             <input type="hidden" name="is_suspend" value="1">
                                                     <div class="form-group ">
                                                             
                                                             <div>
@@ -209,7 +211,7 @@
                                                  </button>
                                                  <h4 class="custom-modal-title">سبب حذف المستخدم</h4>
                                                  <div class="custom-modal-text text-right" style="text-align: right !important;">
-                                                    <form id="deleteForm" action="{{ route('user.delete') }}" method="post" data-id="{{ $user->id }}">
+                                                    <form id="deleteForm" action="{{ route('users.destroy',$user->id) }}" method="post" data-id="{{ $user->id }}">
              
                                                         {{ csrf_field() }}
                                                          <input type="hidden" name="id" value="{{$user->id}}">
@@ -291,7 +293,7 @@
                 if (isConfirm) {
                     $.ajax({
                         type: 'POST',
-                        url: '{{ route('user.delete') }}',
+                        url: '{{ route('users.destroy','+id+') }}',
                         data: {id: id},
                         dataType: 'json',
                         success: function (data) {

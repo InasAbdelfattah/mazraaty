@@ -65,7 +65,7 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
     Route::post('role/delete/group', 'Admin\RolesController@groupDelete')->name('roles.group.delete');
 
     Route::post('user/activate', 'Admin\UsersController@activateProvider')->name('user.activateProvider');
-        Route::post('user/suspend', 'Admin\UsersController@suspendUser')->name('user.suspend');
+    Route::post('user/suspend', 'Admin\UsersController@suspendUser')->name('user.suspend');
     Route::post('user/delete/group', 'Admin\UsersController@groupDelete')->name('users.group.delete');
     Route::post('user/suspend/group', 'Admin\UsersController@groupSuspend')->name('users.group.suspend');
 
@@ -98,7 +98,6 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
      */
     Route::post('area/activate-area', 'Admin\CitiesController@activateArea')->name('city.activateArea');
     Route::post('city/delete/group', 'Admin\CitiesController@groupDelete')->name('cities.group.delete');
-    Route::post('cities/delete', 'Admin\CitiesController@delete')->name('city.delete');
     Route::resource('cities', 'Admin\CitiesController');
     
     /**

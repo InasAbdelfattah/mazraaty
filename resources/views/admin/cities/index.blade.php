@@ -1,5 +1,5 @@
 @extends('admin.layouts.master')
-@section('title','المناطق الرئيسية')
+@section('title','المدن')
 
 @section('content')
 
@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-sm-12">
             
-            <h4 class="page-title">المناطق الرئيسية</h4>
+            <h4 class="page-title">المدن</h4>
         </div>
     </div>
 
@@ -16,56 +16,19 @@
         <div class="col-lg-12">
             <div class="card-box">
                 <div class="dropdown pull-right">
-                    {{--<a href="#" class="dropdown-toggle card-drop" data-toggle="dropdown" aria-expanded="false">--}}
-                    {{--<i class="zmdi zmdi-more-vert"></i>--}}
-                    {{--</a>--}}
-                    {{--<ul class="dropdown-menu" role="menu">--}}
-                    {{--<li><a href="#">Action</a></li>--}}
-                    {{--<li><a href="#">Another action</a></li>--}}
-                    {{--<li><a href="#">Something else here</a></li>--}}
-                    {{--<li class="divider"></li>--}}
-                    {{--<li><a href="#">Separated link</a></li>--}}
-                    {{--</ul>--}}
-
-
-                    <a href="{{ route('cities.create') }}" class="btn btn-custom waves-effect waves-light">إضافة <span
-                            class="m-l-5">
-                            <i class="fa fa-plus"></i></span>
-                </a>
+                    <a href="{{ route('cities.create') }}" class="btn btn-custom waves-effect waves-light">إضافة <span class="m-l-5">
+                        <i class="fa fa-plus"></i></span>
+                    </a>
                 </div>
 
-                {{--<input type="text" name="filter" class="filteriTems" id="filterItems"/>--}}
-
-                {{--<select id="recordNumber" class="filteriTems">--}}
-
-                {{--<option value="5">5</option>--}}
-                {{--<option value="10">10</option>--}}
-                {{--<option value="15">15</option>--}}
-                {{--<option value="20">20</option>--}}
-                {{--<option value="25">25</option>--}}
-                {{--<option value="50">50</option>--}}
-                {{--<option value="100">100</option>--}}
-
-                {{--</select>--}}
-
-                <h4 class="header-title m-t-0 m-b-30">مشاهدة المناطق الرئيسية</h4>
-
-                {{--<div class="articles">--}}
-
-                {{--                    @include('admin.categories.load')--}}
-
-                {{--</div>--}}
-
-
-                {{--<table id="users" class="table table-striped table-hover table-condensed" style="width:100%"--}}
-
+                <h4 class="header-title m-t-0 m-b-30">مشاهدة المدن</h4>
 
                 <table id="datatable-fixed-header" class="table table-striped table-hover table-condensed"
                        style="width:100%">
                     <thead>
                     <tr>
                         <th>
-                            #
+                            م
                             <!-- <div class="checkbox checkbox-primary checkbox-single">
                                 <input type="checkbox" name="check" onchange="checkSelect(this)"
                                        value="option2"
@@ -74,9 +37,8 @@
                             </div> -->
                         </th>
 
-                        <th>اسم المنطقة الرئيسية</th>
-                        <th>وصف المنطقة</th>
-                        <th>حالة المنطقة</th>
+                        <th>اسم المدينة</th>
+                        <th>حالة المدينة</th>
                         <th>العمليات المتاحة</th>
 
                     </tr>
@@ -96,16 +58,10 @@
                                 </div> -->
                             </td>
 
-                            <td>{{ $row->name_ar }}</td>
-                            <td>{!!   str_limit($row->description_ar, 15) !!}</td>
+                            <td>{{ $row->name }}</td>
                             <td>{{ $row->status == 1 ? 'مفعل' : 'معطل' }}</td>
-                            {{--<td>{{ $row->created_at }}</td>--}}
                             <td>
-                                <a href="{{ route('cities.show', $row->id) }}"
-                                   class="btn btn-icon btn-xs waves-effect btn-default m-b-5">
-                                    <i class="fa fa-eye"></i>
-                                </a>
-
+                                
                                 <a href="{{ route('cities.edit', $row->id) }}"
                                    class="btn btn-icon btn-xs waves-effect btn-default m-b-5">
                                     <i class="fa fa-edit"></i>
@@ -115,7 +71,7 @@
                                     {{--<i class="fa fa-remove"></i>--}}
                                 {{--</a>--}}
 
-                                <a href="javascript:;" id="elementRow{{ $row->id }}" data-id="{{ $row->id }}" data-status="{{!$row->status}}"
+                                <a href="javascript:;" id="elementRow{{ $row->id }}" data-id="{{ $row->id }}" data-status="{{$row->status}}"
                                    class="elementStatus btn btn-icon btn-trans btn-xs waves-effect waves-light btn-danger m-b-5">
                                     @if($row->status == 1)
                                         <label class="label label-danger label-xs">تعطيل</label>
@@ -149,12 +105,14 @@
             var status = $(this).attr('data-status');
             
             if(status == 1){
+                status = 0;
                 var type = 'success';
             }else{
+                status = 1;
                 var type = 'error';
             }
             
-            console.log(status);
+            console.log('statusss',status);
             var $tr = $(this).closest($('#elementRow' + id).parent().parent());
             swal({
                 title: "هل انت متأكد؟",
@@ -336,7 +294,7 @@
                 if (isConfirm) {
                     $.ajax({
                         type: 'POST',
-                        url: '{{ route('city.delete') }}',
+                        url: '{{ route('cities.destroy','+id+') }}',
                         data: {id: id},
                         dataType: 'json',
                         success: function (data) {

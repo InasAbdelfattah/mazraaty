@@ -62,67 +62,28 @@ class CitiesController extends Controller
             return abort(401);
         }
 
-        // Get Input
-        $postData = [
-            'name_ar' => $request->name_ar,
-            'name_en' => $request->name_en,
-            'description_ar' => $request->description_ar,
-            'description_en' => $request->description_en,
+        $rules = [
+            'name' => 'required|min:3|max:50',
         ];
 
-        // Declare Validation Rules.
-        $valRules = [
-            'name_ar' => 'required|min:3|max:50',
-            'name_en' => 'required|min:3|max:50',
-            'description_ar' => 'required|min:3|max:1000',
-            'description_en' => 'required|min:3|max:1000',
-        ];
+        $validator = Validator::make($request->all(), $rules);
 
-        // Declare Validation Messages
-        $valMessages = [
-            'name_ar.required' => 'اسم لمنطقة الرئيسية عربى مطلوب',
-            'name_en.required' => 'اسم لمنطقة الرئيسية انجليزى مطلوب',
-            'description_ar.required' => 'وصف المنطقة الرئيسية عربى مطلوب',
-            'description_en.required' => 'وصف المنطقة الرئيسية انجليزى مطلوب',
-            'name_ar.max:50' => 'اسم المنطقة الفرعية عربى يجب الا يزيد عن 50 حرف',
-            'name_en.max:50' => 'اسم المنطقة الفرعية انجليزىيجب الا يزيد عن 50 حرف',
-            'description_ar.max:1000' => 'وصف المنطقة الفرعية عربى الا يزيد عن 1000 حرف',
-            'description_en.max:1000' => 'وصف المنطقة الفرعية انجليزى الا يزيد عن 1000 حرف',
-        ];
+        if ($validator->fails()) {
 
-        // Validate Input
-        $valResult = Validator::make($postData, $valRules, $valMessages);
+           // return redirect()->back()->withErrors($validator)->withInput();
 
-        // Check Validate
-        if ($valResult->passes()) {
-
-            $city = new City;
-            $city->name_ar = $request->name_ar;
-            $city->name_en = $request->name_en;
-            $city->description_ar = $request->description_ar;
-            $city->description_en = $request->description_en;
-            if ($request->hasFile('image')):
-                $city->image = UploadImage::uploadImage($request, 'image', $this->public_path);
-            else:
-                $city->image = '';
-            endif;
-            
-
-            $city->status = $request->status;
-
-            $city->save();
-
-            session()->flash('success', 'لقد تم إضافة المنطقة الرئيسية.');
-            return redirect()->route('cities.index');
-
-
-        } else {
-            // Grab Messages From Validator
-            $valErrors = $valResult->messages();
-            // Error, Redirect To User Edit
+            $valErrors = $validator->messages();
             return redirect()->back()->withInput()
                 ->withErrors($valErrors);
         }
+
+            $city = new City;
+            $city->name = $request->name;
+            $city->status = $request->status;
+            $city->save();
+
+            session()->flash('success', 'لقد تم إضافة المدينة بنجاح.');
+            return redirect()->route('cities.index');
 
     }
 
@@ -176,61 +137,27 @@ class CitiesController extends Controller
 
         $city = City::findOrFail($id);
 
-        // Get Input
-        $postData = [
-            'name_ar' => $request->name_ar,
-            'name_en' => $request->name_en,
-            'description_ar' => $request->description_ar,
-            'description_en' => $request->description_en,
+        $rules = [
+            'name' => 'required|min:3|max:50',
         ];
 
-        // Declare Validation Rules.
-        $valRules = [
-            'name_ar' => 'required',
-            'name_en' => 'required',
-            'description_ar' => 'required',
-            'description_en' => 'required',
-        ];
+        $validator = Validator::make($request->all(), $rules);
 
-        // Declare Validation Messages
-        $valMessages = [
-            'name_ar.required' => 'اسم لمنطقة الرئيسية عربى مطلوب',
-            'name_en.required' => 'اسم لمنطقة الرئيسية انجليزى مطلوب',
-            'description_ar.required' => 'وصف المنطقة الرئيسية عربى مطلوب',
-            'description_en.required' => 'وصف المنطقة الرئيسية انجليزى مطلوب',
-        ];
+        if ($validator->fails()) {
 
-        // Validate Input
-        $valResult = Validator::make($postData, $valRules, $valMessages);
+           // return redirect()->back()->withErrors($validator)->withInput();
 
-        // Check Validate
-        if ($valResult->passes()) {
-
-
-            $city->name_ar = $request->name_ar;
-            $city->name_en = $request->name_en;
-            $city->description_ar = $request->description_ar;
-            $city->description_en = $request->description_en;
-
-            $city->status = $request->status;
-            
-            if ($request->hasFile('image')):
-                $city->image = UploadImage::uploadImage($request, 'image', $this->public_path);
-            endif;
-
-            $city->save();
-
-            session()->flash('success', 'لقد تم تعديل المنطقة الرئيسية بنجاح.');
-            return redirect()->route('cities.index');
-
-
-        } else {
-            // Grab Messages From Validator
-            $valErrors = $valResult->messages();
-            // Error, Redirect To User Edit
+            $valErrors = $validator->messages();
             return redirect()->back()->withInput()
                 ->withErrors($valErrors);
         }
+
+        $city->name = $request->name;
+        $city->status = $request->status;
+        $city->save();
+
+        session()->flash('success', 'لقد تم تعديل المدينة بنجاح.');
+        return redirect()->route('cities.index');
     }
 
     /**
@@ -241,7 +168,31 @@ class CitiesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if (!Gate::allows('setting_manage')) {
+            return abort(401);
+        }
+        
+        $model = City::findOrFail($id);
+
+        // if ($model->centers->count() > 0) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => "عفواً, لا يمكنك حذف المنطقة الرئيسية لوجود مراكز بها"
+        //     ]);
+        // }
+
+        // if ($model->districts->count() > 0) {
+        //     foreach($model->districts as $district){
+        //         $district->delete();
+        //     }
+        // }
+
+        if ($model->delete()) {
+            return response()->json([
+                'status' => true,
+                'data' => $model->id
+            ]);
+        }
     }
 
     /**
@@ -325,17 +276,12 @@ class CitiesController extends Controller
 
             if($model->status != $request->status) {
                 if ($request->status == 1) {
-                    $msg = 'تم تفعيل المنطقة الرئيسية';
+                    $msg = 'تم تفعيل المدينة';
                 } else {
 
-                    if ($model->districts->count() > 0) {
-                        return response()->json([
-                            'status' => false,
-                            'message' => "عفواً, لا يمكنك تعطيل المنطقة الرئيسية ($model->name_ar) نظراً لوجود مناطق فرعية ملتحقة بها "
-                        ]);
-                    }
+                    $
 
-                    $msg = 'تم تعطيل المنطقة الرئيسية';
+                    $msg = 'تم تعطيل المدينة';
                 }
                 $model->status = $request->status;
                 if ($model->save()) {

@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 
-@section('title','أنواع البطاقات')
+@section('title','الأقسام الرئيسية')
 
 @section('content')
 
@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-sm-12">
             
-            <h4 class="page-title">أنواع البطاقات</h4>
+            <h4 class="page-title">الأقسام الرئيسية</h4>
         </div>
     </div>
 
@@ -23,30 +23,18 @@
                         <i class="fa fa-plus"></i> <span>إضافة</span> </span>
                 </a>
                 </div>
-                {{--<input type="text" name="filter" class="filteriTems" id="filterItems"/>--}}
-
-                {{--<select id="recordNumber" class="filteriTems">--}}
-
-                {{--<option value="5">5</option>--}}
-                {{--<option value="10">10</option>--}}
-                {{--<option value="15">15</option>--}}
-                {{--<option value="20">20</option>--}}
-                {{--<option value="25">25</option>--}}
-                {{--<option value="50">50</option>--}}
-                {{--<option value="100">100</option>--}}
-
-                {{--</select>--}}
-
-                <h4 class="header-title m-t-0 m-b-30">مشاهدة أنواع اليطاقات</h4>
+                
+                <h4 class="header-title m-t-0 m-b-30">مشاهدة الأقسام الرئيسية</h4>
 
                 <table class="table m-0  table-striped table-hover table-condensed" id="datatable-fixed-header">
                     <thead>
                     <tr>
                         <th>
-                            #
+                            م
                         </th>
-                        <th>اسم نوع البطاقة</th>
-                        <th>حالة نوع البطاقة</th>
+                        <th>اسم القسم الرئيسى</th>
+                        <th>صورة القسم الرئيسى</th>
+                        <th>حالة القسم الرئيسى</th>
                         <th>العمليات المتاحة</th>
 
                     </tr>
@@ -66,14 +54,22 @@
                                 <!--</div>-->
 
                             </td>
-                            <td>{{ $category->name_ar }}</td>
+                            <td>{{ $category->name }}</td>
+                            <td style="width: 10%;">
+                                <a data-fancybox="gallery"
+                                   href="{{ getDefaultImage(request()->root().'/files/categories/'.$category->image, request()->root().'/assets/admin/custom/images/default.png') }}">
+                                    <img style="width: 50%; border-radius: 50%; height: 49px;"
+                                         src="{{ getDefaultImage(request()->root().'/files/categories/'.$category->image, request()->root().'/assets/admin/custom/images/default.png') }}"/>
+                                </a>
+
+                            </td>
                             <td>{{ $category->status == 1 ? 'مفعل' : 'معطل' }}</td>
                             <td>
                                 
-                                <a href="{{ route('categories.show', $category->id) }}"
+                                <!-- <a href="{{ route('categories.show', $category->id) }}"
                                    class="btn btn-icon btn-xs waves-effect btn-default m-b-5">
                                     <i class="fa fa-eye"></i>
-                                </a>
+                                </a> -->
 
                                 <a href="{{ route('categories.edit', $category->id) }}"
                                    class="btn btn-icon btn-xs waves-effect btn-default m-b-5">
@@ -85,7 +81,7 @@
                                     {{--<i class="fa fa-remove"></i>--}}
 
                                 {{--</a>--}}
-                                <a href="javascript:;" id="elementRow{{ $category->id }}" data-id="{{ $category->id }}" data-status="{{!$category->status}}"
+                                <a href="javascript:;" id="elementRow{{ $category->id }}" data-id="{{ $category->id }}" data-status="{{$category->status}}"
                                    class="elementStatus btn btn-icon btn-trans btn-xs waves-effect waves-light btn-danger m-b-5">
                                     @if($category->status == 1)
                                         <label class="label label-danger label-xs">تعطيل</label>
@@ -132,9 +128,11 @@
             var id = $(this).attr('data-id');
             var status = $(this).attr('data-status');
             
-            if(status == 1){
+            if(status == 0){
+                status = 1;
                 var type = 'success';
             }else{
+                status = 0;
                 var type = 'error';
             }
             

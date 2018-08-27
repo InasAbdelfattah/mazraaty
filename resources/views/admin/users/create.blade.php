@@ -46,11 +46,11 @@
                     <h4 class="header-title m-t-0 m-b-30">بيانات المستخدم</h4>
 
 
-                    <div class="col-xs-6">
+                    <div class="col-xs-12">
                         <div class="form-group">
-                            <label for="userName">الاسم الكامل*</label>
+                            <label for="userName">اسم المستخدم*</label>
                             <input type="text" name="name" value="{{ old('name') }}" class="form-control" required
-                                   placeholder="اسم المستخدم بالكامل..."/>
+                                   placeholder="اسم المستخدم..."/>
                             <p class="help-block" id="error_userName"></p>
                             @if($errors->has('name'))
                                 <p class="help-block">
@@ -61,7 +61,7 @@
 
                     </div>
 
-                    <div class="col-xs-6">
+                    <!-- <div class="col-xs-6">
                         <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }}">
                             <label for="usernames">اسم المستخدم*</label>
                             <input type="text" name="username" value="{{ old('username') }}" class="form-control"
@@ -72,7 +72,7 @@
                                 </p>
                             @endif
                         </div>
-                    </div>
+                    </div> -->
 
 
                     <div class="col-xs-6">
@@ -136,12 +136,12 @@
                     </div>
 
 
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="passWord2">العنوان*</label>
                         <input name="address" value="{{ old('address') }}" type="text" required placeholder="العنوان..."
                                class="form-control">
 
-                    </div>
+                    </div> -->
 
                     <div class="form-group{{ $errors->has('roles') ? ' has-error' : '' }}">
                         <label for="passWord2">الصلاحيات *</label>
@@ -160,13 +160,13 @@
 
                     </div>
 
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="pass1">الحالة *</label>
                         <select class="form-control select2" name="is_active">
                             <option value="1">مفعل</option>
                             <option value="0">غير مفعل</option>
                         </select>
-                    </div>
+                    </div> -->
 
                     <div class="form-group text-right m-t-20">
                         <button class="btn btn-primary waves-effect waves-light m-t-20" type="submit">

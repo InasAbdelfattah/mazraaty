@@ -73,13 +73,14 @@
                                 <label></label>
                             </div>
                         </th>
-                        <th>الصورة</th>
+                        <!-- <th>الصورة</th> -->
                         <th>الاسم</th>
                         <!--<th>اسم المستخدم</th>-->
                         <th>البريد الإلكتروني</th>
                         <th>رقم الجوال</th>
                         <!-- <th>الصلاحيات</th> -->
                         <th>الحالة</th>
+                        <th>تاريخ الاشتراك</th>
                         <th>الخيارات</th>
 
                     </tr>
@@ -101,14 +102,14 @@
                                 <!--#-->
                                 <!--@endif -->
                             </td>
-                            <td style="width: 10%;">
+                            <!-- <td style="width: 10%;">
                                 <a data-fancybox="gallery"
                                    href="{{ getDefaultImage(request()->root().'/files/users/'.$user->image, request()->root().'/assets/admin/custom/images/default.png') }}">
                                     <img style="width: 50%; border-radius: 50%; height: 49px;"
                                          src="{{ getDefaultImage(request()->root().'/files/users/'.$user->image, request()->root().'/assets/admin/custom/images/default.png') }}"/>
                                 </a>
 
-                            </td>
+                            </td> -->
 
                             <td>{{ $user->name }}</td>
                             <!--<td>{{ $user->username  }}</td>-->
@@ -142,7 +143,7 @@
                             <!--    @endif-->
                             <!--</td>-->
 
-
+                            <td>{{$user->created_at}}</td>
                             <td>
                                 <a href="{{ route('users.show',$user->id) }}"
                                    class="btn btn-icon btn-xs waves-effect btn-default m-b-5">
@@ -224,7 +225,7 @@
                                                  </button>
                                                  <h4 class="custom-modal-title">سبب حذف المستخدم</h4>
                                                  <div class="custom-modal-text text-right" style="text-align: right !important;">
-                                                    <form id="deleteForm" action="{{ route('user.delete') }}" method="post" data-id="{{ $user->id }}">
+                                                    <form id="deleteForm" action="{{ route('users.destroy',$user->id) }}" method="post" data-id="{{ $user->id }}">
              
                                                         {{ csrf_field() }}
                                                          <input type="hidden" name="id" value="{{$user->id}}">
@@ -306,7 +307,7 @@
                 if (isConfirm) {
                     $.ajax({
                         type: 'POST',
-                        url: '{{ route('user.delete') }}',
+                        url: '{{ route('users.destroy','+id+') }}',
                         data: {id: id},
                         dataType: 'json',
                         success: function (data) {

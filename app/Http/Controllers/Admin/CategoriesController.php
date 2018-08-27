@@ -79,36 +79,20 @@ class CategoriesController extends Controller
         }
 
         $category = new Category;
-        $category->name_ar = $request->name_ar;
-        $category->name_en = $request->name_en;
-        $category->description_ar = $request->description_ar;
-        $category->description_en = $request->description_en;
-        $category->type = $request->type;
+        $category->name = $request->name;
         $category->status = $request->status;
-        $category->parent_id = ($request->parent != null) ?: 0;
+        $category->parent_id = ($request->parent != null) ? $request->parent: 0;
 
         /**
          * @ Store Image With Image Intervention.
          */
 
         if ($request->hasFile('image')):
-            $category->image = $request->root() . '/' . $this->public_path . UploadImage::uploadImage($request, 'image', $this->public_path);
+            $category->image = uploadImage($request, 'image', $this->public_path);
         endif;
         
         if ($category->save()) {
-            
-            if($request->has('areas') && $request->areas != ''){
-                //dd($request->areas);
-                if(count($request->areas) > 0){
-                    foreach($request->areas as $area){
-                        $cat_area = new CategoryArea();
-                        $cat_area->category_id = $category->id;
-                        $cat_area->area_id = $area;
-                        $cat_area->save();
-                    }
-                }
-            }
-        
+           
             session()->flash('success', 'لقد تم إضافة نوع بطاقة بنجاح' . $category->name_ar);
             return redirect(route('categories.index'));
         }
@@ -146,10 +130,8 @@ class CategoriesController extends Controller
         }
 
         $category = Category::findOrFail($id);
-        //$areas = City::where('status',1)->get();
-        $areas = City::all();
-        $cat_areas = CategoryArea::where('category_id',$id)->pluck('area_id')->toArray();
-        return view('admin.categories.edit')->with(compact('category' , 'areas' , 'cat_areas'));
+       
+        return view('admin.categories.edit')->with(compact('category'));
     }
 
     /**
@@ -166,20 +148,16 @@ class CategoriesController extends Controller
         }
 
         $category = Category::findOrFail($id);
-        $category->name_ar = $request->name_ar;
-        $category->name_en = $request->name_en;
-        $category->description_ar = $request->description_ar;
-        $category->description_en = $request->description_en;
-        $category->type = $request->type;
+        $category->name = $request->name;
         $category->status = $request->status;
-        $category->parent_id = ($request->parent != null) ?: 0;
+        $category->parent_id = ($request->parent != null) ? $request->parent: 0;
 
         /**
          * @ Store Image With Image Intervention.
          */
 
         if ($request->hasFile('image')):
-            $category->image = UploadImage::uploadImage($request, 'image', $this->public_path);
+            $category->image = uploadImage($request, 'image', $this->public_path);
         endif;
 
 
@@ -193,25 +171,7 @@ class CategoriesController extends Controller
 
 
         if ($category->save()) {
-            
-            if($request->has('areas') && $request->areas != ''){
-                //dd($request->areas);
-                if(count($request->areas) > 0){
-                    $cat_areas = CategoryArea::where('category_id',$id)->get();
-                    if(count($cat_areas) > 0){
-                        foreach($cat_areas as $cat_area){
-                            $cat_area->delete();
-                        }
-                    }
-                    foreach($request->areas as $area){
-                        $cat_area = new CategoryArea();
-                        $cat_area->category_id = $category->id;
-                        $cat_area->area_id = $area;
-                        $cat_area->save();
-                    }
-                }
-            }
-            
+              
             session()->flash('success', 'لقد تم تعديل نوع البطاقة بنجاح' . $category->name_ar);
 
             return redirect(route('categories.index'));
@@ -228,7 +188,25 @@ class CategoriesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if (!Gate::allows('setting_manage')) {
+            return abort(401);
+        }
+
+        $model = Category::findOrFail($request->id);
+
+        if ($model->products->count() > 0) {
+            return response()->json([
+                'status' => false,
+                'message' => "عفواً, لا يمكنك حذف القسم ($model->name) نظراً لوجود منتجات ملتحقة بها "
+            ]);
+        }
+
+        if ($model->delete()) {
+            return response()->json([
+                'status' => true,
+                'data' => $model->id
+            ]);
+        }
     }
 
     /**
@@ -346,13 +324,13 @@ class CategoriesController extends Controller
                     $msg = 'تم تفعيل نوع البطاقة';
 
                 } elseif ($request->status == 0) {
-                    if ($model->cards->count() > 0) {
+                    if ($model->products->count() > 0) {
                         return response()->json([
                             'status' => false,
-                            'message' => "عفواً, لا يمكنك تعطيل النوع ($model->name_ar) نظراً لوجود بطاقات ملتحقة بها "
+                            'message' => "عفواً, لا يمكنك تعطيل القسم ($model->name) نظراً لوجود منتجات ملتحقة بها "
                         ]);
                     }
-                    $msg = 'تم تعطيل نوع البطاقة';
+                    $msg = 'تم تعطيل القسم';
                 }
                 $model->status = $request->status;
                 if ($model->save()) {
