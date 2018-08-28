@@ -128,6 +128,12 @@
         //return $this->belongsTo(Company::class);
     }
 
+    function category($id)
+    {
+        $cat = \App\Category::find($id);
+        return $cat != null ? $cat->name : null;
+    }
+
     function day($key){
         $days_arr = ['Sat'=>'السبت' , 'Sun'=>'الأحد' , 'Mon'=>'الإثنين' ,'Tue'=>'الثلاثاء' , 'Wed'=>'الأربعاء' , 'Thu'=>'الخميس' , 'Fri'=>'الجمعة'] ;
          return $days_arr[$key];

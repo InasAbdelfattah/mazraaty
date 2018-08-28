@@ -11,12 +11,12 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="btn-group pull-right m-t-15">
-                    <a href="{{ route('categories.index') }}" class="btn btn-custom  waves-effect waves-light">
+                    <a href="{{ $type == 'cats' ? route('categories.index') : route('subcategories') }}" class="btn btn-custom  waves-effect waves-light">
                         <span class="m-l-5">
-                            <i class="fa fa-eye"></i> <span>عرض الأقسام الرئيسية</span> </span>
+                            <i class="fa fa-eye"></i> <span>عرض الأقسام @if($type == 'cats')الرئيسية@else الفرعية @endif</span> </span>
                     </a>
                 </div>
-                <h4 class="page-title">الأقسام الرئيسية</h4>
+                <h4 class="page-title">الأقسام @if($type == 'cats')الرئيسية@else الفرعية @endif</h4>
             </div>
         </div>
 
@@ -32,6 +32,25 @@
                                placeholder="ادخل الاسم..." class="form-control title"
                                id="userName">
                     </div>
+
+                    @if($type == 'subcats')
+                    <div class="form-group{{ $errors->has('parent_id') ? ' has-error' : '' }}">
+                        <label for="pass1">القسم الرئيسى*</label>
+                        <select class="form-control" name="parent_id" id="cat" required data-parsley-required-message="هذا الحقل الزامى" >
+                            <option value="" selected disabled>برجاء اختيار القسم الرئيسى</option>
+                            @if(count($cates) > 0)
+                                @foreach($cates as $cat)
+                                    <option value="{{$cat->id}}" {{$category->parent_id == $cat->id ? 'selected' : ''}}>{{$cat->name }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                        
+                        @if($errors->has('parent_id'))
+                            <p class="help-block">{{ $errors->first('parent_id') }}</p>
+                        @endif
+                        
+                    </div>
+                    @endif
                   
 
                     <div class="form-group">

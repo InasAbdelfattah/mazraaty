@@ -128,8 +128,8 @@
                                         <li><a href="#">وحدات القياس</a></li>
                                         <li><a href="#">وحدات القياس</a></li>
                                         <li><a href="{{ route('categories.index') }}">الأقسام الرئيسية</a></li>
-                                        <li><a href="#">الأقسام الفرعية</a></li>
-                                        <li><a href="#">المنتجات</a></li>
+                                        <li><a href="{{route('subcategories')}}">الأقسام الفرعية</a></li>
+                                        <li><a href="{{ route('products.index') }}">المنتجات</a></li>
                                         <li><a href="#">العروض</a></li>
                                        
                                     </ul>

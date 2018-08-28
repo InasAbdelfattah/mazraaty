@@ -41,10 +41,25 @@ class CategoriesController extends Controller
         /**
          * Get all Categories
          */
-        $categories = Category::get();
+        $categories = Category::where('parent_id',0)->get();
 
         ## SHOW CATEGORIES LIST VIEW WITH SEND CATEGORIES DATA.
         return view('admin.categories.index')
+            ->with(compact('categories'));
+    }
+
+    public function getSubCategories(){
+        if (!Gate::allows('setting_manage')) {
+            return abort(401);
+        }
+
+        /**
+         * Get all Categories
+         */
+        $categories = Category::where('parent_id','!=',0)->get();
+
+        ## SHOW CATEGORIES LIST VIEW WITH SEND CATEGORIES DATA.
+        return view('admin.categories.subcats')
             ->with(compact('categories'));
     }
 
@@ -53,16 +68,15 @@ class CategoriesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         
         if (!Gate::allows('setting_manage')) {
             return abort(401);
         }
-
-        //$areas = City::where('status',1)->get();
-        $areas = City::all();
-        return view('admin.categories.create',compact('areas'));
+        $type = $request->type;
+        $cates = Category::where('parent_id',0)->get(); 
+        return view('admin.categories.create',compact('type' , 'cates'));
     }
 
     /**
@@ -81,7 +95,7 @@ class CategoriesController extends Controller
         $category = new Category;
         $category->name = $request->name;
         $category->status = $request->status;
-        $category->parent_id = ($request->parent != null) ? $request->parent: 0;
+        $category->parent_id = ($request->parent_id != null) ? $request->parent_id: 0;
 
         /**
          * @ Store Image With Image Intervention.
@@ -93,8 +107,12 @@ class CategoriesController extends Controller
         
         if ($category->save()) {
            
-            session()->flash('success', 'لقد تم إضافة نوع بطاقة بنجاح' . $category->name_ar);
-            return redirect(route('categories.index'));
+            session()->flash('success', 'لقد تم إضافة قسم بنجاح' . $category->name);
+            if($category->parent_id == 0):
+                return redirect(route('categories.index'));
+            else:
+                return redirect(route('subcategories'));
+            endif;
         }
 
 
@@ -123,15 +141,17 @@ class CategoriesController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id , Request $request)
     {
         if (!Gate::allows('setting_manage')) {
             return abort(401);
         }
 
         $category = Category::findOrFail($id);
-       
-        return view('admin.categories.edit')->with(compact('category'));
+
+        $type = $request->type;
+        $cates = Category::where('parent_id',0)->get();        
+        return view('admin.categories.edit')->with(compact('category' , 'cates' , 'type'));
     }
 
     /**
@@ -150,7 +170,7 @@ class CategoriesController extends Controller
         $category = Category::findOrFail($id);
         $category->name = $request->name;
         $category->status = $request->status;
-        $category->parent_id = ($request->parent != null) ? $request->parent: 0;
+        $category->parent_id = ($request->parent_id != null) ? $request->parent_id: 0;
 
         /**
          * @ Store Image With Image Intervention.
@@ -172,9 +192,13 @@ class CategoriesController extends Controller
 
         if ($category->save()) {
               
-            session()->flash('success', 'لقد تم تعديل نوع البطاقة بنجاح' . $category->name_ar);
+            session()->flash('success', 'لقد تم تعديل القسم بنجاح' . $category->name);
 
-            return redirect(route('categories.index'));
+            if($category->parent_id == 0):
+                return redirect(route('categories.index'));
+            else:
+                return redirect(route('subcategories'));
+            endif;
         }
 
 

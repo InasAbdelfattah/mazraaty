@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 
-@section('title','الأقسام الرئيسية')
+@section('title','المنتجات')
 
 @section('content')
 
@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-sm-12">
             
-            <h4 class="page-title">الأقسام الرئيسية</h4>
+            <h4 class="page-title">المنتجات</h4>
         </div>
     </div>
 
@@ -18,13 +18,13 @@
             <div class="card-box">
 
                 <div class="dropdown pull-right">
-                   <a href="{{ route('categories.create','type=cats') }}" class="btn btn-custom  waves-effect waves-light">
+                   <a href="{{ route('products.create') }}" class="btn btn-custom  waves-effect waves-light">
                     <span class="m-l-5">
                         <i class="fa fa-plus"></i> <span>إضافة</span> </span>
                 </a>
                 </div>
                 
-                <h4 class="header-title m-t-0 m-b-30">مشاهدة الأقسام الرئيسية</h4>
+                <h4 class="header-title m-t-0 m-b-30">مشاهدة المنتجات</h4>
 
                 <table class="table m-0  table-striped table-hover table-condensed" id="datatable-fixed-header">
                     <thead>
@@ -32,9 +32,10 @@
                         <th>
                             م
                         </th>
-                        <th>اسم القسم الرئيسى</th>
-                        <th>صورة القسم الرئيسى</th>
-                        <th>حالة القسم الرئيسى</th>
+                        <th>القسم الرئيسى</th>
+                        <th>القسم الفرعى</th>
+                        <th>اسم المنتج</th>
+                        <th>صورة المنتج</th>
                         <th>العمليات المتاحة</th>
 
                     </tr>
@@ -42,48 +43,47 @@
                     <tbody>
 
                     @php $i = 1; @endphp
-                    @foreach($categories as $category)
+                    @foreach($products as $product)
                         <tr>
                             <td>{{$i++}}
 
                                 <!--<div class="checkbox checkbox-primary checkbox-single">-->
                                 <!--    <input type="checkbox" class="checkboxes-items"-->
-                                <!--           value="{{ $category->id }}"-->
+                                <!--           value="{{ $product->id }}"-->
                                 <!--           aria-label="Single checkbox Two">-->
                                 <!--    <label></label>-->
                                 <!--</div>-->
 
                             </td>
-                            <td>{{ $category->name }}</td>
+                            <td>{{category($product->category_id)}}</td>
+                            <td>{{category($product->subcategory_id)}}</td>
+                            <td>{{ $product->name }}</td>
                             <td style="width: 10%;">
                                 <a data-fancybox="gallery"
-                                   href="{{ getDefaultImage(request()->root().'/files/categories/'.$category->image, request()->root().'/assets/admin/custom/images/default.png') }}">
+                                   href="{{ getDefaultImage(request()->root().'/files/products/'.$product->image, request()->root().'/assets/admin/custom/images/default.png') }}">
                                     <img style="width: 50%; border-radius: 50%; height: 49px;"
-                                         src="{{ getDefaultImage(request()->root().'/files/categories/'.$category->image, request()->root().'/assets/admin/custom/images/default.png') }}"/>
+                                         src="{{ getDefaultImage(request()->root().'/files/products/'.$product->image, request()->root().'/assets/admin/custom/images/default.png') }}"/>
                                 </a>
-
                             </td>
-                            <td>{{ $category->status == 1 ? 'مفعل' : 'معطل' }}</td>
                             <td>
                                 
-                                <!-- <a href="{{ route('categories.show', $category->id) }}"
+                                <a href="{{ route('products.show', $product->id) }}"
                                    class="btn btn-icon btn-xs waves-effect btn-default m-b-5">
                                     <i class="fa fa-eye"></i>
-                                </a> -->
+                                </a>
 
-                                <a href="{{ route('categories.edit', $category->id).'?type=cats' }}"
-                                   class="btn btn-icon btn-xs waves-effect btn-default m-b-5">
+                                <a href="{{ route('products.edit', $product->id) }}" class="btn btn-icon btn-xs waves-effect btn-default m-b-5">
                                     <i class="fa fa-edit"></i>
                                 </a>
 
-                                {{--<a href="javascript:;" id="elementRow{{ $category->id }}" data-id="{{ $category->id }}"--}}
+                                {{--<a href="javascript:;" id="elementRow{{ $product->id }}" data-id="{{ $product->id }}"--}}
                                    {{--class="removeElement btn btn-icon btn-trans btn-xs waves-effect waves-light btn-danger m-b-5">--}}
                                     {{--<i class="fa fa-remove"></i>--}}
 
                                 {{--</a>--}}
-                                <a href="javascript:;" id="elementRow{{ $category->id }}" data-id="{{ $category->id }}" data-status="{{$category->status}}"
+                                <a href="javascript:;" id="elementRow{{ $product->id }}" data-id="{{ $product->id }}" data-status="{{$product->status}}"
                                    class="elementStatus btn btn-icon btn-trans btn-xs waves-effect waves-light btn-danger m-b-5">
-                                    @if($category->status == 1)
+                                    @if($product->status == 1)
                                         <label class="label label-danger label-xs">تعطيل</label>
                                     @else
                                         <label class="label label-success label-xs">تفعيل</label>
@@ -97,12 +97,6 @@
                     </tbody>
                 </table>
 
-
-                {{--<div class="articles">--}}
-
-                {{--                    @include('admin.categories.load')--}}
-
-                {{--</div>--}}
             </div>
         </div><!-- end col -->
 
@@ -115,14 +109,6 @@
 
 
     <script>
-
-
-        {{--@if(session()->has('success'))--}}
-
-        {{--setTimeout(function () {--}}
-        {{--showMessage('{{ session()->get('success') }}');--}}
-        {{--}, 3000);--}}
-        {{--@endif--}}
 
         $('body').on('click', '.elementStatus', function () {
             var id = $(this).attr('data-id');
@@ -153,7 +139,7 @@
                 if (isConfirm) {
                     $.ajax({
                         type: 'POST',
-                        url: '{{ route('category.activateCategory') }}',
+                        url: '{{ route('product.activateProduct') }}',
                         data: {id: id , status: status},
                         dataType: 'json',
                         success: function (data) {
@@ -212,96 +198,6 @@
             });
         });
 
-
-
-        $('.getSelected').on('click', function () {
-            // var items = $('.checkboxes-items').val();
-            var sum = [];
-            $('.checkboxes-items').each(function () {
-                if ($(this).prop('checked') == true) {
-                    sum.push(Number($(this).val()));
-                }
-
-            });
-
-            if (sum.length > 0) {
-                //var $tr = $(this).closest($('#elementRow' + id).parent().parent());
-                swal({
-                    title: "هل انت متأكد؟",
-                    text: "يمكنك استرجاع المحذوفات مرة اخرى لا تقلق.",
-                    type: "error",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "موافق",
-                    cancelButtonText: "إلغاء",
-                    confirmButtonClass: 'btn-danger waves-effect waves-light',
-                    closeOnConfirm: true,
-                    closeOnCancel: true,
-                }, function (isConfirm) {
-                    if (isConfirm) {
-                        $.ajax({
-                            type: 'POST',
-                            url: '{{ route('categories.group.delete') }}',
-                            data: {ids: sum},
-                            dataType: 'json',
-                            success: function (data) {
-                                if (data) {
-                                    var shortCutFunction = 'success';
-                                    var msg = 'لقد تمت عملية الحذف بنجاح.';
-                                    var title = data.title;
-                                    toastr.options = {
-                                        positionClass: 'toast-top-center',
-                                        onclick: null,
-                                        showMethod: 'slideDown',
-                                        hideMethod: "slideUp",
-                                    };
-                                    var $toast = toastr[shortCutFunction](msg, title); // Wire up an event handler to a button in the toast, if it exists
-                                    $toastlast = $toast;
-                                }
-
-                                $('.checkboxes-items').each(function () {
-                                    if ($(this).prop('checked') == true) {
-                                        $(this).parent().parent().parent().delay(200).fadeOut();
-                                    }
-                                });
-//                        $tr.find('td').fadeOut(1000, function () {
-//                            $tr.remove();
-//                        });
-                            }
-                        });
-                    } else {
-                        swal({
-                            title: "تم الالغاء",
-                            text: "انت لغيت عملية الحذف تقدر تحاول فى اى وقت :)",
-                            type: "error",
-                            showCancelButton: false,
-                            confirmButtonColor: "#DD6B55",
-                            confirmButtonText: "موافق",
-                            confirmButtonClass: 'btn-info waves-effect waves-light',
-                            closeOnConfirm: false,
-                            closeOnCancel: false
-                        });
-                    }
-                });
-            } else {
-                swal({
-                    title: "تحذير",
-                    text: "قم بتحديد عنصر على الاقل",
-                    type: "warning",
-                    showCancelButton: false,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "موافق",
-                    confirmButtonClass: 'btn-warning waves-effect waves-light',
-                    closeOnConfirm: false,
-                    closeOnCancel: false
-
-                });
-            }
-
-
-        });
-
-
         $('body').on('click', '.removeElement', function () {
             var id = $(this).attr('data-id');
             var $tr = $(this).closest($('#elementRow' + id).parent().parent());
@@ -320,7 +216,7 @@
                 if (isConfirm) {
                     $.ajax({
                         type: 'delete',
-                        url: '{{ route('categories.destroy','+id+') }}',
+                        url: '{{ route('products.destroy','+id+') }}',
                         data: {id: id},
                         dataType: 'json',
                         success: function (data) {
@@ -336,10 +232,10 @@
                                 };
                                 var $toast = toastr[shortCutFunction](msg, title); // Wire up an event handler to a button in the toast, if it exists
                                 $toastlast = $toast;
-
-                                $tr.find('td').fadeOut(1000, function () {
-                                    $tr.remove();
-                                });
+                                location.reload();
+                                // $tr.find('td').fadeOut(1000, function () {
+                                //     $tr.remove();
+                               // });
 
                             } else {
                                 var shortCutFunction = 'error';
@@ -377,24 +273,6 @@
             });
         });
 
-
-        // function showMessage(message) {
-        //
-        //     var shortCutFunction = 'success';
-        //     var msg = message;
-        //     var title = 'نجاح!';
-        //     toastr.options = {
-        //         positionClass: 'toast-top-center',
-        //         onclick: null,
-        //         showMethod: 'slideDown',
-        //         hideMethod: "slideUp",
-        //     };
-        //     var $toast = toastr[shortCutFunction](msg, title);
-        //     // Wire up an event handler to a button in the toast, if it exists
-        //     $toastlast = $toast;
-        //
-        //
-        // }
     </script>
 
 

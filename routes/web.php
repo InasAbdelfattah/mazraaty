@@ -75,9 +75,14 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
      * @@ Manage Categories Routes.
      */
     Route::post('category/activate-category', 'Admin\CategoriesController@activateCategory')->name('category.activateCategory');
-    Route::post('category/delete', 'Admin\CategoriesController@delete')->name('category.delete');
+    Route::get('sub-categories', 'Admin\CategoriesController@getSubCategories')->name('subcategories');
     Route::post('category/delete/group', 'Admin\CategoriesController@groupDelete')->name('categories.group.delete');
+
+
     Route::resource('categories', 'Admin\CategoriesController');
+
+    Route::post('product/activate-product', 'Admin\ProductController@activateProduct')->name('product.activateProduct');
+    Route::resource('products', 'Admin\ProductController');
 
 //sliders
     Route::get('ads/createAd', 'Admin\SliderController@createAd')->name('sliders.createAd');

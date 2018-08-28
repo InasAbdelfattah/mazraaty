@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 
-@section('title','الأقسام الرئيسية')
+@section('title','الأقسام الفرعية')
 
 @section('content')
 
@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-sm-12">
             
-            <h4 class="page-title">الأقسام الرئيسية</h4>
+            <h4 class="page-title">الأقسام الفرعية</h4>
         </div>
     </div>
 
@@ -18,13 +18,13 @@
             <div class="card-box">
 
                 <div class="dropdown pull-right">
-                   <a href="{{ route('categories.create','type=cats') }}" class="btn btn-custom  waves-effect waves-light">
+                   <a href="{{ route('categories.create','type=subcats') }}" class="btn btn-custom  waves-effect waves-light">
                     <span class="m-l-5">
                         <i class="fa fa-plus"></i> <span>إضافة</span> </span>
                 </a>
                 </div>
                 
-                <h4 class="header-title m-t-0 m-b-30">مشاهدة الأقسام الرئيسية</h4>
+                <h4 class="header-title m-t-0 m-b-30">مشاهدة الأقسام الفرعية</h4>
 
                 <table class="table m-0  table-striped table-hover table-condensed" id="datatable-fixed-header">
                     <thead>
@@ -32,9 +32,10 @@
                         <th>
                             م
                         </th>
+                        <th>اسم القسم الفرعى</th>
+                        <th>صورة القسم الفرعى</th>
                         <th>اسم القسم الرئيسى</th>
-                        <th>صورة القسم الرئيسى</th>
-                        <th>حالة القسم الرئيسى</th>
+                        <th>حالة القسم الفرعى</th>
                         <th>العمليات المتاحة</th>
 
                     </tr>
@@ -63,6 +64,12 @@
                                 </a>
 
                             </td>
+                             <td>
+                                @php $cat = \App\Category::find($category->parent_id); @endphp
+                                @if($cat)
+                                    {{ $cat->name }}
+                                @endif
+                            </td>
                             <td>{{ $category->status == 1 ? 'مفعل' : 'معطل' }}</td>
                             <td>
                                 
@@ -71,7 +78,7 @@
                                     <i class="fa fa-eye"></i>
                                 </a> -->
 
-                                <a href="{{ route('categories.edit', $category->id).'?type=cats' }}"
+                                <a href="{{ route('categories.edit', $category->id).'?type=subcats' }}"
                                    class="btn btn-icon btn-xs waves-effect btn-default m-b-5">
                                     <i class="fa fa-edit"></i>
                                 </a>

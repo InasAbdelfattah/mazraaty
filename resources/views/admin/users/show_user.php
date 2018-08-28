@@ -192,8 +192,7 @@
                         <div class="col-sm-12">
 
                             <input type="hidden" value="{{ $user->image }}" name="oldImage"/>
-                            <input type="file" name="image" class="dropify" data-max-file-size="6M"
-                                   data-default-file="{{ $user->image }}"/>
+                            <input type="file" name="image" class="dropify" data-max-file-size="6M" data-default-file="{{ $user->image }}"/>
 
                         </div>
                     </div>

@@ -1,5 +1,5 @@
 @extends('admin.layouts.master')
-@section('title','إضافة نوع بطاقة')
+@section('title','إضافة قسم')
 @section('content')
 
     <div id="messageError"></div>
@@ -21,12 +21,12 @@
                 </div> -->
                 
                 <div class="btn-group pull-right m-t-15">
-                    <a href="{{ route('categories.index') }}" class="btn btn-custom  waves-effect waves-light">
+                    <a href="{{ $type == 'cats' ? route('categories.index') : route('subcategories') }}" class="btn btn-custom  waves-effect waves-light">
                         <span class="m-l-5">
-                            <i class="fa fa-eye"></i> <span>عرض الأقسام الرئيسية</span> </span>
+                            <i class="fa fa-eye"></i> <span>عرض الأقسام @if($type == 'cats')الرئيسية@else الفرعية @endif</span> </span>
                     </a>
                 </div>
-                <h4 class="page-title">الأقسام الرئيسية</h4>
+                <h4 class="page-title">الأقسام @if($type == 'cats')الرئيسية@else الفرعية @endif</h4>
             </div>
         </div>
 
@@ -34,14 +34,32 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="card-box">
-                    <h4 class="header-title m-t-0 m-b-30">إضافة نوع جديد</h4>
+                    <h4 class="header-title m-t-0 m-b-30">إضافة قسم جديد</h4>
 
                     <div class="form-group">
                         <label for="userName"> الاسم*</label>
                         <input type="text" name="name" parsley-trigger="change" required
-                               placeholder=" ادخل اسم القسم الرئيسى..." class="form-control name"
+                               placeholder=" ادخل اسم القسم ..." class="form-control name"
                                id="userName">
                     </div>
+                    @if($type == 'subcats')
+                    <div class="form-group{{ $errors->has('parent_id') ? ' has-error' : '' }}">
+                        <label for="pass1">القسم الرئيسى*</label>
+                        <select class="form-control" name="parent_id" id="cat" required data-parsley-required-message="هذا الحقل الزامى" >
+                            <option value="" selected disabled>برجاء اختيار القسم الرئيسى</option>
+                            @if(count($cates) > 0)
+                                @foreach($cates as $cat)
+                                    <option value="{{$cat->id}}">{{$cat->name }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                        
+                        @if($errors->has('parent_id'))
+                            <p class="help-block">{{ $errors->first('parent_id') }}</p>
+                        @endif
+                        
+                    </div>
+                    @endif
 
                     <div class="form-group">
                         <label for="pass1"> الحالة*</label>
