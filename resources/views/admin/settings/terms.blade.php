@@ -45,7 +45,7 @@
                     <!--    <div class="form-group">-->
                     <!--        <label for="userName">العنوان *</label>-->
                     <!--        <input type="text" name="terms_title_ar"-->
-                    <!--               value="{{ $setting->getBody('terms_title_ar') }}" class="form-control"-->
+                    <!--               value="{{ setting()->getBody('terms_title_ar') }}" class="form-control"-->
                     <!--               required-->
                     <!--               placeholder="العنوان ..."/>-->
                     <!--        <p class="help-block"></p>-->
@@ -58,7 +58,7 @@
                     <!--    <div class="form-group">-->
                     <!--        <label for="userName">العنوان - انجليزى*</label>-->
                     <!--        <input type="text" name="terms_title_en"-->
-                    <!--               value="{{ $setting->getBody('terms_title_en') }}" class="form-control"-->
+                    <!--               value="{{ setting()->getBody('terms_title_en') }}" class="form-control"-->
                     <!--               required-->
                     <!--               placeholder="العنوان ..."/>-->
                     <!--        <p class="help-block"></p>-->
@@ -71,8 +71,8 @@
                     <div class="col-xs-12">
                         <div class="form-group {{ $errors->has('terms_ar') ? 'has-error' : '' }}">
                             <label for="terms_ar">المحتوي</label>
-                            <textarea id="editor" name="terms_ar" value="{{$setting->getBody('terms_ar')}}" class="form-control" required>
-                                {{ $setting->getBody('terms_ar') }}
+                            <textarea id="editor" name="terms_ar" value="{{setting()->getBody('terms_ar')}}" class="form-control" required>
+                                {{ setting()->getBody('terms_ar') }}
                             </textarea>
                         </div>
 
@@ -81,8 +81,8 @@
                     <div class="col-xs-12">
                         <div class="form-group {{ $errors->has('terms_en') ? 'has-error' : '' }}">
                             <label for="terms_en">المحتوي - انجليزى</label>
-                            <textarea name="terms_en" class="form-control" value="{{$setting->getBody('terms_en')}}" required data-parsley-required-message="هذا الحقل الزامى">
-                                {{ $setting->getBody('terms_en') }}
+                            <textarea name="terms_en" class="form-control" value="{{setting()->getBody('terms_en')}}" required data-parsley-required-message="هذا الحقل الزامى">
+                                {{ setting()->getBody('terms_en') }}
                             </textarea>
                         </div>
 
@@ -109,7 +109,7 @@
                         {{--<div class="col-sm-12">--}}
 
                             {{--<input type="hidden" name="about_app_image_old"--}}
-                                   {{--value="{{ $setting->getBody('about_app_image') }}">--}}
+                                   {{--value="{{ setting()->getBody('about_app_image') }}">--}}
                             {{--<input type="file" name="about_app_image" class="dropify" data-max-file-size="6M"--}}
                                    {{--data-default-file="{{ request()->root() . '/' . $setting->getBody('about_app_image') }}"/>--}}
 

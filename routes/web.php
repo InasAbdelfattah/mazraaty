@@ -105,6 +105,22 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
     Route::post('city/delete/group', 'Admin\CitiesController@groupDelete')->name('cities.group.delete');
     Route::resource('cities', 'Admin\CitiesController');
     
+
+    /**
+     * MeasurementsUnits Routes
+     */
+    Route::post('measurementUnits/activate-measurement', 'Admin\MeasurementUnitController@activateMeasurement')->name('measurementUnits.activateMeasurement');
+    Route::post('measurementUnits/delete/group', 'Admin\MeasurementUnitController@groupDelete')->name('measurementUnits.group.delete');
+    Route::resource('measurementUnits', 'Admin\MeasurementUnitController');
+
+    /**
+     * Offers Routes
+     */
+    Route::post('offers/activate-offer', 'Admin\OfferController@activateOffer')->name('offers.activateOffer');
+    Route::post('offers/delete/group', 'Admin\OfferController@groupDelete')->name('offers.group.delete');
+    Route::resource('offers', 'Admin\OfferController');
+    
+
     /**
      * @ orders Routes
      */

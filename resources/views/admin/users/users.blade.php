@@ -250,6 +250,7 @@
 
         $('body').on('click', '.removeElement', function () {
             var id = $(this).attr('data-id');
+            console.log('iddd:',id);
             var $tr = $(this).closest($('#elementRow' + id).parent().parent());
             swal({
                 title: "هل انت متأكد؟",

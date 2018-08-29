@@ -26,6 +26,10 @@
             return $filename;
        // endif;
     }
+
+    function setting(){
+        return new \App\Setting();
+    }
     
     function countNotifs(){
         $count = 0;

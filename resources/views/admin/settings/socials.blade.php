@@ -46,7 +46,7 @@
                         <div class="form-group">
                             <label for="userName">فيس بوك </label>
                             <input type="text" name="facebook"
-                                   value="{{ $setting->getBody('facebook') }}" class="form-control"
+                                   value="{{ setting()->getBody('facebook') }}" class="form-control"
                                    required
                                    placeholder="فيس بوك ..."/>
                             <p class="help-block"></p>
@@ -59,7 +59,7 @@
                         <div class="form-group">
                             <label for="userName">تويتر</label>
                             <input type="text" name="twitter"
-                                   value="{{ $setting->getBody('twitter') }}" class="form-control"
+                                   value="{{ setting()->getBody('twitter') }}" class="form-control"
                                    required
                                    placeholder="تويتر ..."/>
                             <p class="help-block"></p>
@@ -73,7 +73,7 @@
                         <div class="form-group">
                             <label for="userName">انستجرام </label>
                             <input type="text" name="insta"
-                                   value="{{ $setting->getBody('insta') }}" class="form-control"
+                                   value="{{ setting()->getBody('insta') }}" class="form-control"
                                    required
                                    placeholder="انستجرام ..."/>
                             <p class="help-block"></p>
@@ -86,7 +86,7 @@
                         <div class="form-group">
                             <label for="userName">لينكدين </label>
                             <input type="text" name="linkedin"
-                                   value="{{ $setting->getBody('linkedin') }}" class="form-control"
+                                   value="{{ setting()->getBody('linkedin') }}" class="form-control"
                                    required
                                    placeholder="لينكدين ..."/>
                             <p class="help-block"></p>
@@ -116,7 +116,7 @@
             {{--<div class="col-sm-12">--}}
 
             {{--<input type="hidden" name="about_app_image_old"--}}
-            {{--value="{{ $setting->getBody('about_app_image') }}">--}}
+            {{--value="{{ setting()->getBody('about_app_image') }}">--}}
             {{--<input type="file" name="about_app_image" class="dropify" data-max-file-size="6M"--}}
             {{--data-default-file="{{ request()->root() . '/' . $setting->getBody('about_app_image') }}"/>--}}
 

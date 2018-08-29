@@ -46,7 +46,7 @@
                     <!--    <div class="form-group">-->
                     <!--        <label for="userName">العنوان *</label>-->
                     <!--        <input type="text" name="about_app_name"-->
-                    <!--               value="{{ $setting->getBody('about_app_name') }}" class="form-control"-->
+                    <!--               value="{{ setting()->getBody('about_app_name') }}" class="form-control"-->
                     <!--               required-->
                     <!--               placeholder="العنوان ..."/>-->
                     <!--        <p class="help-block"></p>-->
@@ -60,7 +60,7 @@
                         <div class="form-group {{ $errors->has('about_app_desc_ar') ? 'has-error' : '' }}">
                             <label for="about_app_desc_ar">المحتوي - عربى</label>
                             <textarea id="editor" class="form-control" name="about_app_desc_ar" required data-parsley-required-message="هذا الحقل إلزامي">
-                                {{ $setting->getBody('about_app_desc_ar') }}
+                                {{ setting()->getBody('about_app_desc_ar') }}
                             </textarea>
                         </div>
 
@@ -70,7 +70,7 @@
                         <div class="form-group {{ $errors->has('about_app_desc_en') ? 'has-error' : '' }}">
                             <label for="about_app_desc_en">المحتوي - انجليزى</label>
                             <textarea name="about_app_desc_en" class="form-control" required data-parsley-required-message="هذا الحقل إلزامي">
-                                {{ $setting->getBody('about_app_desc_en') }}
+                                {{ setting()->getBody('about_app_desc_en') }}
                             </textarea>
                         </div>
 
@@ -97,9 +97,9 @@
                         <div class="col-sm-12">
 
                             <input type="hidden" name="about_app_image_old"
-                                   value="{{ $setting->getBody('about_app_image') }}">
+                                   value="{{ setting()->getBody('about_app_image') }}">
                             <input type="file" name="about_app_image" class="dropify" data-max-file-size="6M"
-                                   data-default-file="{{ request()->root() . '/' . $setting->getBody('about_app_image') }}"/>
+                                   data-default-file="{{ request()->root() . '/' . setting()->getBody('about_app_image') }}"/>
 
                         </div>
                     </div>

@@ -125,12 +125,11 @@
                                     <ul>
                                         <li><a href="#">اعدادات النظام</a></li>
                                         <li><a href="{{ route('cities.index') }}">المدن</a></li>
-                                        <li><a href="#">وحدات القياس</a></li>
-                                        <li><a href="#">وحدات القياس</a></li>
+                                        <li><a href="{{ route('measurementUnits.index') }}">وحدات القياس</a></li>
                                         <li><a href="{{ route('categories.index') }}">الأقسام الرئيسية</a></li>
                                         <li><a href="{{route('subcategories')}}">الأقسام الفرعية</a></li>
                                         <li><a href="{{ route('products.index') }}">المنتجات</a></li>
-                                        <li><a href="#">العروض</a></li>
+                                        <li><a href="{{route('offers.index')}}">العروض</a></li>
                                        
                                     </ul>
                                 </li>
@@ -146,7 +145,6 @@
                                     <ul>
                                         
                                         <li><a href="{{ route('settings.terms') }}">الشروط والأحكام</a></li>
-                                        <li><a href="{{ route('settings.edu_terms') }}">شروط استخدام التعليمية</a></li>
                                         <li><a href="{{ route('settings.aboutus') }}">عن التطبيق</a></li>
                                          <li><a href="{{ route('settings.socials') }}">اتصل بنا</a></li> 
                                     
