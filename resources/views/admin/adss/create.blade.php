@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 
-@section('title', 'إضافة شاشة من التطبيق')
+@section('title', 'إضافة إعلان')
 
 @section('content')
 
@@ -9,7 +9,7 @@
           action="{{ route('sliders.store') }}"
           enctype="multipart/form-data">
     {{ csrf_field() }}
-    <input type="hidden" name="type" value="0"/>
+    <input type="hidden" name="type" value="1"/>
     <!-- Page-Title -->
         <div class="row">
             <div class="col-sm-12">
@@ -23,7 +23,7 @@
 
 
                 </div>
-                <h4 class="page-title">شاشات التطبيق</h4>
+                <h4 class="page-title">الإعلانات</h4>
             </div>
         </div>
 
@@ -31,7 +31,7 @@
         <div class="row">
             <div class="col-lg-4">
                 <div class="card-box">
-                    <h4 class="header-title m-t-0 m-b-30">إضافة شاشة</h4>
+                    <h4 class="header-title m-t-0 m-b-30">إضافة إعلان</h4>
 
                     
 

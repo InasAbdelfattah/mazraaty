@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Slider;
+use App\Ad;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
@@ -11,7 +11,7 @@ use UploadImage;
 use Validator;
 
 
-class SliderController extends Controller
+class AdController extends Controller
 {
 
     /**
@@ -22,7 +22,7 @@ class SliderController extends Controller
 
     public function __construct()
     {
-        $this->public_path = 'files/sliders/';
+        $this->public_path = 'files/ads/';
     }
 
     /**
@@ -33,7 +33,7 @@ class SliderController extends Controller
     public function index(Request $request)
     {
 
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('ads_manage')) {
             return abort(401);
         }
 
@@ -41,22 +41,22 @@ class SliderController extends Controller
         /**
          * Get all Categories
          */
-        $sliders = Slider::paginate(10);
+        $ads = Ad::all();
 
-        return view('admin.sliders.index')
-            ->with(compact('sliders'));
+        return view('admin.ads.index')
+            ->with(compact('ads'));
     }
     
     public function getAds(){
 
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('ads_manage')) {
             return abort(401);
         }
 
-    	$sliders = Slider::where('type',1)->paginate(10);
+    	$ads = Ad::where('type',1)->paginate(10);
 
         return view('admin.ads.index')
-            ->with(compact('sliders'));
+            ->with(compact('ads'));
         }
     
 
@@ -68,16 +68,16 @@ class SliderController extends Controller
     public function create()
     {
 
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('ads_manage')) {
             return abort(401);
         }
 
-        return view('admin.sliders.create');
+        return view('admin.ads.create');
     }
     
     public function createAd()
     {
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('ads_manage')) {
             return abort(401);
         }
 
@@ -93,7 +93,7 @@ class SliderController extends Controller
     public function store(Request $request)
     {
 
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('ads_manage')) {
             return abort(401);
         }
 
@@ -118,20 +118,19 @@ class SliderController extends Controller
 
         // Check Validate
         if ($valResult->passes()) {
-            $model = new Slider;
-            $model->type = $request->type ;
+            $model = new Ad;
 
             /**
              * @ Store Image With Image Intervention.
              */
 
             if ($request->hasFile('image')):
-                $model->image = UploadImage::uploadImage($request, 'image', $this->public_path);
+                $model->image = uploadImage($request, 'image', $this->public_path);
             endif;
 
             if ($model->save()) {
                 session()->flash('success', 'تم الاضافة بنجاح');
-                return redirect(route('sliders.ads'));
+                return redirect(route('ads.index'));
                 return back();
             }
         } else {
@@ -163,22 +162,22 @@ class SliderController extends Controller
      */
     public function edit($id)
     {
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('ads_manage')) {
             return abort(401);
         }
 
-        $slider = Slider::findOrFail($id);
-        return view('admin.sliders.edit')->with(compact('slider'));
+        $ad = Ad::findOrFail($id);
+        return view('admin.ads.edit')->with(compact('ad'));
     }
     
     public function editAd($id)
     {
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('ads_manage')) {
             return abort(401);
         }
 
-        $slider = Slider::findOrFail($id);
-        return view('admin.ads.edit')->with(compact('slider'));
+        $ad = Ad::findOrFail($id);
+        return view('admin.ads.edit')->with(compact('ad'));
     }
 
     /**
@@ -190,22 +189,21 @@ class SliderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('ads_manage')) {
             return abort(401);
         }
 
-        $model = Slider::findOrFail($id);
+        $model = Ad::findOrFail($id);
       
         if ($request->hasFile('image')):
-            $model->image =  UploadImage::uploadImage($request, 'image', $this->public_path);
+            $model->image =  uploadImage($request, 'image', $this->public_path);
         endif;
 
 
         if ($model->save()) {
             session()->flash('success', 'تم التعديل بنجاح');
 
-            //return redirect(route('sliders.index'));
-            return back();
+            return redirect(route('ads.index'));
         }
 
 
@@ -219,7 +217,19 @@ class SliderController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if (!Gate::allows('ads_manage')) {
+            return abort(401);
+        }
+        
+        $model = Ad::findOrFail($id);
+        $model->delete();
+        
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'id' => $id
+            ]
+        ]);
     }
 
 
@@ -232,18 +242,14 @@ class SliderController extends Controller
     public function groupDelete(Request $request)
     {
 
-        if (!Gate::allows('content_manage')) {
-            return abort(401);
-        }
-
-        if (!Gate::allows('users_delete')) {
+        if (!Gate::allows('ads_manage')) {
             return abort(401);
         }
 
         $ids = $request->ids;
         if(count($ids)>0){
         foreach ($ids as $id) {
-            $model = Slider::findOrFail($id);
+            $model = Ad::findOrFail($id);
             $model->delete();
         }
         }
@@ -256,30 +262,5 @@ class SliderController extends Controller
             ]
         ]);
     }
-
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function delete(Request $request)
-    {
-        if (!Gate::allows('content_manage')) {
-            return abort(401);
-        }
-        
-        $model = Slider::findOrFail($request->id);
-        $model->delete();
-        
-        return response()->json([
-            'status' => true,
-            'data' => [
-                'id' => $request->id
-            ]
-        ]);
-    }
-
 
 }

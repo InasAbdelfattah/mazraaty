@@ -10,12 +10,7 @@
 
         <div class="row">
             <div class="col-sm-12">
-                <!-- <div class="btn-group pull-right m-t-15">
-                    <button type="button" class="btn btn-custom dropdown-toggle waves-effect waves-light"
-                            data-toggle="dropdown" aria-expanded="false">Settings <span class="m-l-5"><i
-                                    class="fa fa-cog"></i></span></button>
-
-                </div> -->
+             
                 <h4 class="page-title">ضبط من نحن</h4>
             </div>
         </div>
@@ -26,56 +21,18 @@
 
 
                     <div id="errorsHere"></div>
-                    <!-- <div class="dropdown pull-right">
-                        <a href="#" class="dropdown-toggle card-drop" data-toggle="dropdown" aria-expanded="false">
-                            <i class="zmdi zmdi-more-vert"></i>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Action</a></li>
-                            <li><a href="#">Another action</a></li>
-                            <li><a href="#">Something else here</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#">Separated link</a></li>
-                        </ul>
-                    </div> -->
-
+               
                     <h4 class="header-title m-t-0 m-b-30">بيانات من نحن</h4>
 
-
-                    <!--<div class="col-xs-12">-->
-                    <!--    <div class="form-group">-->
-                    <!--        <label for="userName">العنوان *</label>-->
-                    <!--        <input type="text" name="about_app_name"-->
-                    <!--               value="{{ setting()->getBody('about_app_name') }}" class="form-control"-->
-                    <!--               required-->
-                    <!--               placeholder="العنوان ..."/>-->
-                    <!--        <p class="help-block"></p>-->
-
-                    <!--    </div>-->
-
-                    <!--</div>-->
-
-
                     <div class="col-xs-12">
-                        <div class="form-group {{ $errors->has('about_app_desc_ar') ? 'has-error' : '' }}">
-                            <label for="about_app_desc_ar">المحتوي - عربى</label>
-                            <textarea id="editor" class="form-control" name="about_app_desc_ar" required data-parsley-required-message="هذا الحقل إلزامي">
-                                {{ setting()->getBody('about_app_desc_ar') }}
+                        <div class="form-group {{ $errors->has('about_app_desc') ? 'has-error' : '' }}">
+                            <label for="about_app_desc">المحتوي</label>
+                            <textarea id="editor" class="form-control" name="about_app_desc" required data-parsley-required-message="هذا الحقل إلزامي">
+                                {{ setting()->getBody('about_app_desc') }}
                             </textarea>
                         </div>
 
                     </div>
-
-                    <div class="col-xs-12">
-                        <div class="form-group {{ $errors->has('about_app_desc_en') ? 'has-error' : '' }}">
-                            <label for="about_app_desc_en">المحتوي - انجليزى</label>
-                            <textarea name="about_app_desc_en" class="form-control" required data-parsley-required-message="هذا الحقل إلزامي">
-                                {{ setting()->getBody('about_app_desc_en') }}
-                            </textarea>
-                        </div>
-
-                    </div>
-
 
                     <div class="form-group text-right m-t-20">
                         <button class="btn btn-primary waves-effect waves-light m-t-20" type="submit">
@@ -112,7 +69,6 @@
 @endsection
 
 @section('scripts')
-    <!--<script src="https://cdn.ckeditor.com/4.7.0/full/ckeditor.js"></script>-->
     <script>
         CKEDITOR.replace( 'about_app_desc_en' );
         CKEDITOR.replace( 'about_app_desc_ar' );

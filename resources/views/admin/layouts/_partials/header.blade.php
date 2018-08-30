@@ -153,12 +153,9 @@
                                         </li>
 
                                         <li>
-                                            <a href="#">الأسئلة المتكررة</a>
+                                            <a href="{{ route('faqs.index') }}">الأسئلة المتكررة</a>
                                         </li>
                                         
-                                        <!--<li><a href="{{ route('sliders.index') }}"> شاشات التطبيق التعريفية</a></li>-->
-                                        
-                                
                                     </ul>
                                 </li>
                             </ul>
@@ -166,7 +163,7 @@
                     @endcan
 
                     @can('ads_manage')
-                        <li><a href="{{ route('sliders.ads') }}">الإعلانات</a></li>
+                        <li><a href="{{ route('ads.index') }}">الإعلانات</a></li>
                     @endcan
 
                     @can('orders_manage')

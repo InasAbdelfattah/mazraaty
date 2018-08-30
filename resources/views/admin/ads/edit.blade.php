@@ -4,7 +4,7 @@
 
     <div id="messageError"></div>
     <form data-parsley-validate novalidate method="POST"
-          action="{{ route('sliders.update', $slider->id)}}"
+          action="{{ route('ads.update', $ad->id)}}"
           enctype="multipart/form-data">
     {{ csrf_field() }}
     {{ method_field('PUT') }}
@@ -13,26 +13,25 @@
             <div class="col-sm-12">
                 <div class="btn-group pull-right m-t-15">
 
-                    <a href="{{ route('sliders.createAd') }}" class="btn btn-custom  waves-effect waves-light">
+                    <a href="{{ route('ads.create') }}" class="btn btn-custom  waves-effect waves-light">
                     <span class="m-l-5">
                         <i class="fa fa-plus"></i> <span>إضافة</span> </span>
                     </a>
 
                 </div>
-                <h4 class="page-title">تعديل اعلان</h4>
+                <h4 class="page-title">الإعلانات</h4>
             </div>
         </div>
-
 
         <div class="row">
             <div class="col-lg-4">
                 <div class="card-box">
-                    <h4 class="header-title m-t-0 m-b-30">تعديل إعلان</h4>
+                    <h4 class="header-title m-t-0 m-b-30">تعديل اعلان</h4>
 
-                    <label>الصورة</label>
+                    <label>صورة الاعلان</label>
 
                     <div class="form-group">
-                        <input type="file" name="image" data-default-file="{{ request()->root().'/files/sliders/'.$slider->image }}" class="dropify" data-max-file-size="6M"/>
+                        <input type="file" name="image" data-default-file="{{ request()->root().'/files/ads/'.$ad->image }}" class="dropify" data-max-file-size="6M"/>
                         @if($errors->has('image'))
                         <p class="help-block">
                             {{ $errors->first('image') }}
@@ -58,9 +57,3 @@
 
 
 @endsection
-
-
-
-
-
-

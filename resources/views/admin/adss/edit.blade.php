@@ -13,13 +13,13 @@
             <div class="col-sm-12">
                 <div class="btn-group pull-right m-t-15">
 
-                    <a href="{{ route('sliders.create') }}" class="btn btn-custom  waves-effect waves-light">
+                    <a href="{{ route('sliders.createAd') }}" class="btn btn-custom  waves-effect waves-light">
                     <span class="m-l-5">
                         <i class="fa fa-plus"></i> <span>إضافة</span> </span>
                     </a>
 
                 </div>
-                <h4 class="page-title">أنواع المنشأت</h4>
+                <h4 class="page-title">تعديل اعلان</h4>
             </div>
         </div>
 
@@ -27,7 +27,7 @@
         <div class="row">
             <div class="col-lg-4">
                 <div class="card-box">
-                    <h4 class="header-title m-t-0 m-b-30">تعديل شاشة</h4>
+                    <h4 class="header-title m-t-0 m-b-30">تعديل إعلان</h4>
 
                     <label>الصورة</label>
 

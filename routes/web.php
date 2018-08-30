@@ -84,15 +84,6 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
     Route::post('product/activate-product', 'Admin\ProductController@activateProduct')->name('product.activateProduct');
     Route::resource('products', 'Admin\ProductController');
 
-//sliders
-    Route::get('ads/createAd', 'Admin\SliderController@createAd')->name('sliders.createAd');
-    Route::get('ads/editAd/{id}', 'Admin\SliderController@editAd')->name('sliders.editAd');
-    Route::get('ads', 'Admin\SliderController@getAds')->name('sliders.ads');
-
-    Route::post('slider/delete', 'Admin\SliderController@delete')->name('slider.delete');
-    Route::post('slider/delete/group', 'Admin\SliderController@groupDelete')->name('sliders.group.delete');
-    Route::resource('sliders', 'Admin\SliderController');
-
     Route::post('contactus/reply/{id}', 'Admin\SupportsController@reply')->name('support.reply');
     Route::get('contactus', 'Admin\SupportsController@index')->name('support.index');
     Route::get('contactus/{id}', 'Admin\SupportsController@show')->name('support.show');
@@ -101,7 +92,7 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
     /**
      * Cities Routes
      */
-    Route::post('area/activate-area', 'Admin\CitiesController@activateArea')->name('city.activateArea');
+    Route::post('city/activate-area', 'Admin\CitiesController@activateArea')->name('city.activateArea');
     Route::post('city/delete/group', 'Admin\CitiesController@groupDelete')->name('cities.group.delete');
     Route::resource('cities', 'Admin\CitiesController');
     
@@ -119,6 +110,18 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
     Route::post('offers/activate-offer', 'Admin\OfferController@activateOffer')->name('offers.activateOffer');
     Route::post('offers/delete/group', 'Admin\OfferController@groupDelete')->name('offers.group.delete');
     Route::resource('offers', 'Admin\OfferController');
+    
+    /**
+     * Ads Routes
+     */
+    Route::post('ads/delete/group', 'Admin\AdController@groupDelete')->name('ads.group.delete');
+    Route::resource('ads', 'Admin\AdController');
+    
+    /**
+     * Faqs Routes
+     */
+    Route::post('faqs/delete/group', 'Admin\FaqController@groupDelete')->name('faqs.group.delete');
+    Route::resource('faqs', 'Admin\FaqController');
     
 
     /**

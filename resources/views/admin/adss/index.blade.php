@@ -1,27 +1,29 @@
 @extends('admin.layouts.master')
 
-@section('title' , 'شاشات التطبيق')
+@section('title' , 'الإعلانات')
 
 @section('content')
 
     <!-- Page-Title -->
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="btn-group pull-right m-t-15">
-                <a href="{{ route('sliders.create') }}" class="btn btn-custom waves-effect waves-light">إضافة <span
-                            class="m-l-5">
-                            <i class="fa fa-plus"></i></span>
-                </a>
-
-            </div>
-            <h4 class="page-title">شاشات التطبيق</h4>
-        </div>
-    </div>
+    
 
 
     <div class="row">
         <div class="col-lg-12">
             <div class="card-box">
+                
+                <div class="row">
+        <div class="col-sm-12">
+            <div class="btn-group pull-right m-t-15">
+                <a href="{{ route('sliders.createAd') }}" class="btn btn-custom waves-effect waves-light">إضافة <span
+                            class="m-l-5">
+                            <i class="fa fa-plus"></i></span>
+                </a>
+
+            </div>
+            <h4 class="page-title">مشاهدة الإعلانات</h4>
+        </div>
+    </div>
                 <div class="dropdown pull-right">
                     @if($sliders->count()> 0)
                         <a style="float: left; margin-right: 15px;" class="btn btn-danger btn-sm getSelected">
@@ -30,7 +32,7 @@
                     @endif
                 </div>
 
-                <h4 class="header-title m-t-0 m-b-30">مشاهدة شاشات التطبيق</h4>
+                <h4 class="header-title m-t-0 m-b-30">مشاهدة الإعلانات</h4>
 
                 <table style="width:100%">
                     <thead>
@@ -74,7 +76,7 @@
 
                             <td>
 
-                                <a href="{{ route('sliders.edit', $row->id) }}"
+                                <a href="{{ route('sliders.editAd', $row->id) }}"
                                    class="btn btn-icon btn-xs waves-effect btn-default m-b-5">
                                     <i class="fa fa-edit"></i>
                                 </a>
@@ -121,7 +123,7 @@
                 //var $tr = $(this).closest($('#elementRow' + id).parent().parent());
                 swal({
                     title: "هل انت متأكد؟",
-                    text: "يمكنك استرجاع المحذوفات مرة اخرى لا تقلق.",
+                    text: "",
                     type: "error",
                     showCancelButton: true,
                     confirmButtonColor: "#DD6B55",
@@ -198,7 +200,7 @@
             var $tr = $(this).closest($('#elementRow' + id).parent().parent());
             swal({
                 title: "هل انت متأكد؟",
-                text: "يمكنك استرجاع المحذوفات مرة اخرى لا تقلق.",
+                text: "",
                 type: "error",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",

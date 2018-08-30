@@ -28,19 +28,6 @@
                         </a>
                     @endif
                 </div>
-                {{--<input type="text" name="filter" class="filteriTems" id="filterItems"/>--}}
-
-                {{--<select id="recordNumber" class="filteriTems">--}}
-
-                {{--<option value="5">5</option>--}}
-                {{--<option value="10">10</option>--}}
-                {{--<option value="15">15</option>--}}
-                {{--<option value="20">20</option>--}}
-                {{--<option value="25">25</option>--}}
-                {{--<option value="50">50</option>--}}
-                {{--<option value="100">100</option>--}}
-
-                {{--</select>--}}
 
                 <h4 class="header-title m-t-0 m-b-30">مشاهدة الرسائل </h4>
 
@@ -48,7 +35,7 @@
                     <thead>
                     <tr>
                         <th>
-                            #
+                            م
                             {{--<div class="checkbox checkbox-primary checkbox-single">--}}
                             {{--<input type="checkbox" name="check" onchange="checkSelect(this)"--}}
                             {{--value="option2"--}}
@@ -56,11 +43,12 @@
                             {{--<label></label>--}}
                             {{--</div>--}}
                         </th>
+                        <th>نوع الرسالة</th>
+                        <th>رقم الجوال</th>
                         <th>اسم المستخدم</th>
                         <!-- <th>الاسم</th>
                         <th>الهاتف</th> -->
                         <!-- <th>البريد الإلكترونى</th> -->
-                        <th>نوع الرسالة</th>
                         <!-- <th>عدد الردور</th> -->
                         <th>الرسالة</th>
                         <th>تأريخ الرسالة</th>

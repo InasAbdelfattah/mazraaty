@@ -15,7 +15,7 @@
                 <div class="row">
         <div class="col-sm-12">
             <div class="btn-group pull-right m-t-15">
-                <a href="{{ route('sliders.createAd') }}" class="btn btn-custom waves-effect waves-light">إضافة <span
+                <a href="{{ route('ads.create') }}" class="btn btn-custom waves-effect waves-light">إضافة <span
                             class="m-l-5">
                             <i class="fa fa-plus"></i></span>
                 </a>
@@ -24,21 +24,21 @@
             <h4 class="page-title">مشاهدة الإعلانات</h4>
         </div>
     </div>
-                <div class="dropdown pull-right">
-                    @if($sliders->count()> 0)
+               <!--  <div class="dropdown pull-right">
+                    @if($ads->count()> 0)
                         <a style="float: left; margin-right: 15px;" class="btn btn-danger btn-sm getSelected">
                             <i class="fa fa-trash" style="margin-left: 5px"></i> حذف المحدد
                         </a>
                     @endif
-                </div>
+                </div> -->
 
                 <h4 class="header-title m-t-0 m-b-30">مشاهدة الإعلانات</h4>
 
                 <table style="width:100%">
                     <thead>
                     <tr>
-                        <th>#</th>
-                        <th>الصورة</th> 
+                        <th>م</th>
+                        <th>صورة الإعلان</th> 
                         <th>تاريخ الإنشاء </th>
                         <th>الخيارات</th>
 
@@ -46,42 +46,41 @@
                     </thead>
                     <tbody>
 
-
-                    @foreach($sliders as $row)
+                    @php $i = 1; @endphp
+                    @foreach($ads as $row)
                         <tr>
-                            <td>
 
-                                <div class="checkbox checkbox-primary checkbox-single">
+                            <td>{{$i++}}
+
+                                <!-- <div class="checkbox checkbox-primary checkbox-single">
                                     <input type="checkbox" class="checkboxes-items"
                                            value="{{ $row->id }}"
                                            aria-label="Single checkbox Two">
                                     <label></label>
-                                </div>
+                                </div> -->
 
                             </td>
 
 
                             <td style="width: 10%;">
                                 <a data-fancybox="gallery"
-                                   href="{{ $helper->getDefaultImage(request()->root().'/files/sliders/'.$row->image, request()->root().'/assets/admin/custom/images/default.png') }}">
+                                   href="{{ getDefaultImage(request()->root().'/files/ads/'.$row->image, request()->root().'/assets/admin/custom/images/default.png') }}">
                                     <img style="width: 50%; border-radius: 50%; height: 49px;"
-                                         src="{{ $helper->getDefaultImage(request()->root().'/files/sliders/'.$row->image, request()->root().'/assets/admin/custom/images/default.png') }}"/>
+                                         src="{{ getDefaultImage(request()->root().'/files/ads/'.$row->image, request()->root().'/assets/admin/custom/images/default.png') }}"/>
                                 </a>
 
                             </td>
                             
-                            <td>
-                                {{ $row->created_at }}
-                            </td>
+                            <td>{{ $row->created_at }}</td>
 
                             <td>
 
-                                <a href="{{ route('sliders.editAd', $row->id) }}"
+                                <a href="{{ route('ads.edit', $row->id) }}"
                                    class="btn btn-icon btn-xs waves-effect btn-default m-b-5">
                                     <i class="fa fa-edit"></i>
                                 </a>
 
-                                <a href="javascript:;" id="elementRow{{ $row->id }}" data-id="{{ $row->id }}"
+                                <a href="javascript:;" id="elementRow{{ $row->id }}" data-id="{{ $row->id }}" data-url="{{route('ads.destroy',$row->id)}}"
                                    class="removeElement btn btn-icon btn-trans btn-xs waves-effect waves-light btn-danger m-b-5">
                                     <i class="fa fa-remove"></i>
 
@@ -95,7 +94,7 @@
 
 
             </div>
-            {{ $sliders->links() }}
+           
         </div><!-- end col -->
 
     </div>
@@ -136,7 +135,7 @@
                     if (isConfirm) {
                         $.ajax({
                             type: 'POST',
-                            url: '{{ route('sliders.group.delete') }}',
+                            url: '{{ route('ads.group.delete') }}',
                             data: {ids: sum},
                             dataType: 'json',
                             success: function (data) {
@@ -197,6 +196,7 @@
 
         $('body').on('click', '.removeElement', function () {
             var id = $(this).attr('data-id');
+            var url = $(this).attr('data-url');
             var $tr = $(this).closest($('#elementRow' + id).parent().parent());
             swal({
                 title: "هل انت متأكد؟",
@@ -212,8 +212,8 @@
             }, function (isConfirm) {
                 if (isConfirm) {
                     $.ajax({
-                        type: 'POST',
-                        url: '{{ route('slider.delete') }}',
+                        type: 'delete',
+                        url: url ,
                         data: {id: id},
                         dataType: 'json',
                         success: function (data) {
