@@ -77,6 +77,15 @@ class SettingsController extends Controller
         return view('admin.settings.socials')->withSettings($settings);
     }
 
+    public function getContacts(){
+        if (!Gate::allows('content_manage')) {
+            return abort(401);
+        }
+
+        $settings = Setting::all();
+        return view('admin.settings.contacts')->withSettings($settings);
+    }
+
 
     public function terms()
     {

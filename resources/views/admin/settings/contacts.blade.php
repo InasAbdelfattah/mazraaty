@@ -14,7 +14,7 @@
                     <button type="button" class="btn btn-custom dropdown-toggle waves-effect waves-light"
                             data-toggle="dropdown" aria-expanded="false">Settings <span class="m-l-5"><i class="fa fa-cog"></i></span></button>
                 </div> -->
-                <h4 class="page-title">بيانات التواصل الاجتماعى</h4>
+                <h4 class="page-title">بيانات التواصل</h4>
             </div>
         </div>
 
@@ -24,22 +24,22 @@
 
                     <div id="errorsHere"></div>
 
-                    <h4 class="header-title m-t-0 m-b-30">روابط التواصل الاجتماعى</h4>
+                    <h4 class="header-title m-t-0 m-b-30">روابط التواصل</h4>
+
+                    <div class="col-xs-12">
+                        <div class="form-group">
+                            <label for="userName">الرقم الموحد</label>
+                            <input type="text" name="hot_no"
+                                   value="{{ setting()->getBody('hot_no') }}" class="form-control" required placeholder="الرقم الموحد ..."/>
+                            <p class="help-block"></p>
+                        </div>
+                    </div>
                     
                     <div class="col-xs-12">
                         <div class="form-group">
                             <label>البريد الإلكترونى </label>
                             <input type="email" name="email"
                                    value="{{ setting()->getBody('email') }}" class="form-control" required placeholder="البريد الإلكترونى ..."/>
-                            <p class="help-block"></p>
-                        </div>
-                    </div>
-
-                    <div class="col-xs-12">
-                        <div class="form-group">
-                            <label for="userName">رقم الجوال الخاص بالتطبيق للدعم الفنى</label>
-                            <input type="text" name="hot_no"
-                                   value="{{ setting()->getBody('hot_no') }}" class="form-control" required placeholder="رقم الجوال الخاص بالتطبيق للدعم الفنى ..."/>
                             <p class="help-block"></p>
                         </div>
                     </div>

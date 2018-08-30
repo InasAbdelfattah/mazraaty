@@ -146,12 +146,10 @@
                                         
                                         <li><a href="{{ route('settings.terms') }}">الشروط والأحكام</a></li>
                                         <li><a href="{{ route('settings.aboutus') }}">عن التطبيق</a></li>
-                                         <li><a href="{{ route('settings.socials') }}">اتصل بنا</a></li> 
-                                    
-                                        <li>
+                                        <li><a href="{{ route('settings.socials') }}">اتصل بنا</a></li> 
+                                        <!-- <li>
                                             <a href="{{ route('support.index') }}">رسائل تواصل معنا</a>
-                                        </li>
-
+                                        </li> -->
                                         <li>
                                             <a href="{{ route('faqs.index') }}">الأسئلة المتكررة</a>
                                         </li>

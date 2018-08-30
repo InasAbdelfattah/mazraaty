@@ -147,7 +147,8 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
     Route::get('/settings/terms', 'Admin\SettingsController@terms')->name('settings.terms');
     Route::get('/settings/edu_terms', 'Admin\SettingsController@eduTerms')->name('settings.edu_terms');
     Route::get('/settings/site', 'Admin\SettingsController@site')->name('settings.site');
-    Route::get('/settings/socials/links','Admin\SettingsController@socialLinks')->name('settings.socials');
+    Route::get('/settings/contacts','Admin\SettingsController@getContacts')->name('settings.contacts');
+    Route::get('/settings/socials-links','Admin\SettingsController@socialLinks')->name('settings.socials');
     Route::post('/settings', 'Admin\SettingsController@store')->name('administrator.settings.store');
 
     // notifications
