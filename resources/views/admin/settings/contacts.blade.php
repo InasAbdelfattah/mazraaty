@@ -69,18 +69,18 @@
                             @php $j= $i++; @endphp
                             <div id="row{{$row->id}}">
                                 <div class="row">
-                                    <div class="col-lg-1"> #{{$i++}} : </div>
-                                    <div class="col-lg-5"><input type="datetime" name="from" value="{{$row->from}}" class="form-control"></div>
-                                    <div class="col-lg-5"><input type="datetime" name="to" value="{{$row->to}}" class="form-control"></div>
-                                    <div class="col-lg-1 removeElement" data-id="0"><i class="fa fa-remove"></i></div>
+                                    <div class="col-lg-1"> #{{$j}} : </div>
+                                    <div class="col-lg-5"><input type="datetime" name="from[]" value="{{$row->from}}" class="form-control"></div>
+                                    <div class="col-lg-5"><input type="datetime" name="to[]" value="{{$row->to}}" class="form-control"></div>
+                                    <div class="col-lg-1 removeElement" data-id="{{$row->id}}"><i class="fa fa-remove"></i></div>
                                 </div>
                             </div>
                         @empty
                             <div id="row1">
                                 <div class="row">
                                     <div class="col-lg-1"> 1 - </div>
-                                    <div class="col-lg-5"><input type="text" name="workdays[][from]" class="form-control"></div>
-                                    <div class="col-lg-5"><input type="text" name="workdays[][to]" class="form-control"></div>
+                                    <div class="col-lg-5"><input type="datetime" name="from[]" class="form-control"></div>
+                                    <div class="col-lg-5"><input type="datetime" name="to[]" class="form-control"></div>
                                     <div class="col-lg-1 removeElement" data-id="0"><i class="fa fa-remove"></i></div>
                                 </div>
                             </div>
@@ -98,6 +98,30 @@
                                 إضافة ميعاد عمل</button>
                         </div>
                     @endif
+
+                    <!-- end of workdays -->
+                        <div class="form-group{{ $errors->has('start_at') ? ' has-error' : '' }}{{ $errors->has('end_at') ? ' has-error' : '' }}">
+                            <label class="control-label">تاريخ البداية والنهاية</label>
+
+                            <div class="input-daterange input-group" id="date-range">
+                                <input type="text" class="form-control" name="start_at" value="{{ old('start_at') }}"/>
+                                <span class="input-group-addon bg-primary b-0 text-white">إلي</span>
+                                <input type="text" class="form-control" name="end_at" value="{{ old('end_at') }}"/>
+                            </div>
+                            @if($errors->has('start_at'))
+                                <p class="help-block">
+                                    {{ $errors->first('start_at') }}
+                                </p>
+                            @endif
+                            
+                            @if($errors->has('end_at'))
+                                <p class="help-block">
+                                    {{ $errors->first('end_at') }}
+                                </p>
+                            @endif
+
+                        </div>
+                    <!-- gg -->
 
                     <div class="form-group text-right m-t-20">
                         <button class="btn btn-primary waves-effect waves-light m-t-20" type="submit">
@@ -119,6 +143,11 @@
 
 @section('scripts')
     <script>
+
+    jQuery('#date-range').datepicker({
+        toggleActive: true
+    });
+    
     $('#mydiv').on('click', function (e) {
         e.preventDefault();
         var a = $('#mydiv').data('myval');

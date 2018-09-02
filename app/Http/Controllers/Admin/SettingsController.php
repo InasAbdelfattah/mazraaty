@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Category;
-use App\Company;
+use App\WorkDay;
 use App\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -87,7 +87,7 @@ class SettingsController extends Controller
 
         $workdays = workDay::all();
         //dd($settings);
-        return view('admin.settings.contacts')->withSettings($settings);
+        return view('admin.settings.contacts' , compact('settings' , 'workdays'));
     }
 
 
