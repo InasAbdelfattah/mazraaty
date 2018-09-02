@@ -5,15 +5,9 @@
           enctype="multipart/form-data">
 
     {{ csrf_field() }}
-
     <!-- Page-Title -->
-
         <div class="row">
             <div class="col-sm-12">
-                <!-- <div class="btn-group pull-right m-t-15">
-                    <button type="button" class="btn btn-custom dropdown-toggle waves-effect waves-light"
-                            data-toggle="dropdown" aria-expanded="false">Settings <span class="m-l-5"><i class="fa fa-cog"></i></span></button>
-                </div> -->
                 <h4 class="page-title">بيانات التواصل</h4>
             </div>
         </div>
@@ -25,50 +19,85 @@
                     <div id="errorsHere"></div>
 
                     <h4 class="header-title m-t-0 m-b-30">روابط التواصل</h4>
-
-                    <div class="col-xs-12">
-                        <div class="form-group">
-                            <label for="userName">الرقم الموحد</label>
-                            <input type="text" name="hot_no"
-                                   value="{{ setting()->getBody('hot_no') }}" class="form-control" required placeholder="الرقم الموحد ..."/>
-                            <p class="help-block"></p>
+                    <br/> <br>
+                    <!-- hot numbers -->
+                    <div class="form-group" id="hotNo">
+                        <label>الارقام الموحدة</label><br/><br/>
+                        @php $i = 1 ; @endphp
+                        @forelse($settings  as $row)
+                        @php $j= $i++; @endphp
+                        <div id="row{{$row->id}}">
+                            <div class="row">
+                                <div class="col-lg-1">{{$j}} - </div>
+                                <div class="col-lg-8"><input type="text" name="{{$row->name}}"
+                                       value="{{$row->body}}" class="form-control" required placeholder="الرقم الموحد ..."/></div>
+                                <div class="col-lg-3 removeElement" data-id="{{$row->id}}" data-type="model"><i class="fa fa-remove"></i></div>
+                            </div>
+                            <br/>
                         </div>
-                    </div>
-                    
-                    <div class="col-xs-12">
-                        <div class="form-group">
-                            <label>البريد الإلكترونى </label>
-                            <input type="email" name="email"
-                                   value="{{ setting()->getBody('email') }}" class="form-control" required placeholder="البريد الإلكترونى ..."/>
-                            <p class="help-block"></p>
+                        
+                        @empty
+                        <div id="row1">
+                            <div class="row">
+                                <div class="col-lg-2">1</div>
+                                <div class="col-lg-8"><input type="text" name="hot_no1"
+                                       value="{{$row->body}}" class="form-control" required placeholder="الرقم الموحد ..."/></div>
+                                <div class="col-lg-2 removeElement" data-id="{{$row->id}}" data-type="flight"><i class="fa fa-remove"></i></div>
+                            </div>
+                            <br/>
                         </div>
-                    </div>
-
-                    <div class="col-xs-12">
-                        <div class="form-group">
-                            <label for="userName">فيس بوك </label>
-                            <input type="text" name="facebook"
-                                   value="{{ setting()->getBody('facebook') }}" class="form-control"
-                                   required
-                                   placeholder="فيس بوك ..."/>
-                            <p class="help-block"></p>
-
-                        </div>
-
+                        @endforelse
                     </div>
 
-                    <div class="col-xs-12">
-                        <div class="form-group">
-                            <label for="userName">تويتر</label>
-                            <input type="text" name="twitter"
-                                   value="{{ setting()->getBody('twitter') }}" class="form-control"
-                                   required
-                                   placeholder="تويتر ..."/>
-                            <p class="help-block"></p>
-
+                    @if(count($settings) > 0)
+                        <div class="form-group text-right m-b-0 ">
+                            <button id="mydiv" data-myval="{{count($settings)}}" class="btn btn-primary waves-effect waves-light m-l-5 m-t-20">
+                                إضافة رقم</button>
                         </div>
-
+                    @else
+                        <div class="form-group text-right m-b-0 ">
+                        <button id="mydiv" data-myval="0" class="btn btn-primary waves-effect waves-light m-l-5 m-t-20">
+                            إضافة رقم</button>
                     </div>
+                    @endif
+
+                    <!-- workdays -->
+                    <div class="form-group" id="workDays">
+                        <label>مواعيد العمل</label><br/><br/>
+                        @php $i = 1 ; @endphp
+                        @forelse($workdays  as $row)
+                            @php $j= $i++; @endphp
+                            <div id="row{{$row->id}}">
+                                <div class="row">
+                                    <div class="col-lg-1"> #{{$i++}} : </div>
+                                    <div class="col-lg-5"><input type="datetime" name="from" value="{{$row->from}}" class="form-control"></div>
+                                    <div class="col-lg-5"><input type="datetime" name="to" value="{{$row->to}}" class="form-control"></div>
+                                    <div class="col-lg-1 removeElement" data-id="0"><i class="fa fa-remove"></i></div>
+                                </div>
+                            </div>
+                        @empty
+                            <div id="row1">
+                                <div class="row">
+                                    <div class="col-lg-1"> 1 - </div>
+                                    <div class="col-lg-5"><input type="text" name="workdays[][from]" class="form-control"></div>
+                                    <div class="col-lg-5"><input type="text" name="workdays[][to]" class="form-control"></div>
+                                    <div class="col-lg-1 removeElement" data-id="0"><i class="fa fa-remove"></i></div>
+                                </div>
+                            </div>
+                        @endforelse
+                    </div>
+                        
+                    @if(count($workdays) > 0)
+                        <div class="form-group text-right m-b-0 ">
+                            <button id="mydiv" data-myval="{{count($workdays)}}" class="btn btn-primary waves-effect waves-light m-l-5 m-t-20">
+                                إضافة ميعاد عمل</button>
+                        </div>
+                    @else
+                        <div class="form-group text-right m-b-0 ">
+                            <button id="mydiv" data-myval="0" class="btn btn-primary waves-effect waves-light m-l-5 m-t-20">
+                                إضافة ميعاد عمل</button>
+                        </div>
+                    @endif
 
                     <div class="form-group text-right m-t-20">
                         <button class="btn btn-primary waves-effect waves-light m-t-20" type="submit">
@@ -83,23 +112,93 @@
                 </div>
             </div><!-- end col -->
 
-            {{--<div class="col-lg-4">--}}
-            {{--<div class="card-box" style="overflow: hidden;">--}}
-            {{--<h4 class="header-title m-t-0 m-b-30">الصورة الشخصية</h4>--}}
-            {{--<div class="form-group">--}}
-            {{--<div class="col-sm-12">--}}
-
-            {{--<input type="hidden" name="about_app_image_old"--}}
-            {{--value="{{ setting()->getBody('about_app_image') }}">--}}
-            {{--<input type="file" name="about_app_image" class="dropify" data-max-file-size="6M"--}}
-            {{--data-default-file="{{ request()->root() . '/' . $setting->getBody('about_app_image') }}"/>--}}
-
-            {{--</div>--}}
-            {{--</div>--}}
-
-            {{--</div>--}}
-            {{--</div><!-- end col -->--}}
         </div>
         <!-- end row -->
     </form>
+@endsection
+
+@section('scripts')
+    <script>
+    $('#mydiv').on('click', function (e) {
+        e.preventDefault();
+        var a = $('#mydiv').data('myval');
+        var v = a + 1;
+        $('#mydiv').data('myval', a + 1);
+
+        $('#hotNo').append('<div class="row" id="row'+v+'" data-id="row' + v + '"><div class="col-lg-2"># '+(v+1)+' : </div> <div class="col-lg-8"><input type="text" name="hot_no' + v + '" class="form-control"></div><div class="col-lg-2 removeElement" data-id="'+ v + '" data-type="flight"><i class="fa fa-remove"></i></div></div><br/>');
+    });
+
+    $('body').on('click', '.removeElement', function () {
+            var id = $(this).attr('data-id');
+            var type = $(this).attr('data-type');
+            var $tr = $(this).closest($('#elementRow' + id).parent().parent());
+            swal({
+                title: "هل انت متأكد؟",
+                text: "",
+                type: "error",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "موافق",
+                cancelButtonText: "إلغاء",
+                confirmButtonClass: 'btn-danger waves-effect waves-light',
+                closeOnConfirm: true,
+                closeOnCancel: true,
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    if(type == 'model'){
+                        $.ajax({
+                            type: 'get',
+                            url: '{{ route('settings.delete') }}',
+                            data: {modelId: id},
+                            dataType: 'json',
+                            success: function (data) {
+                                if (data) {
+                                    console.log('model_idd',id);
+                                    console.log(data);
+                                    var shortCutFunction = 'success';
+                                    var msg = 'لقد تمت عملية الحذف بنجاح.';
+                                    var title = data.title;
+                                    toastr.options = {
+                                        positionClass: 'toast-top-center',
+                                        onclick: null,
+                                        showMethod: 'slideDown',
+                                        hideMethod: "slideUp",
+                                    };
+                                    var $toast = toastr[shortCutFunction](msg, title); // Wire up an event handler to a button in the toast, if it exists
+                                    $toastlast = $toast;
+
+                                    $("#row"+id).fadeOut(1000, function () {
+                                        $("#row"+id).remove();
+                                    });
+                                }
+
+                                // $tr.find('td').fadeOut(1000, function () {
+                                //     $tr.remove();
+                                // });
+                            }
+                        });
+                    }else{
+                        $("#row"+id).fadeOut(1000, function () {
+                            $("#row"+id).remove();
+                        });
+                    }   
+                } else {
+
+                    swal({
+                        title: "تم الالغاء",
+                        text: "انت لغيت عملية الحذف تقدر تحاول فى اى وقت :)",
+                        type: "error",
+                        showCancelButton: false,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "موافق",
+                        confirmButtonClass: 'btn-info waves-effect waves-light',
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+
+                    });
+
+                }
+            });
+        });
+</script>
 @endsection

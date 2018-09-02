@@ -56,9 +56,7 @@
                             $old = date('Y-m-d', strtotime('-5days'));
                             $new = date("Y-m-d"); 
                         @endphp
-                    <div class="col-lg-3">
-                        
-                        
+                        <div class="col-lg-3">
                             <label>من</label>
                             <input type="date" name="from" value="{{$old}}" class="form-control" placeholder="من : "/>
                         </div>

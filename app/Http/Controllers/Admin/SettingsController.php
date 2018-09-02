@@ -82,7 +82,11 @@ class SettingsController extends Controller
             return abort(401);
         }
 
-        $settings = Setting::all();
+        //$settings = Setting::all();
+        $settings = Setting::where('key', 'like', 'hot_no%')->select('id','key as name' , 'body')->get();
+
+        $workdays = workDay::all();
+        //dd($settings);
         return view('admin.settings.contacts')->withSettings($settings);
     }
 
@@ -166,5 +170,21 @@ class SettingsController extends Controller
 
     }
 
+    public function destroy(Request $request)
+    {
+        
+        $model = Setting::where('id',$request->modelId)->first();
+        // return response()->json([
+        //     'status' => true,
+        //     'id' =>$request->modelId ,
+        //     'data' => $model,
+        // ]);
 
+        if ($model->delete()) {
+            return response()->json([
+                'status' => true,
+                'data' => $request->id,
+            ]);
+        }
+    }
 }
