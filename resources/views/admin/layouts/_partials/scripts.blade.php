@@ -92,6 +92,11 @@
 <script src="{{ request()->root() }}/assets/admin/js/validate.js"></script>
 <script src="https://cdn.ckeditor.com/4.9.2/standard/ckeditor.js"></script>
 
+<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
+
+<!-- <script src="jquery.datetimepicker.js"></script> -->
+
+
 @yield('scripts')
 <script>
 

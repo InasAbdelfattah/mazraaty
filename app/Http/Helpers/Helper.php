@@ -402,7 +402,7 @@
         return $real_mob_number;
     }
     
-    function sendActivationCode($message, $recepientNumber)
+    function sendSms($message, $recepientNumber)
     {
             $getdata = http_build_query(
             $fields = array(

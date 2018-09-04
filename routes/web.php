@@ -123,6 +123,13 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
     Route::post('faqs/delete/group', 'Admin\FaqController@groupDelete')->name('faqs.group.delete');
     Route::resource('faqs', 'Admin\FaqController');
     
+    /**
+     * Discounts Routes
+     */
+    Route::get('discounts/search', 'Admin\DiscountController@search')->name('discounts.search');
+
+    Route::resource('discounts', 'Admin\DiscountController');
+    
 
     /**
      * @ orders Routes
@@ -151,6 +158,8 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
     Route::get('/settings/socials-links','Admin\SettingsController@socialLinks')->name('settings.socials');
     Route::get('/settings/delete','Admin\SettingsController@destroy')->name('settings.delete');
     Route::post('/settings', 'Admin\SettingsController@store')->name('administrator.settings.store');
+    Route::get('/workDays/delete','Admin\SettingsController@destroyWorkDay')->name('settings.destroyWorkDay');
+
 
     // notifications
     Route::group(['prefix' => 'notifications'], function () {

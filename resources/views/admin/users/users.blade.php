@@ -94,7 +94,7 @@
                                 
                                 @if($user->id != 1)
                                     
-                                    <!-- @if($user->is_suspend == 1) -->
+                                     @if($user->is_suspend == 1)
                                     <a id="unsuspendForm{{$user->id}}" onclick="event.preventDefault();" class="btn btn-success btn-xs btn-trans waves-effect waves-light m-r-5 m-b-10">الغاء الحظر
                                     </a>
 
@@ -102,14 +102,14 @@
                                         {{ csrf_field() }}
                                         <input type="hidden" name="userId" value="{{$user->id}}">
                                     </form>
-                                    <!-- @else -->
+                                    @else
                                     <a href="#custom-modal{{ $user->id }}"
                                         data-id="{{ $user->id }}"
                                         class="btn btn-danger btn-xs btn-trans waves-effect waves-light m-r-5 m-b-10" id="suspendForm{{$user->id}}" 
                                         data-animation="fadein" data-plugin="custommodal"
                                         data-overlaySpeed="100" data-overlayColor="#36404a">حظر
                                     </a>
-                                    <!-- @endif -->
+                                    @endif
                                     <div id="custom-modal{{ $user->id }}" class="modal-demo"
                                                   data-backdrop="static">
                                                  <button type="button" class="close" onclick="Custombox.close();">
@@ -150,7 +150,7 @@
                                              </div>
                                 
 
-                                <!-- <a href="javascript:;" id="elementRow{{ $user->id }}" data-id="{{ $user->id }}"
+                                <!-- <a href="javascript:;" id="elementRow{{ $user->id }}" data-id="{{ $user->id }}" data-url="{{ route('users.destroy',$user->id) }}"
                                    class="removeElement btn-xs btn-icon btn-trans btn-sm waves-effect waves-light btn-danger m-b-5">
                                     <i class="fa fa-remove"></i>
 
@@ -233,23 +233,24 @@
         }, 3000);
         @endif
 
-        $(function() {
-            var user_id = $("#user_id").val();
-            var suspend_status = $("#suspend_status").val();
-            console.log(suspend_status);
+        // $(function() {
+        //     var user_id = $("#user_id").val();
+        //     var suspend_status = $("#suspend_status").val();
+        //     console.log(suspend_status);
 
-            if(suspend_status == 1){
-                $("#suspendForm" + user_id).hide();
-                $("#unsuspendForm" + user_id).show();
-            }else{
-                //$("#currentRow" + data.id).html('حظر');
-                $("#unsuspendForm" + user_id).hide();
-                $("#suspendForm" + user_id).show();
-            }
-        });
+        //     if(suspend_status == 1){
+        //         $("#suspendForm" + user_id).hide();
+        //         $("#unsuspendForm" + user_id).show();
+        //     }else{
+        //         //$("#currentRow" + data.id).html('حظر');
+        //         $("#unsuspendForm" + user_id).hide();
+        //         $("#suspendForm" + user_id).show();
+        //     }
+        // });
 
         $('body').on('click', '.removeElement', function () {
             var id = $(this).attr('data-id');
+            var url = $(this).attr('action');
             console.log('iddd:',id);
             var $tr = $(this).closest($('#elementRow' + id).parent().parent());
             swal({
@@ -267,7 +268,7 @@
                 if (isConfirm) {
                     $.ajax({
                         type: 'POST',
-                        url: '{{ route('users.destroy','+id+') }}',
+                        url: url,
                         data: {id: id},
                         dataType: 'json',
                         success: function (data) {
@@ -285,10 +286,10 @@
                                 var $toast = toastr[shortCutFunction](msg, title); // Wire up an event handler to a button in the toast, if it exists
                                 $toastlast = $toast;
                             }
-
-                            $tr.find('td').fadeOut(1000, function () {
-                                $tr.remove();
-                            });
+                            location.reload();
+                            // $tr.find('td').fadeOut(1000, function () {
+                            //     $tr.remove();
+                            // });
                         }
                     });
                 } else {
@@ -541,6 +542,7 @@
                         //if(data.is_suspend == 0){
                             //$("#currentRow" + data.id).html('الغاء الحظر');
                             $("#unsuspendForm"+ data.id).show();
+                            location.reload();
                             //$("#suspendForm"+ data.id).hide();
                         // }else if (data.is_suspend == 1){
                         //     $("#suspendForm"+ data.id).show();
@@ -574,7 +576,7 @@
             });
         });
 user_id = $("#user_id").val();
-   $("#unsuspendForm"+ user_id).on('click', function (e) {
+   $("#unsuspendForm").on('click', function (e) {
 
     //$('form#activeForm2').on('submit', function (e) {
     //document.getElementById('activeForm2').on('submit', function (e) {

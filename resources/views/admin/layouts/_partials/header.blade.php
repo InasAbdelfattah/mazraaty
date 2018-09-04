@@ -187,7 +187,7 @@
                             <ul class="submenu megamenu">
                                 <li>
                                     <ul>
-                                        <li><a href="#">أكواد الخصم</a></li>
+                                        <li><a href="{{route('discounts.index')}}">أكواد الخصم</a></li>
                                         <li><a href="#">المستفيدين من الخصم</a></li>
                                     </ul>
                                 </li>

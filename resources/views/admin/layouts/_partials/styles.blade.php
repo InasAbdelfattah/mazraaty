@@ -43,6 +43,7 @@
 <link href="{{ request()->root() }}/assets/admin/custom/css/custom.css" rel="stylesheet" type="text/css"/>
 <link href="{{ request()->root() }}/assets/admin/css/ionicons.min.css" rel="stylesheet">
 
+<!-- <link rel="stylesheet" type="text/css" href="jquery.datetimepicker.css"/> -->
 
 <style>
     body {

@@ -38,8 +38,8 @@
                     <div class="col-xs-12">
                         <div class="form-group">
                             <label for="userName">رقم الجوال الخاص بالتطبيق للدعم الفنى</label>
-                            <input type="text" name="hot_no"
-                                   value="{{ setting()->getBody('hot_no') }}" class="form-control" required placeholder="رقم الجوال الخاص بالتطبيق للدعم الفنى ..."/>
+                            <input type="text" name="support_phone"
+                                   value="{{ setting()->getBody('support_phone') }}" class="form-control" required placeholder="رقم الجوال الخاص بالتطبيق للدعم الفنى ..."/>
                             <p class="help-block"></p>
                         </div>
                     </div>

@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Silber\Bouncer\Database\HasRolesAndAbilities;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -36,6 +37,20 @@ class User extends Authenticatable
         } else {
             redirect(route('admin.login'));
         }
+    }
+
+    public function setEmailAttribute($value) {
+        if ( empty($value) ) { // will check for empty string, null values, see php.net about it
+            $this->attributes['email'] = NULL;
+        } else {
+            $this->attributes['email'] = $value;
+        }
+    }
+
+    public function setPasswordAttribute($input)
+    {
+        if ($input)
+            $this->attributes['password'] = Hash::needsRehash($input) ? Hash::make($input) : $input;
     }
 
     public function role()

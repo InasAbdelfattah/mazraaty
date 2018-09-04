@@ -42,7 +42,7 @@
                                 <div class="col-lg-2">1</div>
                                 <div class="col-lg-8"><input type="text" name="hot_no1"
                                        value="{{$row->body}}" class="form-control" required placeholder="الرقم الموحد ..."/></div>
-                                <div class="col-lg-2 removeElement" data-id="{{$row->id}}" data-type="flight"><i class="fa fa-remove"></i></div>
+                                <div class="col-lg-2 removeElement" data-id="0" data-type="flight"><i class="fa fa-remove"></i></div>
                             </div>
                             <br/>
                         </div>
@@ -67,40 +67,64 @@
                         @php $i = 1 ; @endphp
                         @forelse($workdays  as $row)
                             @php $j= $i++; @endphp
-                            <div id="row{{$row->id}}">
+                            <div id="work{{$row->id}}">
                                 <div class="row">
-                                    <div class="col-lg-1"> #{{$j}} : </div>
-                                    <div class="col-lg-5"><input type="datetime" name="from[]" value="{{$row->from}}" class="form-control"></div>
-                                    <div class="col-lg-5"><input type="datetime" name="to[]" value="{{$row->to}}" class="form-control"></div>
-                                    <div class="col-lg-1 removeElement" data-id="{{$row->id}}"><i class="fa fa-remove"></i></div>
+                                    <div class="col-lg-1"> {{$j}} - </div>
+                                    <div class="col-lg-3">
+                                        <select class="form-control" name="workday[{{$j}}][day]">
+                                            <option value="saturday" {{$row->day == 'saturday' ? 'selected' : ''}}>السبت</option>
+                                            <option value="sunday" {{$row->day == 'sunday' ? 'selected' : ''}}>الأحد</option>
+                                            <option value="monday" {{$row->day == 'monday' ? 'selected' : ''}}>الإثنين</option>
+                                            <option value="tuesday" {{$row->day == 'tuesday' ? 'selected' : ''}}>الثلاثاء</option>
+                                            <option value="wednesday" {{$row->day == 'wednesday' ? 'selected' : ''}}>الأربعاء</option>
+                                            <option value="thursday" {{$row->day == 'thursday' ? 'selected' : ''}}>الخميس</option>
+                                            <option value="friday" {{$row->day == 'friday' ? 'selected' : ''}}>الجمعة</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3"><input type="time" name="workday[{{$j}}][from]" value="{{$row->from}}" class="form-control"></div>
+                                    <div class="col-lg-3"><input type="time" name="workday[{{$j}}][to]" value="{{$row->to}}" class="form-control"></div>
+                                    <div class="col-lg-2 removeWorkDay" data-id="{{$row->id}}" data-type="model"><i class="fa fa-remove"></i></div>
                                 </div>
+                                <br>
                             </div>
                         @empty
-                            <div id="row1">
+                            <div id="work1">
                                 <div class="row">
                                     <div class="col-lg-1"> 1 - </div>
-                                    <div class="col-lg-5"><input type="datetime" name="from[]" class="form-control"></div>
-                                    <div class="col-lg-5"><input type="datetime" name="to[]" class="form-control"></div>
-                                    <div class="col-lg-1 removeElement" data-id="0"><i class="fa fa-remove"></i></div>
+                                    <div class="col-lg-3">
+                                        <select class="form-control" name="workday[0][day]">
+                                            <option value="saturday">السبت</option>
+                                            <option value="sunday">الأحد</option>
+                                            <option value="monday">الإثنين</option>
+                                            <option value="tuesday">الثلاثاء</option>
+                                            <option value="wednesday">الأربعاء</option>
+                                            <option value="thursday">الخميس</option>
+                                            <option value="friday">الجمعة</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3"><input type="time" id="from" name="workday[0][from]" class="form-control" placeholder="من"></div>
+                                    <div class="col-lg-3"><input type="time" name="workday[0][to]" class="form-control" placeholder="إلى"></div>
+                                    <div class="col-lg-2 removeWorkDay" data-id="0" data-type="flight"><i class="fa fa-remove"></i></div>
                                 </div>
+                                <br>
                             </div>
                         @endforelse
                     </div>
                         
                     @if(count($workdays) > 0)
                         <div class="form-group text-right m-b-0 ">
-                            <button id="mydiv" data-myval="{{count($workdays)}}" class="btn btn-primary waves-effect waves-light m-l-5 m-t-20">
+                            <button id="mywork" data-myval="{{count($workdays)}}" class="btn btn-primary waves-effect waves-light m-l-5 m-t-20">
                                 إضافة ميعاد عمل</button>
                         </div>
                     @else
                         <div class="form-group text-right m-b-0 ">
-                            <button id="mydiv" data-myval="0" class="btn btn-primary waves-effect waves-light m-l-5 m-t-20">
+                            <button id="mywork" data-myval="0" class="btn btn-primary waves-effect waves-light m-l-5 m-t-20">
                                 إضافة ميعاد عمل</button>
                         </div>
                     @endif
 
                     <!-- end of workdays -->
-                        <div class="form-group{{ $errors->has('start_at') ? ' has-error' : '' }}{{ $errors->has('end_at') ? ' has-error' : '' }}">
+                        <!-- <div class="form-group{{ $errors->has('start_at') ? ' has-error' : '' }}{{ $errors->has('end_at') ? ' has-error' : '' }}">
                             <label class="control-label">تاريخ البداية والنهاية</label>
 
                             <div class="input-daterange input-group" id="date-range">
@@ -120,7 +144,7 @@
                                 </p>
                             @endif
 
-                        </div>
+                        </div> -->
                     <!-- gg -->
 
                     <div class="form-group text-right m-t-20">
@@ -144,17 +168,36 @@
 @section('scripts')
     <script>
 
-    jQuery('#date-range').datepicker({
-        toggleActive: true
-    });
-    
+    // jQuery('#date-range').datepicker({
+    //     toggleActive: true
+    // });
+
+    // $('#from').datetimepicker({
+    //     inline:true,
+    // });
+
+    // $('#from').datetimepicker('show');
+
+    //$( '#from' ).datetimepicker( { format: 'MM-DD-YYYY' } );
+
     $('#mydiv').on('click', function (e) {
         e.preventDefault();
         var a = $('#mydiv').data('myval');
+        console.log('a:',a);
         var v = a + 1;
-        $('#mydiv').data('myval', a + 1);
+        console.log('v:',v)
+        $('#mydiv').data('myval', v);
 
-        $('#hotNo').append('<div class="row" id="row'+v+'" data-id="row' + v + '"><div class="col-lg-2"># '+(v+1)+' : </div> <div class="col-lg-8"><input type="text" name="hot_no' + v + '" class="form-control"></div><div class="col-lg-2 removeElement" data-id="'+ v + '" data-type="flight"><i class="fa fa-remove"></i></div></div><br/>');
+        $('#hotNo').append('<div id="row'+v+'"><div class="row" data-id="row' + v + '"><div class="col-lg-1"> '+(v)+' - </div><div class="col-lg-8"><input type="text" name="hot_no' + v + '" class="form-control"></div><div class="col-lg-3 removeElement" data-id="'+ v + '" data-type="flight"><i class="fa fa-remove"></i></div></div><br/></div>');
+    });
+
+    $('#mywork').on('click', function (e) {
+        e.preventDefault();
+        var a = $('#mywork').data('myval');
+        var v = a + 1;
+        $('#mywork').data('myval', a + 1);
+
+        $('#workDays').append('<div id="work'+v+'" ><div class="row" data-id="row' + v + '"><div class="col-lg-1"> '+(v)+' - </div><div class="col-lg-3"><select class="form-control" name="workday[' + v + '][day]"><option value="saturday">السبت</option><option value="sunday">الأحد</option><option value="monday">الإثنين</option><option value="tuesday">الثلاثاء</option><option value="wednesday">الأربعاء</option><option value="thursday">الخميس</option><option value="friday">الجمعة</option></select></div><div class="col-lg-3"><input type="time" name="workday[' + v + '][from]" class="form-control"></div><div class="col-lg-3"><input type="time" name="workday[' + v + '][to]" class="form-control"></div><div class="col-lg-2 removeWorkDay" data-id="'+ v + '" data-type="flight"><i class="fa fa-remove"></i></div></div><br/></div>');
     });
 
     $('body').on('click', '.removeElement', function () {
@@ -229,5 +272,80 @@
                 }
             });
         });
+
+    $('body').on('click', '.removeWorkDay', function () {
+            var id = $(this).attr('data-id');
+            var type = $(this).attr('data-type');
+            var $tr = $(this).closest($('#elementRow' + id).parent().parent());
+            swal({
+                title: "هل انت متأكد؟",
+                text: "",
+                type: "error",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "موافق",
+                cancelButtonText: "إلغاء",
+                confirmButtonClass: 'btn-danger waves-effect waves-light',
+                closeOnConfirm: true,
+                closeOnCancel: true,
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    if(type == 'model'){
+                        $.ajax({
+                            type: 'get',
+                            url: '{{ route('settings.destroyWorkDay') }}',
+                            data: {modelId: id},
+                            dataType: 'json',
+                            success: function (data) {
+                                if (data) {
+                                    console.log('model_idd',id);
+                                    console.log(data);
+                                    var shortCutFunction = 'success';
+                                    var msg = 'لقد تمت عملية الحذف بنجاح.';
+                                    var title = data.title;
+                                    toastr.options = {
+                                        positionClass: 'toast-top-center',
+                                        onclick: null,
+                                        showMethod: 'slideDown',
+                                        hideMethod: "slideUp",
+                                    };
+                                    var $toast = toastr[shortCutFunction](msg, title); // Wire up an event handler to a button in the toast, if it exists
+                                    $toastlast = $toast;
+
+                                    $("#work"+id).fadeOut(1000, function () {
+                                        $("#work"+id).remove();
+                                    });
+                                }
+
+                                // $tr.find('td').fadeOut(1000, function () {
+                                //     $tr.remove();
+                                // });
+                            }
+                        });
+                    }else{
+                        $("#work"+id).fadeOut(1000, function () {
+                            $("#work"+id).remove();
+                        });
+                    }   
+                } else {
+
+                    swal({
+                        title: "تم الالغاء",
+                        text: "انت لغيت عملية الحذف تقدر تحاول فى اى وقت :)",
+                        type: "error",
+                        showCancelButton: false,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "موافق",
+                        confirmButtonClass: 'btn-info waves-effect waves-light',
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+
+                    });
+
+                }
+            });
+        });
+
+    
 </script>
 @endsection

@@ -135,12 +135,14 @@ class SettingsController extends Controller
     public function store(Request $request)
     {
 
+        //dd($request);
         if (!Gate::allows('content_manage')) {
             return abort(401);
         }
-        
+
+   
         foreach ($request->all() as $key => $value) {
-            if ($key != '_token' && $key != 'about_app_image_old' && $key != 'site_image_old'):
+            if ($key != '_token' && $key != 'about_app_image_old' && $key != 'site_image_old' && $key != 'workday'):
                 Setting::updateOrCreate(['key' => $key], ['body' => $value]);
             endif;
             
@@ -166,6 +168,25 @@ class SettingsController extends Controller
             }
         endif;
 
+        if ($request->has('workday') && count($request->workday) > 0):
+            
+            $workdays = WorkDay::all();
+            if(count($workdays) > 0){
+                foreach($workdays as $workday){
+                    $workday->delete();
+                }
+            }
+            foreach($request->workday as $work){
+                //dd($work);
+
+                $work_day = new WorkDay();
+                $work_day->day = $work['day'];
+                $work_day->from = $work['from'];
+                $work_day->to = $work['to'];
+                $work_day->save();
+            }
+        endif;
+
         return redirect()->back()->with('success', 'تم الحفظ بنجاح');
 
     }
@@ -174,6 +195,24 @@ class SettingsController extends Controller
     {
         
         $model = Setting::where('id',$request->modelId)->first();
+        // return response()->json([
+        //     'status' => true,
+        //     'id' =>$request->modelId ,
+        //     'data' => $model,
+        // ]);
+
+        if ($model->delete()) {
+            return response()->json([
+                'status' => true,
+                'data' => $request->id,
+            ]);
+        }
+    }
+
+    public function destroyWorkDay(Request $request)
+    {
+        
+        $model = WorkDay::where('id',$request->modelId)->first();
         // return response()->json([
         //     'status' => true,
         //     'id' =>$request->modelId ,
