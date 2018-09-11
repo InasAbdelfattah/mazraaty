@@ -6,8 +6,8 @@ use App\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Validator;
-use MeasurementUnit;
-use Category ;
+use App\MeasurementUnit;
+use App\Category ;
 
 class ProductController extends Controller
 {

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateItemsTable extends Migration
+class AddRatioToCouponsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateItemsTable extends Migration
      */
     public function up()
     {
-        Schema::create('items', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('product_id')->unsigned();
-            $table->integer('basket_id')->unsigned();
-            $table->string('amount');
-            $table->timestamps();
+        Schema::table('coupons', function (Blueprint $table) {
+            $table->string('ratio')->default('1');
         });
     }
 
@@ -29,6 +25,8 @@ class CreateItemsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('items');
+        Schema::table('coupons', function (Blueprint $table) {
+            //
+        });
     }
 }

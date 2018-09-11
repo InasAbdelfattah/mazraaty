@@ -16,4 +16,8 @@ class Offer extends Model
      */
     //protected $dates = ['deleted_at'];
 
+    public function items()
+    {
+        return $this->morphMany('App\Item', 'itemable');
+    }
 }

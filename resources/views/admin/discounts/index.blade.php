@@ -80,8 +80,8 @@
                             <td>{{$i++}}</td>
                             <td>{{ $discount->code }}</td>
                             <td>{{ $discount->ratio }}</td>
-                            <td>{{ $discount->start_from }}</td>
-                            <td>{{ $discount->end_at }}</td>
+                            <td>{{ $discount->from }}</td>
+                            <td>{{ $discount->to }}</td>
                             <td>{{ $discount->times }}</td>
                             <td>
                                 

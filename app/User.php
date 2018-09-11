@@ -82,9 +82,14 @@ class User extends Authenticatable
 
         $rand = User::where('action_code', $code)->first();
         if ($rand) {
-            return $randomCode = rand(1000000000, 9999999999);
+            return $randomCode = rand(1000, 9999);
         } else {
             return $code;
         }
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'city_id');
     }
 }

@@ -17,14 +17,14 @@ class CreateOrdersTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('basket_id')->unsigned();
-            $table->integer('coupon_id')->unsigned();
+            $table->integer('coupon_id')->unsigned()->nullable();
             $table->string('total_price');
             $table->string('discount');
             $table->date('order_date');
             $table->time('order_time');
             $table->integer('address_id')->unsigned();
             $table->boolean('status');
-            $table->dateTime('user_deliverd_time');
+            $table->dateTime('user_deliverd_time')->nullable();
             $table->timestamps();
         });
     }

@@ -6,7 +6,8 @@
             <!-- LOGO -->
             <div class="topbar-left">
                 <a href="{{ route('admin.home') }}" class="logo">
-                    <span>مز<span> رعتى</span></span>
+                    <!-- <span>مز<span> رعتى</span></span> -->
+                    <span>{{ config('app.name') }}</span>
                 </a>
             </div>
             <!-- End Logo container-->
@@ -123,7 +124,7 @@
                             <ul class="submenu megamenu">
                                 <li>
                                     <ul>
-                                        <li><a href="#">اعدادات النظام</a></li>
+                                        <li><a href="{{ route('settings.generalSettings') }}">اعدادات النظام</a></li>
                                         <li><a href="{{ route('cities.index') }}">المدن</a></li>
                                         <li><a href="{{ route('measurementUnits.index') }}">وحدات القياس</a></li>
                                         <li><a href="{{ route('categories.index') }}">الأقسام الرئيسية</a></li>

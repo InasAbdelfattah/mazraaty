@@ -79,7 +79,7 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-6">
-                 . لوحة تحكم مزرعتى
+                 . لوحة تحكم {{ config('app.name') }}
  © {{ date('Y')   }} - {{ date('Y') + 1  }}
             </div>
             

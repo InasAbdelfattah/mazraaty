@@ -7,8 +7,8 @@ use App\Offer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Validator;
-use MeasurementUnit;
-use Category ;
+use App\MeasurementUnit;
+use App\Category ;
 
 class OfferController extends Controller
 {
@@ -62,7 +62,7 @@ class OfferController extends Controller
          * @ Get All Data Array
          */
 //`name`, `image`, `description`, `price`, `amount`, `product_id`, `measurement_id`, `is_available`, `status`, `created_at`, `updated_at`, `category_id`, `subcategory_id
-        $offers = $query->select('id','name','description' , 'image' , 'price' ,'category_id' ,'subcategory_id' , 'measurement_id' ,'product_id','amount', 'is_available','created_at')->get();
+        $offers = $query->select('id','name','description' , 'price' ,'category_id' ,'subcategory_id' , 'measurement_id' ,'product_id','amount', 'is_available','created_at')->get();
 
         $offers->map(function ($q) use($request){
 
@@ -75,7 +75,7 @@ class OfferController extends Controller
             $q->subcategory = $subcategory != null ? $subcategory->name : null ;
             $q->measurementUnit = $measurementUnit != null ? $measurementUnit->name : null ;
             $q->product = $product != null ? $product->name : null ;
-            $q->image= $request->root() . '/' . $this->public_path . $q->image ;
+            //$q->image= $request->root() . '/' . $this->public_path . $q->image ;
             
         });
 

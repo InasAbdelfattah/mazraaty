@@ -36,8 +36,7 @@ class AdController extends Controller
 
         $currentPage = $request->get('page', 1); // Default to 1
         
-        $query = Ad::where('status', 1)
-            ->orderBy('created_at', 'desc')
+        $query = Ad::orderBy('created_at', 'desc')
             ->select();        
 
         /**
@@ -61,7 +60,7 @@ class AdController extends Controller
 
         $ads->map(function ($q){
 
-            $q->image= $request->root() . '/' . $this->public_path . $q->image ;
+            $q->image= Request()->root() . '/' . $this->public_path . $q->image ;
             
         });
 

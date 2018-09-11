@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Validator;
 use Illuminate\Support\Facades\Gate;
 use App\Discount;
+use App\Coupon;
 
 class DiscountController extends Controller
 {
@@ -26,7 +27,7 @@ class DiscountController extends Controller
         /**
          * Get all discounts
          */
-        $discounts = Discount::all();
+        $discounts = Coupon::all();
         return view('admin.discounts.index',compact('discounts'));
     }
 
@@ -75,12 +76,12 @@ class DiscountController extends Controller
                 ->withErrors($validator->errors());
         }
             
-        $discount = new Discount;
+        $discount = new Coupon;
         $discount->times = $request->times;
         $discount->code = $request->code;
         $discount->ratio = $request->ratio;
-        $discount->start_from = $request->start_from;
-        $discount->end_at = $request->end_at;
+        $discount->from = $request->start_from;
+        $discount->to = $request->end_at;
         $discount->save();
         session()->flash('success', 'لقد تم إضافة كود خصم بنجاح');
         return redirect(route('discounts.index'));
@@ -98,7 +99,7 @@ class DiscountController extends Controller
             return abort(401);
         }
 
-        $discount = Discount::findOrFail($id);
+        $discount = Coupon::findOrFail($id);
         
         return view('admin.discounts.show')->with(compact('discount'));
     }
@@ -115,7 +116,7 @@ class DiscountController extends Controller
             return abort(401);
         }
 
-        $discount = Discount::findOrFail($id);
+        $discount = Coupon::findOrFail($id);
         return view('admin.discounts.edit' , compact('discount'));
     }
 
@@ -150,12 +151,12 @@ class DiscountController extends Controller
                 ->withErrors($validator->errors());
         }
             
-        $discount = Discount::findOrFail($id);
+        $discount = Coupon::findOrFail($id);
         $discount->times = $request->times;
         $discount->code = $request->code;
         $discount->ratio = $request->ratio;
-        $discount->start_from = $request->start_from;
-        $discount->end_at = $request->end_at;
+        $discount->from = $request->start_from;
+        $discount->to = $request->end_at;
         $discount->save();
         session()->flash('success', 'لقد تم تعديل كود الخصم بنجاح');
         return redirect(route('discounts.index'));   
@@ -171,7 +172,7 @@ class DiscountController extends Controller
 
         if ($request->from_date != '' && $request->to_date != '' && $request->to_date > $request->from_date) {
             
-            $discounts = Discount::whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->get();
+            $discounts = Coupon::whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->get();
         }else{
 
             return back()->with(compact('discounts'))->with('error','من فضلك يرجى اختيار فترة زمنية صحيحة');

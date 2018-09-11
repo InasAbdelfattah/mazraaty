@@ -72,13 +72,13 @@
                                     <div class="col-lg-1"> {{$j}} - </div>
                                     <div class="col-lg-3">
                                         <select class="form-control" name="workday[{{$j}}][day]">
-                                            <option value="saturday" {{$row->day == 'saturday' ? 'selected' : ''}}>السبت</option>
-                                            <option value="sunday" {{$row->day == 'sunday' ? 'selected' : ''}}>الأحد</option>
-                                            <option value="monday" {{$row->day == 'monday' ? 'selected' : ''}}>الإثنين</option>
-                                            <option value="tuesday" {{$row->day == 'tuesday' ? 'selected' : ''}}>الثلاثاء</option>
-                                            <option value="wednesday" {{$row->day == 'wednesday' ? 'selected' : ''}}>الأربعاء</option>
-                                            <option value="thursday" {{$row->day == 'thursday' ? 'selected' : ''}}>الخميس</option>
-                                            <option value="friday" {{$row->day == 'friday' ? 'selected' : ''}}>الجمعة</option>
+                                            <option value="Sat" {{$row->day == 'Sat' ? 'selected' : ''}}>السبت</option>
+                                            <option value="Sun" {{$row->day == 'Sun' ? 'selected' : ''}}>الأحد</option>
+                                            <option value="Mon" {{$row->day == 'Mon' ? 'selected' : ''}}>الإثنين</option>
+                                            <option value="Tue" {{$row->day == 'Tue' ? 'selected' : ''}}>الثلاثاء</option>
+                                            <option value="Wed" {{$row->day == 'Wed' ? 'selected' : ''}}>الأربعاء</option>
+                                            <option value="Thu" {{$row->day == 'Thu' ? 'selected' : ''}}>الخميس</option>
+                                            <option value="Fri" {{$row->day == 'Fri' ? 'selected' : ''}}>الجمعة</option>
                                         </select>
                                     </div>
                                     <div class="col-lg-3"><input type="time" name="workday[{{$j}}][from]" value="{{$row->from}}" class="form-control"></div>
@@ -93,13 +93,13 @@
                                     <div class="col-lg-1"> 1 - </div>
                                     <div class="col-lg-3">
                                         <select class="form-control" name="workday[0][day]">
-                                            <option value="saturday">السبت</option>
-                                            <option value="sunday">الأحد</option>
-                                            <option value="monday">الإثنين</option>
-                                            <option value="tuesday">الثلاثاء</option>
-                                            <option value="wednesday">الأربعاء</option>
-                                            <option value="thursday">الخميس</option>
-                                            <option value="friday">الجمعة</option>
+                                            <option value="Sat">السبت</option>
+                                            <option value="Sun">الأحد</option>
+                                            <option value="Mon">الإثنين</option>
+                                            <option value="Tue">الثلاثاء</option>
+                                            <option value="Wed">الأربعاء</option>
+                                            <option value="Thu">الخميس</option>
+                                            <option value="Fri">الجمعة</option>
                                         </select>
                                     </div>
                                     <div class="col-lg-3"><input type="time" id="from" name="workday[0][from]" class="form-control" placeholder="من"></div>
@@ -197,7 +197,7 @@
         var v = a + 1;
         $('#mywork').data('myval', a + 1);
 
-        $('#workDays').append('<div id="work'+v+'" ><div class="row" data-id="row' + v + '"><div class="col-lg-1"> '+(v)+' - </div><div class="col-lg-3"><select class="form-control" name="workday[' + v + '][day]"><option value="saturday">السبت</option><option value="sunday">الأحد</option><option value="monday">الإثنين</option><option value="tuesday">الثلاثاء</option><option value="wednesday">الأربعاء</option><option value="thursday">الخميس</option><option value="friday">الجمعة</option></select></div><div class="col-lg-3"><input type="time" name="workday[' + v + '][from]" class="form-control"></div><div class="col-lg-3"><input type="time" name="workday[' + v + '][to]" class="form-control"></div><div class="col-lg-2 removeWorkDay" data-id="'+ v + '" data-type="flight"><i class="fa fa-remove"></i></div></div><br/></div>');
+        $('#workDays').append('<div id="work'+v+'" ><div class="row" data-id="row' + v + '"><div class="col-lg-1"> '+(v)+' - </div><div class="col-lg-3"><select class="form-control" name="workday[' + v + '][day]"><option value="Sat">السبت</option><option value="Sun">الأحد</option><option value="Mon">الإثنين</option><option value="Tue">الثلاثاء</option><option value="Wed">الأربعاء</option><option value="Thu">الخميس</option><option value="Fri">الجمعة</option></select></div><div class="col-lg-3"><input type="time" name="workday[' + v + '][from]" class="form-control"></div><div class="col-lg-3"><input type="time" name="workday[' + v + '][to]" class="form-control"></div><div class="col-lg-2 removeWorkDay" data-id="'+ v + '" data-type="flight"><i class="fa fa-remove"></i></div></div><br/></div>');
     });
 
     $('body').on('click', '.removeElement', function () {

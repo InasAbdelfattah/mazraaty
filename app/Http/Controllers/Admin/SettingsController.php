@@ -90,6 +90,17 @@ class SettingsController extends Controller
         return view('admin.settings.contacts' , compact('settings' , 'workdays'));
     }
 
+    public function getGeneralSettings(){
+        
+        if (!Gate::allows('content_manage')) {
+            return abort(401);
+        }
+
+        $settings = Setting::all();
+        
+        return view('admin.settings.general_settings' , compact('settings'));
+    }
+
 
     public function terms()
     {

@@ -22,4 +22,9 @@ class Product extends Model
         return $this->belongsTo(Category::class, 'category_id');
     }
 
+    public function items()
+    {
+        return $this->morphMany('App\Item', 'itemable');
+    }
+
 }

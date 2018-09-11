@@ -61,12 +61,12 @@ class CategoryController extends Controller
 
         $categories->map(function ($q){
 
-            $subcategories = Category::where('parent_id',$q->id)->get();
+            $subcategories = Category::where('parent_id',$q->id)->select('id', 'name' , 'image')->get();
             $subcategories->map(function ($q) {
-                $q->image= $request->root() . '/' . $this->public_path . $q->image ;
+                $q->image= Request()->root() . '/' . $this->public_path . $q->image ;
             });
 
-            $q->image= $request->root() . '/' . $this->public_path . $q->image ;
+            $q->image= Request()->root() . '/' . $this->public_path . $q->image ;
 
             $q->subcategories= $subcategories;
             

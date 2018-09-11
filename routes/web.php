@@ -150,6 +150,7 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
     /**
      * @ Setting Routes
      */
+    Route::get('/settings/general-settings', 'Admin\SettingsController@getGeneralSettings')->name('settings.generalSettings');
     Route::get('/settings/aboutus', 'Admin\SettingsController@aboutus')->name('settings.aboutus');
     Route::get('/settings/terms', 'Admin\SettingsController@terms')->name('settings.terms');
     Route::get('/settings/edu_terms', 'Admin\SettingsController@eduTerms')->name('settings.edu_terms');

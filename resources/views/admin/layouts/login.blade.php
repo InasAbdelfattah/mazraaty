@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="{{ request()->root() }}/admin/assets/images/favicon.ico">
 
     <!-- App title -->
-    <title>لوحة تحكم مزرعتى - تسجيل الدخول</title>
+    <title>لوحة تحكم {{ config('app.name') }} - تسجيل الدخول</title>
 
     <!-- App CSS -->
     <link href="{{ request()->root() }}/assets/admin/css/bootstrap-rtl.min.css" rel="stylesheet" type="text/css" />
@@ -34,7 +34,7 @@
 <div class="clearfix"></div>
 <div class="wrapper-page" style="margin:  3% auto">
     <div class="text-center">
-        <a href="{{ route('admin.login') }}" class="logo" style="font-family: JF-Flat-Regular;"><span>مزرعتى</span></a>
+        <a href="{{ route('admin.login') }}" class="logo" style="font-family: JF-Flat-Regular;"><span>{{ config('app.name') }}</span></a>
     </div>
     @yield('content')
 </div>

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Category;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -10,22 +9,20 @@ use Validator;
 use Auth;
 use App\Device;
 use App\Setting;
-use App\Order;
 use App\City;
 
 
 class LoginController extends Controller
 {
 
-    public $public_path_user;
+    public $public_path;
 
     public function __construct()
     {
 
-        $this->public_path_user = 'files/users/';
+        $this->public_path = 'files/users/';
         
     }
-
 
     public function login(Request $request)
     {
@@ -65,14 +62,9 @@ class LoginController extends Controller
 
             $this->manageDevices($request, auth()->user());
 
-            if($user->image != ''){
-                $user->photo = $request->root() . '/' . $this->public_path_user . $user->image ;
-            }           
-            $user_city = City::where('id',$user->city)->first();
+            $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :null ;
             
-            if($user_city):
-                $user->user_city->name = $user->user_city->name;
-            endif;
+            $user->cityName = $user->city != null ? $user->city->name : null;
             
             return response()->json([
                 'status' => true,
@@ -123,4 +115,56 @@ class LoginController extends Controller
             // }
         }
     }
+
+    public function postActivationCode(Request $request)
+    {        
+        $rules = [
+            'phone' => 'required|regex:/(05)[0-9]{8}/',
+            'activation_code' => 'required',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+
+            $error_arr = validateRules($validator->errors(), $rules);
+            return response()->json(['status'=>false,'data' => $error_arr]);
+        }
+
+        $user = User::where(['phone' => $request->phone,
+            'action_code' => $request->activation_code])
+            ->first();
+
+        if(! $user):
+            return response()->json([
+                'status' => 'false',
+                'message' => 'كود التفعيل غير صحيح',
+                'data' => $user
+            ]);
+        endif;
+
+        $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :null ;
+        $user->cityName = $user->city != null ? $user->city->name : null;
+    
+        $this->manageDevices($request, $user);
+                    
+        if ($user->is_active == 0) {
+            $user->is_active = 1;
+            $user->update();                
+            return response()->json([
+                'status' => true,
+                'message' => 'تم تفعيل الحساب',
+                'data' => $user
+            ]);
+
+        }
+
+        return response()->json([
+            'status' => false,
+            'message' => 'تم تفعيل الحساب من قبل',
+            'data' => $user
+        ], 400); 
+
+    }
+
 }

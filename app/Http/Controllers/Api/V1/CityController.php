@@ -6,7 +6,7 @@ use App\City;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class CategoryController extends Controller
+class CityController extends Controller
 {
    
     public function index(Request $request)
