@@ -80,14 +80,14 @@ class OfferController extends Controller
     public function store(Request $request)
     {
         
-        if (!Gate::allows('cards_manage')) {
+        if (!Gate::allows('offers_manage')) {
             return abort(401);
         }
      
         // Declare Validation Rules.
         $rules = [
-            'name' => 'required|min:3|max:50',
-            'description' => 'required|min:3|max:10000',
+            //'name' => 'required|min:3|max:50',
+            //'description' => 'required|min:3|max:10000',
             'price' => 'required|numeric|min:1',
             'amount' => 'required|numeric|min:1',
             'product_id' => 'required',
@@ -111,8 +111,8 @@ class OfferController extends Controller
         }
         //`name`, `image`, `description`, `price`, `amount`, `product_id`, `measurement_id`, `is_available`, `status`,'category_id','subcategory_id'
         $offer = new Offer;
-        $offer->name = $request->name;
-        $offer->description = $request->description;
+        $offer->name = $request->name ? $request->name : '';
+        $offer->description = $request->description ? $request->description : '';
         $offer->price = $request->price;
         $offer->amount = $request->amount;
         $offer->product_id = $request->product_id;

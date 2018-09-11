@@ -44,6 +44,42 @@
                         </div>
                     </div>
 
+                    <div class="col-xs-12">
+                        <div class="form-group">
+                            <label>فيس بوك</label>
+                            <input type="url" name="fb"
+                                   value="{{ setting()->getBody('fb') }}" class="form-control" required placeholder=" فيس بوك ..."/>
+                            <p class="help-block"></p>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12">
+                        <div class="form-group">
+                            <label>تويتر</label>
+                            <input type="url" name="twitter"
+                                   value="{{ setting()->getBody('twitter') }}" class="form-control" required placeholder=" تويتر ..."/>
+                            <p class="help-block"></p>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12">
+                        <div class="form-group">
+                            <label>جوجل بلاس</label>
+                            <input type="url" name="google"
+                                   value="{{ setting()->getBody('google') }}" class="form-control" required placeholder=" جوجل بلاس..."/>
+                            <p class="help-block"></p>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12">
+                        <div class="form-group">
+                            <label>انستاجرام</label>
+                            <input type="url" name="instagram"
+                                   value="{{ setting()->getBody('instagram') }}" class="form-control" required placeholder=" انستاجرام..."/>
+                            <p class="help-block"></p>
+                        </div>
+                    </div>
+
                     <div class="form-group text-right m-t-20">
                         <button class="btn btn-primary waves-effect waves-light m-t-20" type="submit">
                             حفظ البيانات

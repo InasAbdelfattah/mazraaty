@@ -92,7 +92,7 @@
                         
                     </div>
 
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="userName"> عنوان العرض*</label>
                         <input class="form-control" type="text" name="name" value="{{ old('name') }}" placeholder="عنوان العرض" data-parsley-required-message="هذا الحقل الزامى" data-parsley-maxlength="15" data-parsley-maxlength-message="يجب الا يزيد الحقل عن 15 حرف">
                         <p class="help-block" id="error_userName"></p>
@@ -112,7 +112,7 @@
                                 {{ $errors->first('description') }}
                             </p>
                         @endif
-                    </div>
+                    </div> -->
 
                     <div class="form-group">
                         <label for="userName"> سعر المنتج فى العرض*</label>
@@ -136,7 +136,7 @@
                         @endif
                     </div>
 
-                    <div class="form-group{{ $errors->has('measurement_id') ? ' has-error' : '' }}">
+                    <!-- <div class="form-group{{ $errors->has('measurement_id') ? ' has-error' : '' }}">
                         <label for="pass1">وحدة القياس *</label>
                         <select class="form-control" name="measurement_id" required data-parsley-required-message="هذا الحقل الزامى" >
                             <option value="" selected disabled>وحدة القياس ..</option>
@@ -150,7 +150,7 @@
                         @if($errors->has('measurement_id'))
                             <p class="help-block">{{ $errors->first('measurement_id') }}</p>
                         @endif
-                    </div>
+                    </div> -->
 
                     <div class="form-group">
                         <label for="pass1"> حالة العرض*</label>

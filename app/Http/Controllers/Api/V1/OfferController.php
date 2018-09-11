@@ -18,8 +18,7 @@ class OfferController extends Controller
 
     public function __construct()
     {
-        $this->public_path = 'files/offers/';
-        $this->public_product_path = 'files/products/';
+        $this->public_path = 'files/products/';
     }
    
     public function index(Request $request)
@@ -62,20 +61,28 @@ class OfferController extends Controller
          * @ Get All Data Array
          */
 //`name`, `image`, `description`, `price`, `amount`, `product_id`, `measurement_id`, `is_available`, `status`, `created_at`, `updated_at`, `category_id`, `subcategory_id
-        $offers = $query->select('id','name','description' , 'price' ,'category_id' ,'subcategory_id' , 'measurement_id' ,'product_id','amount', 'is_available','created_at')->get();
+        $offers = $query->select('id', 'price' ,'category_id' ,'subcategory_id' , 'measurement_id' ,'product_id','amount', 'is_available','created_at')->get();
 
         $offers->map(function ($q) use($request){
 
             $category = Category::find($q->category_id);
             $subcategory = Category::find($q->subcategory_id);
-            $measurementUnit = MeasurementUnit::find($q->measurement_id);
+            //$measurementUnit = MeasurementUnit::find($q->measurement_id);
             $product = Product::find($q->product_id);
 
             $q->category = $category != null ? $category->name : null ;
             $q->subcategory = $subcategory != null ? $subcategory->name : null ;
-            $q->measurementUnit = $measurementUnit != null ? $measurementUnit->name : null ;
-            $q->product = $product != null ? $product->name : null ;
-            //$q->image= $request->root() . '/' . $this->public_path . $q->image ;
+            //$q->measurementUnit = $measurementUnit != null ? $measurementUnit->name : null ;
+            $q->productName = $product != null ? $product->name : null ;
+            $q->productPrice = $product != null ? $product->price : null ;
+            if($product):
+                $measurementUnit = MeasurementUnit::find($product->measurement_id);
+                $q->measurementUnit = $measurementUnit != null ? $measurementUnit->name : null;
+                $q->productImage = $request->root() . '/' . $this->public_path . $product->image ;
+            else:
+                $q->measurementUnit = null;
+                $q->productImage = null;
+            endif;
             
         });
 

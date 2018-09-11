@@ -58,6 +58,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function () {
      * orders
      */
 
+    Route::get('orders/user-recent-order', 'Api\V1\OrderController@getUserRecentOrder');
     Route::get('orders/user-orders', 'Api\V1\OrderController@getUserOrders');
     Route::post('orders/save-new-order', 'Api\V1\OrderController@saveOrder');
     Route::post('user/logout', 'Api\V1\UsersController@logout');

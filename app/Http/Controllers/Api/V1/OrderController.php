@@ -27,6 +27,58 @@ use Carbon\Carbon;
 
 class OrderController extends Controller
 {
+    
+    public function getUserRecentOrder(Request $request){
+
+        $user = auth()->user();
+        
+        if(!$user){
+            return response()->json([
+                'status' => false,
+                'message' => 'user not found',
+                'data' => []
+            ]);
+        }
+        
+        $order = Order::where('user_id',$user->id)->orderBy('id','Desc')->select('id','user_id', 'basket_id', 'coupon_id', 'total_price', 'discount', 'order_date', 'order_time', 'address_id', 'status', 'user_deliverd_time')->first();
+
+        if($order->coupon_id != null):
+            $coupon = Coupon::find($order->coupon_id);
+            $order->couponCode= $coupon ? $coupon->code : '';
+        endif;
+        $address = UserAddress::find($order->address_id);
+        $order->address= $address ? $address->address : '';    
+
+        $items = Item::where('basket_id',$order->basket_id)->select('id','itemable_id','amount','itemable_type')->get();
+        $items->map(function ($q) {
+            $product = Product::find($q->itemable_id);
+            $offer = Offer::find($q->itemable_id);
+            if($q->itemable_type == 'App\Product'):
+                $q->product_name = $product->name;
+                $q->product_price = $product->price;
+                $q->product_image= Request()->root() . '/files/products/' . $product->image ;
+                //$q->offer_name = null;
+                $q->offer_price = null;
+            else:
+                $offer_product = Product::find($offer->product_id);
+                //$q->offer_name = $offer->name;
+                $q->offer_price = $offer->price;
+                $q->product_name = $offer_product->name;
+                $q->product_price = $offer_product->price;
+                $q->product_image= Request()->root() . '/files/products/' . $offer_product->image ;
+
+            endif;
+        });
+
+        $order->items = $items;
+        
+        return response()->json([
+            'status' => true,
+            //'message' => $status,
+            'data' => $order
+        ]);
+    }
+
     public function getUserOrders(Request $request){
 
         $user = auth()->user();
@@ -43,6 +95,10 @@ class OrderController extends Controller
         $skipCount = $request->get('skipCount', 0);
         
         $query = Order::where('user_id',$user->id)->orderBy('id','Desc')->select();
+
+        if ($request->status) :
+            $query->where('status', $request->status);
+        endif;
 
         $query->skip($skipCount);
         $query->take($pageSize);
@@ -66,11 +122,11 @@ class OrderController extends Controller
                     $q->product_name = $product->name;
                     $q->product_price = $product->price;
                     $q->product_image= Request()->root() . '/files/products/' . $product->image ;
-                    $q->offer_name = null;
+                    //$q->offer_name = null;
                     $q->offer_price = null;
                 else:
                     $offer_product = Product::find($offer->product_id);
-                    $q->offer_name = $offer->name;
+                    //$q->offer_name = $offer->name;
                     $q->offer_price = $offer->price;
                     $q->product_name = $offer_product->name;
                     $q->product_price = $offer_product->price;
@@ -93,7 +149,7 @@ class OrderController extends Controller
         return response()->json([
             'status' => true,
             //'message' => $status,
-            'data' => ['orders' => $orders ]
+            'data' => $orders
         ]);
     }
     
@@ -123,11 +179,11 @@ class OrderController extends Controller
                     $q->product_name = $product->name;
                     $q->product_price = $product->price;
                     $q->product_image= Request()->root() . '/files/products/' . $product->image ;
-                    $q->offer_name = null;
+                    //$q->offer_name = null;
                     $q->offer_price = null;
                 else:
                     $offer_product = Product::find($offer->product_id);
-                    $q->offer_name = $offer->name;
+                    //$q->offer_name = $offer->name;
                     $q->offer_price = $offer->price;
                     $q->product_name = $offer_product->name;
                     $q->product_price = $offer_product->price;

@@ -21,6 +21,10 @@ class SettingController extends Controller
                 'about_app' => Setting::getBody('about_app_desc'),
                 'support_phone' => Setting::getBody('support_phone'),
                 'email' => Setting::getBody('email'),
+                'fb' => Setting::getBody('fb'),
+                'twitter' => Setting::getBody('twitter'),
+                'instagram' => Setting::getBody('instagram'),
+                'googlePlus' => Setting::getBody('googlePlus'),
                 'hotNos' => Setting::where('key', 'like', 'hot_no%')->select('body as number')->get(),
                 'workdays' => workDay::select('day','from','to')->get()
             ]
