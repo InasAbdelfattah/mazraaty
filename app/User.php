@@ -92,4 +92,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(City::class, 'city_id');
     }
+
+    public function loginCount()
+    {
+        return $this->belongsTo(UserLogin::class, 'user_id');
+    }
 }

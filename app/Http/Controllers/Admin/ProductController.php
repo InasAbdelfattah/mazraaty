@@ -9,8 +9,9 @@ use Illuminate\Support\Facades\Gate;
 use App\Product;
 use App\Category;
 use App\MeasurementUnit;
-use UploadImage;
-
+use App\Libraries\PushNotification;
+use App\User;
+use App\Notification;
 
 class ProductController extends Controller
 {
@@ -20,10 +21,12 @@ class ProductController extends Controller
      */
 
     public $public_path;
+    public $push;
 
-    public function __construct()
+    public function __construct(PushNotification $push)
     {
         $this->public_path = 'files/products/';
+        $this->push = $push;
     }
 
     /**
@@ -117,6 +120,42 @@ class ProductController extends Controller
             $product->image = '';
         endif;
         $product->save();
+
+        $title = 'كود خصم من مزرعتى';
+        $body = 'تم اضافة منتج جديد وهو : '.$product->name;
+        //$data = ['title' => $title , 'body'=>$body];
+        $data = [];
+
+        $r = $this->push->sendPushNotification(null , $data, $title, $body,'global');
+        
+        $users = User::whereDoesntHave('roles')->where('is_admin',0)->select('id')->get();
+        //$ids = User::where('is_admin',0)->pluck('id')->toArray();
+
+        //$ids = $users->pluck('id');
+
+        $notif_data = [];
+
+        foreach ($users as $key => $user) {
+
+            $notif_data[] = array(
+                'user_id' => $user->id,
+                'user_ids' => null,
+                'push_type' => 'global',
+                'target_id' => null,
+                'target_type' => 'product',
+                'title' => $title,
+                'body' => $body,
+                'image' => null,
+                'is_read' => 0,
+                'data' => '',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            );
+
+        }
+
+        Notification::insert($notif_data);
+
         session()->flash('success', 'لقد تم إضافة المنتج بنجاح' . $product->name);
         return redirect(route('products.index'));
     }

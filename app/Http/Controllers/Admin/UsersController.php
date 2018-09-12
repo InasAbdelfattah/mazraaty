@@ -136,7 +136,7 @@ class UsersController extends Controller
 
         $user = User::findOrFail($id);
         //$login = UserLogin::where('user_id',$id)->first();
-        $login = 0;
+        $login = $user->loginCount;
         $user_cards = null;
         
 

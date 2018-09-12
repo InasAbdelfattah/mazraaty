@@ -8,9 +8,20 @@ use Validator;
 use Illuminate\Support\Facades\Gate;
 use App\Discount;
 use App\Coupon;
+use App\Libraries\PushNotification;
+use App\User;
+use App\Notification;
 
 class DiscountController extends Controller
 {
+
+    public $push;
+
+    public function __construct(PushNotification $push)
+    {
+ 
+        $this->push = $push;
+    }
 
     /**
      * Display a listing of the resource.
@@ -83,6 +94,43 @@ class DiscountController extends Controller
         $discount->from = $request->start_from;
         $discount->to = $request->end_at;
         $discount->save();
+
+        $title = 'كود خصم من مزرعتى';
+        $body = 'كود الخصم هو : '.$discount->code. ' وجارى استخدامه فى الفترة من : '.$discount->from.'الى : '.$discount->to;
+        //$data = ['title' => $title , 'body'=>$body];
+        $data = [];
+
+        $r = $this->push->sendPushNotification(null , $data, $title, $body,'global');
+        
+        $users = User::whereDoesntHave('roles')->where('is_admin',0)->select('id')->get();
+
+        $ids = $users->pluck('id');
+
+        $notif_data = [];
+
+        foreach ($users as $key => $user) {
+
+            $notif_data[] = array(
+                'user_id' => $user->id,
+                'user_ids' => null,
+                'push_type' => 'global',
+                'target_id' => null,
+                'target_type' => 'coupon',
+                'title' => $title,
+                'body' => $body,
+                'image' => null,
+                'is_read' => 0,
+                'data' => '',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            );
+
+        }
+
+        Notification::insert($notif_data);
+
+        //return $r;
+
         session()->flash('success', 'لقد تم إضافة كود خصم بنجاح');
         return redirect(route('discounts.index'));
     }

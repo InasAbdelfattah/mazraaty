@@ -49,6 +49,13 @@
 
     </style>
 
+    @if(auth()->check())
+        <script>
+            var userId = '{{ auth()->id() }}';
+            // {{-- var url = '{{ route('user.update.token') }}'; --}}
+            var lang = '{{ config('app.locale') }}';
+        </script>
+    @endif
 
 </head>
 
@@ -334,6 +341,8 @@
 
 </script>
 
+<script src="https://www.gstatic.com/firebasejs/4.10.1/firebase.js"></script>
+<script src="{{ request()->root() }}/public/assets/fcm/FCM-Setup.js"></script>
 
 </body>
 </html>

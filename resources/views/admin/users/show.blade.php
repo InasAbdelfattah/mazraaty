@@ -6,15 +6,7 @@
     <!-- Page-Title -->
     <div class="row">
         <div class="col-sm-12">
-           <!--  <div class="btn-group pull-right m-t-15">
-                    <a href="{{ route('districts.index') }}" type="button" class="btn btn-custom waves-effect waves-light"
-                       aria-expanded="false"> مشاهدة جميع المناطق الفرعية
-                        <span class="m-l-5">
-                        <i class="fa fa-backward"></i>
-                    </span>
-                    </a>
-
-                </div> -->
+           
             <h4 class="page-title">بيانات المستخدم</h4>
         </div>
     </div>
@@ -68,7 +60,7 @@
                     <div class="col-xs-6">
                         <div class="form-group">
                             <label for="pass1">عدد مرات الدخول على حسابه</label>
-                            <p>{{$login ? $login->logins_count : 0}}</p>
+                            <p>{{$user->loginCount ? $user->loginCount : 0}}</p>
 
                         </div>
                     </div>
@@ -95,42 +87,6 @@
                             </div>
                         </div>
                     @endif
-                </div>
-                
-                <div class="row">
-                    <div class="col-xs-6">
-                        <div class="form-group">
-                            <label>بطاقات المستخدم : </label>
-                            <table class="table table-striped table-condensed">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            م
-                                        </th>
-                                        <th>اسم البطاقة</th>
-                                        <th>السعر</th>
-                                        <th>تاريخ بدء الصلاحية</th>
-                                        <th>تاريخ انتهاء الصلاحية</th>
-                            
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @php $i = 1; @endphp
-                                    @forelse($user_cards as $user_card)
-                                    <tr>
-                                        <td>{{$i++}}</td>
-                                        <td>{{$user_card->card ? $user_card->card->name : ''}}</td>
-                                        <td>{{$user_card->card ? $user_card->card->price : ''}}</td>
-                                        <td>{{$user_card->from}}</td>
-                                        <td>{{$user_card->to}}</td>
-                                    </tr>
-                                    @empty
-                                        <tr><td colspan="5">لا توجد بطاقات للمستخدم</td></tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
                 </div>
                 
                

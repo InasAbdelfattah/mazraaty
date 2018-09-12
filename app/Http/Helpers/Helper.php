@@ -62,7 +62,7 @@
         if(auth()->user()){
             $count = \App\Notification::where('notif_type','single')->where('to_user',auth()->user()->id)->where('is_seen',0)->get();
             
-            $notifi1 = \App\Notification::where('notif_type','all')->get();
+            $notifi1 = \App\Notification::where('notif_type','global')->get();
             $notifi2 = \App\Notification::where('notif_type','single')->where('to_user',auth()->user()->id)->where('is_seen',0)->get();
         
             $merged = $notifi1->merge($notifi2);
@@ -78,7 +78,6 @@
             // });
 
         }
-        
         
         return $notifications ;
     }

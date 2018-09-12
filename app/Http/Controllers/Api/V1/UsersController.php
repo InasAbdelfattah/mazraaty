@@ -268,4 +268,6 @@ class UsersController extends Controller
             'password_confirmation.same' => trans('global.password_not_confirmed'),
         ];
     }
+
+    
 }
