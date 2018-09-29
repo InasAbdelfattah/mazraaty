@@ -59,7 +59,7 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
     Route::post('users_mass_destroy', ['uses' => 'Admin\UsersController@massDestroy', 'as' => 'users.mass_destroy']);
 
     Route::get('app_users', ['uses' => 'Admin\UsersController@getUsers', 'as' => 'users.app_users']);
-    Route::get('suspended_users', ['uses' => 'Admin\UsersController@getSuspendedUsers', 'as' => 'users.suspended_users']);
+    Route::get('search-users', ['uses' => 'Admin\UsersController@searchUsers', 'as' => 'users.search']);
     Route::get('suspended_admins', ['uses' => 'Admin\UsersController@getSuspendedAdmins', 'as' => 'users.suspended_admins']);
 
     Route::post('role/delete/group', 'Admin\RolesController@groupDelete')->name('roles.group.delete');
@@ -74,12 +74,18 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
     /**
      * @@ Manage Categories Routes.
      */
+
+    Route::get('categories/search', ['uses' => 'Admin\CategoriesController@search', 'as' => 'categories.search']);
     Route::post('category/activate-category', 'Admin\CategoriesController@activateCategory')->name('category.activateCategory');
     Route::get('sub-categories', 'Admin\CategoriesController@getSubCategories')->name('subcategories');
     Route::post('category/delete/group', 'Admin\CategoriesController@groupDelete')->name('categories.group.delete');
 
 
     Route::resource('categories', 'Admin\CategoriesController');
+
+    // products
+
+    Route::get('products/search', ['uses' => 'Admin\ProductController@search', 'as' => 'products.search']);
 
     Route::post('product/activate-product', 'Admin\ProductController@activateProduct')->name('product.activateProduct');
     Route::resource('products', 'Admin\ProductController');
@@ -92,6 +98,7 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
     /**
      * Cities Routes
      */
+    Route::get('cities-search', ['uses' => 'Admin\CitiesController@search', 'as' => 'cities.search']);
     Route::post('city/activate-area', 'Admin\CitiesController@activateArea')->name('city.activateArea');
     Route::post('city/delete/group', 'Admin\CitiesController@groupDelete')->name('cities.group.delete');
     Route::resource('cities', 'Admin\CitiesController');
@@ -100,6 +107,9 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
     /**
      * MeasurementsUnits Routes
      */
+
+    Route::get('measurementUnits/search', ['uses' => 'Admin\MeasurementUnitController@search', 'as' => 'measurementUnits.search']);
+
     Route::post('measurementUnits/activate-measurement', 'Admin\MeasurementUnitController@activateMeasurement')->name('measurementUnits.activateMeasurement');
     Route::post('measurementUnits/delete/group', 'Admin\MeasurementUnitController@groupDelete')->name('measurementUnits.group.delete');
     Route::resource('measurementUnits', 'Admin\MeasurementUnitController');
@@ -107,6 +117,9 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
     /**
      * Offers Routes
      */
+
+    Route::get('offers/search', ['uses' => 'Admin\OfferController@search', 'as' => 'offers.search']);
+
     Route::post('offers/activate-offer', 'Admin\OfferController@activateOffer')->name('offers.activateOffer');
     Route::post('offers/delete/group', 'Admin\OfferController@groupDelete')->name('offers.group.delete');
     Route::resource('offers', 'Admin\OfferController');
@@ -123,9 +136,14 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
     Route::post('faqs/delete/group', 'Admin\FaqController@groupDelete')->name('faqs.group.delete');
     Route::resource('faqs', 'Admin\FaqController');
     
-    /**
-     * Discounts Routes
-     */
+
+    //user coupons
+    Route::get('User-coupons', 'Admin\DiscountController@getUserCoupons')->name('userCoupons');
+    Route::get('user-coupons/{id}', 'Admin\DiscountController@showUserCoupons')->name('showUserCoupons');
+
+    Route::get('discounts_users/search', 'Admin\DiscountController@searchDiscountsUsers')->name('discount_users.search');
+
+    //coupons
     Route::get('discounts/search', 'Admin\DiscountController@search')->name('discounts.search');
 
     Route::resource('discounts', 'Admin\DiscountController');
@@ -183,7 +201,7 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
         
         Route::post('/delete', 'Admin\NotificationController@delete')->name('notifs.delete');
         Route::get('/show/{id}', 'Admin\NotificationController@show')->name('notifs.show');
-
+        Route::get('/search', ['uses' => 'Admin\NotificationController@search', 'as' => 'notifs.search']);
     });
     Route::post('/logout', 'Admin\LoginController@logout')->name('administrator.logout');
 });
@@ -199,4 +217,18 @@ Route::get('roles', function () {
 
     //Bouncer::allow('admin')->to('users_manage');
     //Bouncer::allow($user)->toOwnEverything();
+});
+
+Route::get('test', function () {
+    $z = null;
+    $a = 0;
+    $a += null;
+    $a += 5;
+    $a += null;
+    $a += 5 ;
+    $a += null;
+    if($z)
+        $a += $z;
+    
+    return $a ;
 });

@@ -43,24 +43,31 @@
 
                     <div class="col-xs-6">
                         <div class="form-group">
+                            @if($user->is_admin == 1)
                             <label for="pass1">تاريخ انشاء المستخدم</label>
+                            @else
+                            <label for="pass1">تاريخ الإشتراك بالتطبيق</label>
+                            @endif
                             <p>{{ $user->created_at}}</p>
 
                         </div>
                     </div>
-                    
-                    
-
-                    
+                                        
                 </div>
                 <div class="row">
-
-                    
+                    @if($user->is_admin == 0)
 
                     <div class="col-xs-6">
                         <div class="form-group">
+                            <label>عدد الطلبات التى قام بها</label>
+                            <p>{{$user->orders->count()}}</p>
+                        </div>
+                    </div>
+                    @endif
+                    <div class="col-xs-6">
+                        <div class="form-group">
                             <label for="pass1">عدد مرات الدخول على حسابه</label>
-                            <p>{{$user->loginCount ? $user->loginCount : 0}}</p>
+                            <p>{{$login ? $login->logins_count : 0}}</p>
 
                         </div>
                     </div>
@@ -73,7 +80,8 @@
                         </div>
                     </div>
 
-                    @if($user->is_user !=1)
+                    
+                    @if($user->is_admin == 1)
                         <div class="col-xs-6">
                             <div class="form-group">
                                 <label for="pass1">الصلاحيات الممنوحة اليه</label>
@@ -84,6 +92,20 @@
                                 @endif
                                 
 
+                            </div>
+                        </div>
+                    @endif
+
+                    @if($user->is_admin == 0)
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label for="pass1">عناوين العميل : </label>
+                                @forelse($user->addresses->pluck('address') as $address)
+                                  <p>- {{$address}}</p>
+                                @empty
+                                    <p> لا توجد عناوين مسجلو للعميل</p>
+                                @endforelse 
+                            
                             </div>
                         </div>
                     @endif

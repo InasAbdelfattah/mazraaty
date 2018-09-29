@@ -27,13 +27,15 @@ class CitiesController extends Controller
      */
     public function index()
     {
-        if (!Gate::allows('setting_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
         $cities = City::get();
+        $list = City::all();
+        $type = 'cities';
 
-        return view('admin.cities.index')->with(compact('cities'));
+        return view('admin.cities.index')->with(compact('cities','type','list'));
     }
 
     /**
@@ -43,7 +45,7 @@ class CitiesController extends Controller
      */
     public function create()
     {
-        if (!Gate::allows('setting_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -58,7 +60,7 @@ class CitiesController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Gate::allows('setting_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -95,7 +97,7 @@ class CitiesController extends Controller
      */
     public function show($id)
     {
-        if (!Gate::allows('setting_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -112,7 +114,7 @@ class CitiesController extends Controller
      */
     public function edit($id)
     {
-        if (!Gate::allows('setting_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -131,7 +133,7 @@ class CitiesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Gate::allows('cities_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -168,7 +170,7 @@ class CitiesController extends Controller
      */
     public function destroy($id)
     {
-        if (!Gate::allows('setting_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
         
@@ -239,24 +241,24 @@ class CitiesController extends Controller
      */
     public function delete(Request $request)
     {
-        if (!Gate::allows('setting_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
         
         $model = City::findOrFail($request->id);
 
-        if ($model->centers->count() > 0) {
-            return response()->json([
-                'status' => false,
-                'message' => "عفواً, لا يمكنك حذف المنطقة الرئيسية لوجود مراكز بها"
-            ]);
-        }
+        // if ($model->centers->count() > 0) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => "عفواً, لا يمكنك حذف المنطقة الرئيسية لوجود مراكز بها"
+        //     ]);
+        // }
 
-        if ($model->districts->count() > 0) {
-            foreach($model->districts as $district){
-                $district->delete();
-            }
-        }
+        // if ($model->districts->count() > 0) {
+        //     foreach($model->districts as $district){
+        //         $district->delete();
+        //     }
+        // }
 
         if ($model->delete()) {
             return response()->json([
@@ -278,9 +280,6 @@ class CitiesController extends Controller
                 if ($request->status == 1) {
                     $msg = 'تم تفعيل المدينة';
                 } else {
-
-                    $
-
                     $msg = 'تم تعطيل المدينة';
                 }
                 $model->status = $request->status;
@@ -305,6 +304,37 @@ class CitiesController extends Controller
             ]);
         }
     }
+
+    public function search(Request $request)
+    {
+        
+        if (!Gate::allows('settings_manage')) {
+            return abort(401);
+        }
+
+        $cities = [] ;
+
+        $query = City::select();
+        if($request->city):
+            $query->where('id',$request->city);
+        endif;
+
+
+        if($request->status != null):
+            $status = (int)$request->status;
+            $query->where('status',$status);
+        endif;
+        
+        $cities = $query->orderBy('id','DESC')->get();
+
+        $list = City::all();
+        $type='search';
+        
+        return view('admin.cities.index')->with(compact('cities','type','list'));
+
+
+    }
+
 
 
 }

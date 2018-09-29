@@ -5,13 +5,11 @@ namespace App\Http\Controllers\Api\v1;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Setting;
- use App\workDay;
+use App\WorkDay;
 
 class SettingController extends Controller
 {
 
-    
-    
     public function index()
     {
         return response()->json([
@@ -26,7 +24,7 @@ class SettingController extends Controller
                 'instagram' => Setting::getBody('instagram'),
                 'googlePlus' => Setting::getBody('googlePlus'),
                 'hotNos' => Setting::where('key', 'like', 'hot_no%')->select('body as number')->get(),
-                'workdays' => workDay::select('day','from','to')->get()
+                'workDays' => WorkDay::select('day','from','to')->get()
             ]
         ]);
     }

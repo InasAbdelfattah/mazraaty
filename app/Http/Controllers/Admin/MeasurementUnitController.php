@@ -20,13 +20,46 @@ class MeasurementUnitController extends Controller
      */
     public function index()
     {
-        if (!Gate::allows('measurements_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
         $measurements = MeasurementUnit::get();
+        $list = MeasurementUnit::all();
+        $type='measurements';
 
-        return view('admin.measurements.index')->with(compact('measurements'));
+        return view('admin.measurements.index')->with(compact('measurements','list','type'));
+    }
+
+    public function search(Request $request)
+    {
+        
+        if (!Gate::allows('settings_manage')) {
+            return abort(401);
+        }
+
+        $measurements = [] ;
+
+        $query = MeasurementUnit::select();
+        if($request->unit):
+            $query->where('id',$request->unit);
+        endif;
+
+
+        if($request->status != null):
+            $status = (int)$request->status;
+            $query->where('status',$status);
+        endif;
+        
+        $measurements = $query->orderBy('id','DESC')->get();
+
+        $list = MeasurementUnit::all();
+        $type='search';
+        
+        return view('admin.measurements.index')->with(compact('measurements','list','type'));
+
+
+
     }
 
     /**
@@ -36,7 +69,7 @@ class MeasurementUnitController extends Controller
      */
     public function create()
     {
-        if (!Gate::allows('measurements_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -51,7 +84,7 @@ class MeasurementUnitController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Gate::allows('measurements_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -87,7 +120,7 @@ class MeasurementUnitController extends Controller
      */
     public function edit($id)
     {
-        if (!Gate::allows('measurements_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -106,7 +139,7 @@ class MeasurementUnitController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Gate::allows('measurements_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -130,7 +163,7 @@ class MeasurementUnitController extends Controller
         $measurement->status = $request->status;
         $measurement->save();
 
-        session()->flash('success', 'لقد تم تعديل المدينة بنجاح.');
+        session()->flash('success', 'لقد تم التعديل بنجاح.');
         return redirect()->route('measurementUnits.index');
     }
 
@@ -142,7 +175,7 @@ class MeasurementUnitController extends Controller
      */
     public function destroy($id)
     {
-        if (!Gate::allows('setting_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
         
@@ -172,7 +205,7 @@ class MeasurementUnitController extends Controller
     public function groupDelete(Request $request)
     {
 
-        if (!Gate::allows('measurements_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -209,8 +242,6 @@ class MeasurementUnitController extends Controller
                 if ($request->status == 1) {
                     $msg = 'تم تفعيل وحدة القياس';
                 } else {
-
-                    $
 
                     $msg = 'تم تعطيل وحدة القياس';
                 }

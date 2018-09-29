@@ -59,7 +59,7 @@
                             </td>
 
                             <td>{{ $row->question }}</td>
-                            <td>{{ $row->created_at }}</td>
+                            <td>{{ $row->created_at->format("Y-m-d") }}</td>
                             <td>
                                 
                                 <a href="{{ route('faqs.edit', $row->id) }}"

@@ -501,14 +501,14 @@ Enjoy responsibly!
 
                     <div class="widget-box-2">
                         <div class="widget-detail-2">
-                                     <span class="badge badge-success pull-left m-t-20">{{$data['cities']}}<i class="zmdi zmdi-trending-up"></i> </span>
-                            <h2 class="m-b-0">{{$data['cities']}}</h2>
+                                     <span class="badge badge-success pull-left m-t-20">{{$data['categoriesCount']}}<i class="zmdi zmdi-trending-up"></i> </span>
+                            <h2 class="m-b-0">{{$data['categoriesCount']}}</h2>
                             <p class="text-muted m-b-25">عدد الأقسام الرئيسية </p>
                         </div>
                         <div class="progress progress-bar-success-alt progress-sm m-b-0">
                             <div class="progress-bar progress-bar-success" role="progressbar"
                                  aria-valuenow="77" aria-valuemin="0" aria-valuemax="100"
-                                 style="width: {{$data['cities']}}%;">
+                                 style="width: {{$data['categoriesCount']}}%;">
                                 <span class="sr-only">77% Complete</span>
                             </div>
                         </div>
@@ -523,14 +523,14 @@ Enjoy responsibly!
 
                     <div class="widget-box-2">
                         <div class="widget-detail-2">
-                                     <span class="badge badge-success pull-left m-t-20">{{$data['cities']}}<i class="zmdi zmdi-trending-up"></i> </span>
-                            <h2 class="m-b-0">{{$data['cities']}}</h2>
+                                     <span class="badge badge-success pull-left m-t-20">{{$data['subcategoriesCount']}}<i class="zmdi zmdi-trending-up"></i> </span>
+                            <h2 class="m-b-0">{{$data['subcategoriesCount']}}</h2>
                             <p class="text-muted m-b-25">عدد الأقسام الفرعية </p>
                         </div>
                         <div class="progress progress-bar-success-alt progress-sm m-b-0">
                             <div class="progress-bar progress-bar-success" role="progressbar"
                                  aria-valuenow="77" aria-valuemin="0" aria-valuemax="100"
-                                 style="width: {{$data['cities']}}%;">
+                                 style="width: {{$data['subcategoriesCount']}}%;">
                                 <span class="sr-only">77% Complete</span>
                             </div>
                         </div>
@@ -545,14 +545,14 @@ Enjoy responsibly!
 
                     <div class="widget-box-2">
                         <div class="widget-detail-2">
-                                     <span class="badge badge-success pull-left m-t-20">{{$data['cities']}}<i class="zmdi zmdi-trending-up"></i> </span>
-                            <h2 class="m-b-0">{{$data['cities']}}</h2>
+                                     <span class="badge badge-success pull-left m-t-20">{{$data['activeproducts']}}<i class="zmdi zmdi-trending-up"></i> </span>
+                            <h2 class="m-b-0">{{$data['activeproducts']}}</h2>
                             <p class="text-muted m-b-25">عدد المنتجات المفعلة </p>
                         </div>
                         <div class="progress progress-bar-success-alt progress-sm m-b-0">
                             <div class="progress-bar progress-bar-success" role="progressbar"
                                  aria-valuenow="77" aria-valuemin="0" aria-valuemax="100"
-                                 style="width: {{$data['cities']}}%;">
+                                 style="width: {{$data['activeproducts']}}%;">
                                 <span class="sr-only">77% Complete</span>
                             </div>
                         </div>
@@ -567,14 +567,14 @@ Enjoy responsibly!
 
                     <div class="widget-box-2">
                         <div class="widget-detail-2">
-                                     <span class="badge badge-success pull-left m-t-20">{{$data['cities']}}<i class="zmdi zmdi-trending-up"></i> </span>
-                            <h2 class="m-b-0">{{$data['cities']}}</h2>
+                                     <span class="badge badge-success pull-left m-t-20">{{$data['inactiveproducts']}}<i class="zmdi zmdi-trending-up"></i> </span>
+                            <h2 class="m-b-0">{{$data['inactiveproducts']}}</h2>
                             <p class="text-muted m-b-25">عدد المنتجات المعطلة </p>
                         </div>
                         <div class="progress progress-bar-success-alt progress-sm m-b-0">
                             <div class="progress-bar progress-bar-success" role="progressbar"
                                  aria-valuenow="77" aria-valuemin="0" aria-valuemax="100"
-                                 style="width: {{$data['cities']}}%;">
+                                 style="width: {{$data['inactiveproducts']}}%;">
                                 <span class="sr-only">77% Complete</span>
                             </div>
                         </div>
@@ -589,14 +589,14 @@ Enjoy responsibly!
 
                     <div class="widget-box-2">
                         <div class="widget-detail-2">
-                                     <span class="badge badge-success pull-left m-t-20">{{$data['cities']}}<i class="zmdi zmdi-trending-up"></i> </span>
-                            <h2 class="m-b-0">{{$data['cities']}}</h2>
+                                     <span class="badge badge-success pull-left m-t-20">{{$data['products']}}<i class="zmdi zmdi-trending-up"></i> </span>
+                            <h2 class="m-b-0">{{$data['products']}}</h2>
                             <p class="text-muted m-b-25">العدد الإجمالى للمنتجات </p>
                         </div>
                         <div class="progress progress-bar-success-alt progress-sm m-b-0">
                             <div class="progress-bar progress-bar-success" role="progressbar"
                                  aria-valuenow="77" aria-valuemin="0" aria-valuemax="100"
-                                 style="width: {{$data['cities']}}%;">
+                                 style="width: {{$data['products']}}%;">
                                 <span class="sr-only">77% Complete</span>
                             </div>
                         </div>
@@ -611,14 +611,14 @@ Enjoy responsibly!
 
                     <div class="widget-box-2">
                         <div class="widget-detail-2">
-                                     <span class="badge badge-success pull-left m-t-20">{{$data['cities']}}<i class="zmdi zmdi-trending-up"></i> </span>
-                            <h2 class="m-b-0">{{$data['cities']}}</h2>
+                                     <span class="badge badge-success pull-left m-t-20">{{$data['availableOffers']}}<i class="zmdi zmdi-trending-up"></i> </span>
+                            <h2 class="m-b-0">{{$data['availableOffers']}}</h2>
                             <p class="text-muted m-b-25">عدد العروض النشطة </p>
                         </div>
                         <div class="progress progress-bar-success-alt progress-sm m-b-0">
                             <div class="progress-bar progress-bar-success" role="progressbar"
                                  aria-valuenow="77" aria-valuemin="0" aria-valuemax="100"
-                                 style="width: {{$data['cities']}}%;">
+                                 style="width: {{$data['availableOffers']}}%;">
                                 <span class="sr-only">77% Complete</span>
                             </div>
                         </div>
@@ -633,14 +633,14 @@ Enjoy responsibly!
 
                     <div class="widget-box-2">
                         <div class="widget-detail-2">
-                                     <span class="badge badge-success pull-left m-t-20">{{$data['cities']}}<i class="zmdi zmdi-trending-up"></i> </span>
-                            <h2 class="m-b-0">{{$data['cities']}}</h2>
+                                     <span class="badge badge-success pull-left m-t-20">{{$data['inavailableOffers']}}<i class="zmdi zmdi-trending-up"></i> </span>
+                            <h2 class="m-b-0">{{$data['inavailableOffers']}}</h2>
                             <p class="text-muted m-b-25">عدد العروض المنتهية </p>
                         </div>
                         <div class="progress progress-bar-success-alt progress-sm m-b-0">
                             <div class="progress-bar progress-bar-success" role="progressbar"
                                  aria-valuenow="77" aria-valuemin="0" aria-valuemax="100"
-                                 style="width: {{$data['cities']}}%;">
+                                 style="width: {{$data['inavailableOffers']}}%;">
                                 <span class="sr-only">77% Complete</span>
                             </div>
                         </div>
@@ -655,14 +655,14 @@ Enjoy responsibly!
 
                     <div class="widget-box-2">
                         <div class="widget-detail-2">
-                                     <span class="badge badge-success pull-left m-t-20">{{$data['cities']}}<i class="zmdi zmdi-trending-up"></i> </span>
-                            <h2 class="m-b-0">{{$data['cities']}}</h2>
+                                     <span class="badge badge-success pull-left m-t-20">{{$data['waiting_orders']}}<i class="zmdi zmdi-trending-up"></i> </span>
+                            <h2 class="m-b-0">{{$data['waiting_orders']}}</h2>
                             <p class="text-muted m-b-25">عدد الطلبات قيد الانتظار </p>
                         </div>
                         <div class="progress progress-bar-success-alt progress-sm m-b-0">
                             <div class="progress-bar progress-bar-success" role="progressbar"
                                  aria-valuenow="77" aria-valuemin="0" aria-valuemax="100"
-                                 style="width: {{$data['cities']}}%;">
+                                 style="width: {{$data['waiting_orders']}}%;">
                                 <span class="sr-only">77% Complete</span>
                             </div>
                         </div>
@@ -677,14 +677,14 @@ Enjoy responsibly!
 
                     <div class="widget-box-2">
                         <div class="widget-detail-2">
-                                     <span class="badge badge-success pull-left m-t-20">{{$data['cities']}}<i class="zmdi zmdi-trending-up"></i> </span>
-                            <h2 class="m-b-0">{{$data['cities']}}</h2>
+                                     <span class="badge badge-success pull-left m-t-20">{{$data['accepted_orders']}}<i class="zmdi zmdi-trending-up"></i> </span>
+                            <h2 class="m-b-0">{{$data['accepted_orders']}}</h2>
                             <p class="text-muted m-b-25">عدد الطلبات قيد التنفيذ </p>
                         </div>
                         <div class="progress progress-bar-success-alt progress-sm m-b-0">
                             <div class="progress-bar progress-bar-success" role="progressbar"
                                  aria-valuenow="77" aria-valuemin="0" aria-valuemax="100"
-                                 style="width: {{$data['cities']}}%;">
+                                 style="width: {{$data['accepted_orders']}}%;">
                                 <span class="sr-only">77% Complete</span>
                             </div>
                         </div>
@@ -695,18 +695,18 @@ Enjoy responsibly!
             <div class="col-lg-3 col-md-6">
                 <div class="card-box">
                    
-                    <h4 class="header-title m-t-0 m-b-30">عدد الطلبات قيد الملغاة </h4>
+                    <h4 class="header-title m-t-0 m-b-30">عدد الطلبات الملغاة </h4>
 
                     <div class="widget-box-2">
                         <div class="widget-detail-2">
-                                     <span class="badge badge-success pull-left m-t-20">{{$data['cities']}}<i class="zmdi zmdi-trending-up"></i> </span>
-                            <h2 class="m-b-0">{{$data['cities']}}</h2>
+                                     <span class="badge badge-success pull-left m-t-20">{{$data['refused_orders']}}<i class="zmdi zmdi-trending-up"></i> </span>
+                            <h2 class="m-b-0">{{$data['refused_orders']}}</h2>
                             <p class="text-muted m-b-25">عدد الطلبات الملغاة </p>
                         </div>
                         <div class="progress progress-bar-success-alt progress-sm m-b-0">
                             <div class="progress-bar progress-bar-success" role="progressbar"
                                  aria-valuenow="77" aria-valuemin="0" aria-valuemax="100"
-                                 style="width: {{$data['cities']}}%;">
+                                 style="width: {{$data['refused_orders']}}%;">
                                 <span class="sr-only">77% Complete</span>
                             </div>
                         </div>
@@ -721,14 +721,14 @@ Enjoy responsibly!
 
                     <div class="widget-box-2">
                         <div class="widget-detail-2">
-                                     <span class="badge badge-success pull-left m-t-20">{{$data['cities']}}<i class="zmdi zmdi-trending-up"></i> </span>
-                            <h2 class="m-b-0">{{$data['cities']}}</h2>
+                                     <span class="badge badge-success pull-left m-t-20">{{$data['excuted_orders']}}<i class="zmdi zmdi-trending-up"></i> </span>
+                            <h2 class="m-b-0">{{$data['excuted_orders']}}</h2>
                             <p class="text-muted m-b-25">عدد الطلبات المكتملة </p>
                         </div>
                         <div class="progress progress-bar-success-alt progress-sm m-b-0">
                             <div class="progress-bar progress-bar-success" role="progressbar"
                                  aria-valuenow="77" aria-valuemin="0" aria-valuemax="100"
-                                 style="width: {{$data['cities']}}%;">
+                                 style="width: {{$data['excuted_orders']}}%;">
                                 <span class="sr-only">77% Complete</span>
                             </div>
                         </div>
@@ -736,50 +736,7 @@ Enjoy responsibly!
                 </div>
             </div><!-- end col -->
 
-            <div class="col-lg-3 col-md-6">
-                <div class="card-box">
-                   
-                    <h4 class="header-title m-t-0 m-b-30">عدد الرسائل المقرؤة</h4>
-
-                    <div class="widget-box-2">
-                        <div class="widget-detail-2">
-                                     <span class="badge badge-success pull-left m-t-20">{{$data['read_contacts']}}<i class="zmdi zmdi-trending-up"></i> </span>
-                            <h2 class="m-b-0">{{$data['read_contacts']}}</h2>
-                            <p class="text-muted m-b-25">الرسائل المقرؤة </p>
-                        </div>
-                        <div class="progress progress-bar-success-alt progress-sm m-b-0">
-                            <div class="progress-bar progress-bar-success" role="progressbar"
-                                 aria-valuenow="77" aria-valuemin="0" aria-valuemax="100"
-                                 style="width: {{$data['read_contacts']}}%;">
-                                <span class="sr-only">77% Complete</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div><!-- end col -->
-
-            <div class="col-lg-3 col-md-6">
-                <div class="card-box">
-                   
-                    <h4 class="header-title m-t-0 m-b-30">عدد الرسائل الغير مقرؤة</h4>
-
-                    <div class="widget-box-2">
-                        <div class="widget-detail-2">
-                                     <span class="badge badge-success pull-left m-t-20">{{$data['notread_contacts']}}<i class="zmdi zmdi-trending-up"></i> </span>
-                            <h2 class="m-b-0">{{$data['notread_contacts']}}</h2>
-                            <p class="text-muted m-b-25">عدد الرسائل الغير مقرؤة</p>
-                        </div>
-                        <div class="progress progress-bar-success-alt progress-sm m-b-0">
-                            <div class="progress-bar progress-bar-success" role="progressbar"
-                                 aria-valuenow="77" aria-valuemin="0" aria-valuemax="100"
-                                 style="width: {{$data['notread_contacts']}}%;">
-                                <span class="sr-only">77% Complete</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div><!-- end col -->
-                     
+            
         </div>
         <!-- end row -->
 

@@ -24,6 +24,15 @@
                 </a>
                 </div>
 
+                <div class="pull-right" style="margin-left: 10px;">
+                    @if(isset($type) && $type == 'search')
+                        <a href="{{ route('discounts.index') }}" style="float: left; margin-right: 15px;" class="btn btn-primary btn-sm"><i class="fa fa-eye" style="margin-left: 5px"></i>مشاهدة اكواد الخصم
+                        </a>
+                    @endif
+                </div>
+
+                @if(isset($type) && $type != 'search')
+
                 <div class="row">
                     <p>البحث خلال الفترة الزمنية : </p>
                 </div>
@@ -54,6 +63,7 @@
                     </form>
                 </div>
                 <br> <br>
+                @endif
 
                 <h4 class="header-title m-t-0 m-b-30">مشاهدة أكواد الخصم</h4>
 

@@ -38,7 +38,7 @@ class SettingsController extends Controller
      */
     public function index()
     {
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -49,7 +49,7 @@ class SettingsController extends Controller
 
     public function aboutus()
     {
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -59,7 +59,7 @@ class SettingsController extends Controller
     
     public function site()
     {
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -69,7 +69,7 @@ class SettingsController extends Controller
 
     public function socialLinks()
     {
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -78,7 +78,7 @@ class SettingsController extends Controller
     }
 
     public function getContacts(){
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -92,7 +92,7 @@ class SettingsController extends Controller
 
     public function getGeneralSettings(){
         
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -104,7 +104,7 @@ class SettingsController extends Controller
 
     public function terms()
     {
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -113,7 +113,7 @@ class SettingsController extends Controller
     }
     
     public function eduTerms(){
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -130,7 +130,7 @@ class SettingsController extends Controller
     public function create()
     {
 
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -147,7 +147,7 @@ class SettingsController extends Controller
     {
 
         //dd($request);
-        if (!Gate::allows('content_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 

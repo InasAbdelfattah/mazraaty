@@ -35,17 +35,17 @@
                             
                             <div class="col-lg-12 col-xs-12">
                                 <label> تاريخ وقت بداية الخصم :</label>
-                                <p>{{ $discount->start_from }}</p>
+                                <p>{{ $discount->from }}</p>
                             </div>
 
                             <div class="col-lg-6 col-xs-12">
                                 <label>تاريخ وقت انتهاء الخصم :</label>
-                                <p>{{ $discount->end_at }}</p>
+                                <p>{{ $discount->to }}</p>
                             </div>
 
                             <div class="col-lg-6 col-xs-12">
                                 <label>عدد المستخدمين للكود :</label>
-                                <p>{{ $discount->times }}</p>
+                                <p>{{ $user_no }}</p>
                             </div>
                             
                             <div class="col-lg-6 col-xs-12">

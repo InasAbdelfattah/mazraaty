@@ -23,6 +23,64 @@
                         <i class="fa fa-plus"></i> <span>إضافة</span> </span>
                 </a>
                 </div>
+
+                <div class="pull-right" style="margin-left: 10px;">
+                    @if(isset($type) && $type == 'search')
+                        <a href="{{ route('products.index') }}" style="float: left; margin-right: 15px;" class="btn btn-primary btn-sm"><i class="fa fa-eye" style="margin-left: 5px"></i>مشاهدة المنتجات
+                        </a>
+                    @endif
+                </div>
+
+                @if(isset($type) && $type != 'search')
+                    <div class="row">
+                        <form action="{{route('products.search')}}" method="get">
+                            
+                            <div class="col-lg-3"> 
+                                <label>القسم الرئيسلى</label>
+                                <select name="cat_id" class="form-control" id="cat">
+                                    <option value="" disabled selected>القسم الرئيسى...</option>
+                                    @forelse($cat as $value)
+                                        <option value="{{$value->id}}" id="subcate{{$value->id}}" data-subcats="{{$value->subcats}}">{{$value->name}}</option>
+                                    @empty
+                                    <option value="" disabled>لا توجد أقسام رئيسية</option>
+                                    @endforelse
+                                </select>
+                                
+                            </div>
+
+                            <div class="col-lg-3"> 
+                                <label>القسم الفرعى</label>
+                                <select name="subcat_id" class="form-control" id="sub_cat">
+                                    <option value="" disabled selected>القسم الفرعى...</option>
+                                    
+                                </select>
+                                
+                            </div>
+
+                            <div class="col-lg-3">
+                                <label>اسم المنتج</label>
+                                <!-- <input type="text" class="form-control" name="name"> -->
+
+                                <select name="id" class="form-control">
+                                    <option value="" disabled selected>اسم المنتج...</option>
+                                    @forelse($list as $value)
+                                        <option value="{{$value->id}}">{{$value->name}}</option>
+                                    @empty
+                                    <option value="" disabled>لا توجد منتجات</option>
+                                    @endforelse
+                                </select>
+
+                            </div>
+
+                            <div class="col-lg-3">
+                                <button type="submit" class="btn btn-primary">بحث</button>
+                            </div>
+                            
+                        </form>
+                    </div>
+                @endif
+
+                <br> <br>
                 
                 <h4 class="header-title m-t-0 m-b-30">مشاهدة المنتجات</h4>
 
@@ -270,6 +328,24 @@
                     });
 
                 }
+            });
+        });
+
+        $("#cat").change(function(){
+            $("#sub_cat").html('');
+            var id = $(this).val();
+            var data = $("#subcate"+id).data("subcats");
+            console.log(id);
+            console.log('subcat',data);
+            var subCats = $(this).data("subcats");
+            var sub_cats = $(this).attr("data-subcats");
+            console.log(sub_cats);
+            //var json = JSON.parse(sub_cats)
+            $("#sub_cat").append('<option value="">برجاء الاختيار</option');
+            $.each(data, function(key, val) {
+                var a = val.products;
+                console.log('a:',a);
+                $("#sub_cat").append('<option value="' + val.id + '" id="prod'+val.id+'" data-products='+a+'>' + val.name + '</option>');
             });
         });
 

@@ -171,14 +171,14 @@
                     @can('orders_manage')
                         
                         <li class="has-submenu">
-                            <a href="#"><i class="zmdi zmdi-invert-colors"></i> <span>الطلبات</span> </a>
-                            <ul class="submenu megamenu">
+                            <a href="{{ route('orders.index').'?order_type=orders&status=""&from=""&to=""' }}"><i class="zmdi zmdi-invert-colors"></i> <span>الطلبات</span> </a>
+                            <!-- <ul class="submenu megamenu">
                                 <li>
                                     <ul>
-                                        <li><a href="{{ route('orders.index') }}">طلبات جديدة لمزرعتى</a></li>
+                                        <li><a href="{{ route('orders.index').'?status=""&from=""&to=""' }}">طلبات جديدة لمزرعتى</a></li>
                                     </ul>
                                 </li>
-                            </ul>
+                            </ul> -->
                         </li>
                     @endcan
 
@@ -189,7 +189,7 @@
                                 <li>
                                     <ul>
                                         <li><a href="{{route('discounts.index')}}">أكواد الخصم</a></li>
-                                        <li><a href="#">المستفيدين من الخصم</a></li>
+                                        <li><a href="{{route('userCoupons')}}">المستفيدين من الخصم</a></li>
                                     </ul>
                                 </li>
                             </ul>
@@ -203,9 +203,9 @@
                             <ul class="submenu megamenu">
                                 <li>
                                     <ul>
-                                        <li><a href="#">المنتجات الأكثر مبيعا</a></li>
-                                        <li><a href="#">طلبات مزرعتى</a></li>
-                                        <li><a href="#">تقارير أكواد الخصم</a></li>
+                                        <!-- <li><a href="#">المنتجات الأكثر مبيعا</a></li> -->
+                                        <li><a href="{{ route('orders.index').'?order_type=reports&status=""&from=""&to=""' }}">طلبات مزرعتى</a></li>
+                                        <!-- <li><a href="#">تقارير أكواد الخصم</a></li> -->
                                 
                                     </ul>
                                 </li>

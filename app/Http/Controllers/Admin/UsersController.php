@@ -10,11 +10,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreUsersRequest;
 use App\Http\Requests\Admin\UpdateUsersRequest;
 //use UploadImage;
-//use App\UserLogin;
-use Image;
+use App\UserLogin;
+use App\City;
 use Validator;
-use App\UserCard;
-use App\Card;
 
 class UsersController extends Controller
 {
@@ -33,13 +31,23 @@ class UsersController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::with('roles')->where('is_admin',1)->get();
+        if (!Gate::allows('users_manage')) {
+            return abort(401);
+        }
+
+
+        $users = User::with('roles')->where('is_admin',1)->where('is_suspend',0)->get();
 
         return view('admin.users.index', compact('users'));
     }
 
     public function getSuspendedAdmins()
     {
+        if (!Gate::allows('users_manage')) {
+            return abort(401);
+        }
+
+
         $users = User::with('roles')->where('is_admin',1)->where('is_suspend',1)->get();
         
         return view('admin.users.suspended_admins', compact('users'));
@@ -102,7 +110,7 @@ class UsersController extends Controller
             endif;
 
 
-            $code = rand(10000000, 99999999);
+            $code = rand(1000, 9999);
             $code = $user->userCode($code);
             $user->action_code = $code;
 
@@ -129,14 +137,14 @@ class UsersController extends Controller
      */
     public function show($id)
     {
-        if (!Gate::allows('users_manage')) {
-            return abort(401);
-        }
+        // if (!Gate::allows('users_manage')) {
+        //     return abort(401);
+        // }
         $roles = Role::get();
 
         $user = User::findOrFail($id);
         //$login = UserLogin::where('user_id',$id)->first();
-        $login = $user->loginCount;
+        $login = UserLogin::where('user_id',$user->id)->first();
         $user_cards = null;
         
 
@@ -397,117 +405,7 @@ class UsersController extends Controller
     }
 
 
-    public function groupSuspend(Request $request)
-    {
-        if (!Gate::allows('users_manage')) {
-            return abort(401);
-        }
 
-
-        $ids = $request->ids;
-        $suspended_users = [];
-        foreach ($ids as $id) {
-            $user = User::findOrFail($id);
-
-            if($user->is_suspend == 1){
-
-                //array_push($suspended_users, $user->id);
-                return response()->json([
-                'status' => false,
-                'message' => 'يوجد مستخدمين محظورين من قبل',
-            ]);
-            }
-
-            $user->is_suspend = 1 ;
-
-            $user->save();
-        }
-
-        if(count($suspended_users) > 0){
-
-            return response()->json([
-                'status' => false,
-                'message' => 'يوجد مستخدمين محظورين من قبل',
-            ]);
-        }
-        
-
-        return response()->json([
-            'status' => true,
-            'data' => [
-                'id' => $request->ids
-            ]
-        ]);
-
-
-    }
-
-
-    /**
-     * Delete all selected User at once.
-     *
-     * @param Request $request
-     */
-    public function massDestroy(Request $request)
-    {
-        if (!Gate::allows('users_manage')) {
-            return abort(401);
-        }
-        if ($request->input('ids')) {
-            $entries = User::whereIn('id', $request->input('ids'))->get();
-
-            foreach ($entries as $entry) {
-                $entry->delete();
-            }
-        }
-    }
-
-
-    function filter(Request $request)
-    {
-
-        $name = $request->keyName;
-
-        $page = $request->pageSize;
-
-        ## GET ALL CATEGORIES PARENTS
-        $query = User::with('roles')->select();
-        // $categories = Category::paginate($pageSize);
-
-
-        if ($name != '') {
-            $query->where('name', 'like', "%$name%");
-        }
-
-        $query->orderBy('created_at', 'DESC');
-        $users = $query->paginate(($page) ?: 10);
-
-        if ($name != '') {
-            $users->setPath('users?name=' . $name);
-        } else {
-            $users->setPath('users');
-        }
-
-
-        if ($request->ajax()) {
-            return view('admin.users.load', ['users' => $users])->render();
-        }
-        ## SHOW CATEGORIES LIST VIEW WITH SEND CATEGORIES DATA.
-        return view('admin.users.index')
-            ->with(compact('users'));
-    }
-
-    /**
-     * Display a list of providers.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function getSuspendedUsers()
-    {
-        $users = User::where('is_admin',0)->where('is_active',0)->get();
-        
-        return view('admin.users.suspended_users', compact('users'));
-    }
 
     /**
      * Display a listing of app users.
@@ -516,10 +414,38 @@ class UsersController extends Controller
      */
     public function getUsers()
     {
-        $users = User::where('is_admin',0)->get();
+        if (!Gate::allows('clients_manage')) {
+            return abort(401);
+        }
+
+
+        $users = User::where('is_admin',0)->where('is_active',1)->get();
+        $cities = City::all();
         
+        return view('admin.users.users', compact('users' ,'cities'));
+    }
+
+    public function searchUsers(Request $request)
+    {
+        if (!Gate::allows('clients_manage')) {
+            return abort(401);
+        }
         
-        return view('admin.users.users', compact('users'));
+        $query = User::where('is_admin',$request->is_admin)->where('is_active',1)->select();
+        if($request->city):
+            $query->where('city_id',$request->city);
+        endif;
+
+        if($request->phone):
+            $query->where('phone',$request->phone);
+        endif;
+
+        $users = $query->get();
+
+        $cities = City::all();
+        $type='search';
+        
+        return view('admin.users.users', compact('users' ,'cities','type'));
     }
 
     public function activation(Request $request)
@@ -669,6 +595,7 @@ class UsersController extends Controller
 
             } elseif ($model->is_suspend == 0) {
                 $model->is_suspend = 1;
+                $model->suspend_reason = $request->reason;
                 $msg = 'تم تعطيل المستخدم';
             }
 
@@ -693,7 +620,6 @@ class UsersController extends Controller
     	        //sendEmail( 'admin.emails.deactivateUser', $vars );
             }
                                 
-            $model->suspend_reason = $request->reason ;
             if ($model->save()) {
                 return response()->json([
                     'status' => true,

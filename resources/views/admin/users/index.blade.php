@@ -64,14 +64,14 @@
                 <table id="datatable-fixed-header" class="table  table-striped">
                     <thead>
                     <tr>
-                        <th>
-                            <div class="checkbox checkbox-primary checkbox-single">
+                        <th>م
+                            <!-- <div class="checkbox checkbox-primary checkbox-single">
                                 <input type="checkbox" style="margin-bottom: 0px;" name="check"
                                        onchange="checkSelect(this)"
                                        value="option2"
                                        aria-label="Single checkbox Two">
                                 <label></label>
-                            </div>
+                            </div> -->
                         </th>
                         <!-- <th>الصورة</th> -->
                         <th>الاسم</th>
@@ -86,7 +86,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                        @php $i = 0 ; @endphp 
+                        @php $i = 1 ; @endphp 
                     @foreach($users as $user)
 
                         <tr id="currentRowOn{{$user->id}}">
@@ -128,10 +128,11 @@
 
 
                             <td id="is_active{{$user->id}}">
-                                @if($user->is_active == 1)
+                            
+                                @if($user->is_suspend == 0)
                                     <label class="label label-success label-xs">مفعل</label>
                                 @else
-                                    <label class="label label-danger label-xs">معطل</label>
+                                    <label class="label label-danger label-xs">محظور</label>
                                 @endif
                             </td>
 
@@ -157,13 +158,12 @@
 
                                 @if($user->id != 1)
 
-                            
-                                @if($user->is_active == 1)
+                                @if($user->is_suspend == 0)
                                 <a href="#custom-modal{{ $user->id }}"
                                     data-id="{{ $user->id }}" id="currentRow{{ $user->id }}"
                                     class="btn btn-success btn-xs btn-trans waves-effect waves-light m-r-5 m-b-10"
                                     data-animation="fadein" data-plugin="custommodal"
-                                    data-overlaySpeed="100" data-overlayColor="#36404a">تعطيل
+                                    data-overlaySpeed="100" data-overlayColor="#36404a">حظر
                                 </a>
                                 <div id="custom-modal{{ $user->id }}" class="modal-demo"
                                               data-backdrop="static">
@@ -212,12 +212,12 @@
 
                                 </a> -->
 
-                                <a href="#custom-modal2{{ $user->id }}"
+                                <!-- <a href="#custom-modal2{{ $user->id }}"
                                         data-id="{{ $user->id }}" id="currentRow{{ $user->id }}"
                                         class="btn-xs btn-icon btn-trans btn-sm waves-effect waves-light btn-danger m-b-5"
                                         data-animation="fadein" data-plugin="custommodal"
                                         data-overlaySpeed="100" data-overlayColor="#36404a"><i class="fa fa-remove"></i>
-                                    </a>
+                                    </a> -->
                                     <div id="custom-modal2{{ $user->id }}" class="modal-demo"
                                                   data-backdrop="static">
                                                  <button type="button" class="close" onclick="Custombox.close();">

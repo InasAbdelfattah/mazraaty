@@ -34,7 +34,7 @@ class CategoriesController extends Controller
     public function index(Request $request)
     {
 
-        if (!Gate::allows('setting_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -42,14 +42,17 @@ class CategoriesController extends Controller
          * Get all Categories
          */
         $categories = Category::where('parent_id',0)->get();
+        $type = 'cats';
+        $cat = Category::where('parent_id',0)->get();
+        $subcat = Category::where('parent_id','!=',0)->get();
 
         ## SHOW CATEGORIES LIST VIEW WITH SEND CATEGORIES DATA.
         return view('admin.categories.index')
-            ->with(compact('categories'));
+            ->with(compact('categories' , 'type','cat' , 'subcat'));
     }
 
     public function getSubCategories(){
-        if (!Gate::allows('setting_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -57,10 +60,57 @@ class CategoriesController extends Controller
          * Get all Categories
          */
         $categories = Category::where('parent_id','!=',0)->get();
+        $cat = Category::where('parent_id',0)->get();
+        $subcat = Category::where('parent_id','!=',0)->get();
 
+        $type = 'cats';
         ## SHOW CATEGORIES LIST VIEW WITH SEND CATEGORIES DATA.
         return view('admin.categories.subcats')
-            ->with(compact('categories'));
+            ->with(compact('categories','type' , 'cat' , 'subcat'));
+    }
+
+    public function search(Request $request)
+    {
+        
+        if (!Gate::allows('settings_manage')) {
+            return abort(401);
+        }
+
+        $categories = [] ;
+
+        $query = Category::select();
+
+        if($request->id):
+            $query->where('id',$request->id);
+        endif;
+
+        if($request->parent_id != null):
+            $query->where('parent_id',$request->parent_id);
+        else:
+            $query->where('parent_id','!=',0);
+        endif;
+
+
+        if($request->status != null):
+            $status = (int)$request->status;
+            $query->where('status',$status);
+        endif;
+        
+        $categories = $query->orderBy('id','DESC')->get();
+        $type = 'cats';
+
+        $cat = Category::where('parent_id',0)->get();
+        $subcat = Category::where('parent_id','!=',0)->get();
+        $type='search';
+        
+        if($request->parent_id != null && $request->parent_id ==0):
+            return view('admin.categories.index',compact('categories','cat','subcat','type'));
+        else:
+            return view('admin.categories.subcats',compact('categories','cat','subcat','type'));
+        endif;
+
+
+
     }
 
     /**
@@ -71,7 +121,7 @@ class CategoriesController extends Controller
     public function create(Request $request)
     {
         
-        if (!Gate::allows('setting_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
         $type = $request->type;
@@ -88,7 +138,7 @@ class CategoriesController extends Controller
     public function store(Request $request)
     {
 
-        if (!Gate::allows('setting_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -126,7 +176,7 @@ class CategoriesController extends Controller
      */
     public function show($id)
     {
-        if (!Gate::allows('setting_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -143,7 +193,7 @@ class CategoriesController extends Controller
      */
     public function edit($id , Request $request)
     {
-        if (!Gate::allows('setting_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -212,7 +262,7 @@ class CategoriesController extends Controller
      */
     public function destroy($id)
     {
-        if (!Gate::allows('setting_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -279,7 +329,7 @@ class CategoriesController extends Controller
     public function groupDelete(Request $request)
     {
 
-        if (!Gate::allows('setting_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -315,7 +365,7 @@ class CategoriesController extends Controller
      */
     public function delete(Request $request)
     {
-        if (!Gate::allows('setting_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 

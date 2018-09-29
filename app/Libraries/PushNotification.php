@@ -44,8 +44,11 @@ class PushNotification
         // $dataLoad['FrontendDeveloper01'] = 'Mohamed Dawood';
         // $dataLoad['FrontendDeveloper02'] = 'Ahmed Maher';
 
-        if (isset($data['href']))
+        if (isset($data['href'])):
             $dataLoad['href'] = $data['href'];
+        else:
+            $dataLoad['href'] = null;
+        endif;
 
         if (isset($data['type']))
             $dataLoad['type'] = $data['type'];
@@ -96,6 +99,11 @@ class PushNotification
             $json = $push->getPushData();
             $push = $push->getPushNotification();
             $response = $firebase->sendToTopic('users', $json, $push);
+
+        }elseif ($push_type == 'cities') {
+            $json = $push->getPushData();
+            $push = $push->getPushNotification();
+            $response = $firebase->sendToTopic('cities', $json, $push);
 
         } elseif ($push_type == 'companies') {
             $json = $push->getPushData();

@@ -69,7 +69,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                        @php $i = 0 ; @endphp 
+                        @php $i = 1 ; @endphp 
                     @foreach($users as $user)
 
                         <tr id="currentRowOn{{$user->id}}">
@@ -99,35 +99,16 @@
                             <!--<td>{{ $user->username  }}</td>-->
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->phone }}</td>
-                            <td>{{ $user->created_at }}</td>
-                            <!-- <td>
-                                
-                                @forelse($user->roles as $role)
-                                    <ul class="none-style-ul">
-                                        <li style="font-size: 11px;">{{ $role->title }}</li>
-                                    </ul>
-                                @empty
-                                    لم يعين صلاحية
-                                @endforelse
-                            </td> -->
-
 
                             <td id="is_active{{$user->id}}">
                                 @if($user->is_suspend == 0)
                                     <label class="label label-success label-xs">مفعل</label>
                                 @else
-                                    <label class="label label-danger label-xs">معطل</label>
+                                    <label class="label label-danger label-xs">محظور</label>
                                 @endif
                             </td>
 
-                            <!--<td id ="is_suspend{{$user->id}}" data-suspend="{{$user->is_suspend}}">-->
-                            <!--    @if($user->is_suspend == 0)-->
-                            <!--        <label class="label label-success label-xs">غير محذور</label>-->
-                            <!--    @else-->
-                            <!--        <label class="label label-danger label-xs">محذور</label>-->
-                            <!--    @endif-->
-                            <!--</td>-->
-
+                            <td>{{ $user->created_at }}</td>
                             <td>
 
                                 <a href="{{ route('users.show',$user->id) }}"
@@ -141,111 +122,15 @@
                                 </a>
 
                                 @if($user->id != 1)
+                                    @if($user->is_suspend == 1)
 
-                            
-                                @if($user->is_suspend == 1)
-                                <a href="#custom-modal{{ $user->id }}"
-                                    data-id="{{ $user->id }}" id="currentRow{{ $user->id }}"
-                                    class="btn btn-success btn-xs btn-trans waves-effect waves-light m-r-5 m-b-10"
-                                    data-animation="fadein" data-plugin="custommodal"
-                                    data-overlaySpeed="100" data-overlayColor="#36404a">تفعيل
-                                </a>
-                                <div id="custom-modal{{ $user->id }}" class="modal-demo"
-                                              data-backdrop="static">
-                                             <button type="button" class="close" onclick="Custombox.close();">
-                                                 <span>&times;</span><span class="sr-only">Close</span>
-                                             </button>
-                                             <h4 class="custom-modal-title">سبب تفعيل المستخدم</h4>
-                                             <div class="custom-modal-text text-right" style="text-align: right !important;">
-                                                <form id="activeForm" action="{{ route('user.suspend') }}" method="post" data-id="{{ $user->id }}">
-         
-                                                    {{ csrf_field() }}
-                                             <input type="hidden" name="userId" value="{{$user->id}}">
-                                             <input type="hidden" name="is_suspend" value="1">
-                                                    <div class="form-group ">
-                                                            
-                                                            <div>
-                                                                <label for="paid-signup">
-                                                                     سبب التفعيل 
-                                                                </label>
-                                                                <br>
-                                                                <textarea id="paid-signup" value="{{old('reason')}}" name="reason" id="reason" class="form-control"></textarea>
-                                                            </div>
-                                                        </div>
-            
-            
-                                                        <div class="form-group text-right m-t-20">
-                                                            <button class="btn btn-primary waves-effect waves-light m-t-0"
-                                                                    type="submit">
-                                                                حفظ البيانات
-                                                            </button>
-                                                            <button onclick="Custombox.close();" type="reset"
-                                                                    class="btn btn-default waves-effect waves-light m-l-5 m-t-0">
-                                                                إلغاء
-                                                            </button>
-                                                        </div>
-            
-                                                    </form>
-                                                     
-                                                </div>
-         
-                                </div>
-                                      
+                                        <a id="activateUser{{ $user->id }}" href="javascript:;"
+                                           data-id="{{ $user->id }}" data-status="0" data-url="{{ route('user.suspend') }}"
+                                           class="activateElement btn btn-icon btn-trans btn-xs waves-effect waves-light btn-primary m-b-5">
+                                           تفعيل
+                                        </a>       
+                                     @endif
                                  @endif
-                                <!-- <a href="javascript:;" id="elementRow{{ $user->id }}" data-id="{{ $user->id }}"
-                                   class="removeElement btn-xs btn-icon btn-trans btn-sm waves-effect waves-light btn-danger m-b-5">
-                                    <i class="fa fa-remove"></i>
-
-                                </a> -->
-
-                                <a href="#custom-modal2{{ $user->id }}"
-                                        data-id="{{ $user->id }}" id="currentRow{{ $user->id }}"
-                                        class="btn-xs btn-icon btn-trans btn-sm waves-effect waves-light btn-danger m-b-5"
-                                        data-animation="fadein" data-plugin="custommodal"
-                                        data-overlaySpeed="100" data-overlayColor="#36404a"><i class="fa fa-remove"></i>
-                                    </a>
-                                    <div id="custom-modal2{{ $user->id }}" class="modal-demo"
-                                                  data-backdrop="static">
-                                                 <button type="button" class="close" onclick="Custombox.close();">
-                                                     <span>&times;</span><span class="sr-only">Close</span>
-                                                 </button>
-                                                 <h4 class="custom-modal-title">سبب حذف المستخدم</h4>
-                                                 <div class="custom-modal-text text-right" style="text-align: right !important;">
-                                                    <form id="deleteForm" action="{{ route('users.destroy',$user->id) }}" method="post" data-id="{{ $user->id }}">
-             
-                                                        {{ csrf_field() }}
-                                                         <input type="hidden" name="id" value="{{$user->id}}">
-                                                  
-                                                        <div class="form-group ">
-                                                                
-                                                                <div>
-                                                                    <label for="paid-signup">
-                                                                         سبب الحذف 
-                                                                    </label>
-                                                                    <br>
-                                                                    <textarea id="paid-signup" value="{{old('delete_reason')}}" name="delete_reason" id="reason" class="form-control"></textarea>
-                                                                </div>
-                                                            </div>
-                
-                
-                                                            <div class="form-group text-right m-t-20">
-                                                                <button class="btn btn-primary waves-effect waves-light m-t-0"
-                                                                        type="submit">
-                                                                    حفظ البيانات
-                                                                </button>
-                                                                <button onclick="Custombox.close();" type="reset"
-                                                                        class="btn btn-default waves-effect waves-light m-l-5 m-t-0">
-                                                                    إلغاء
-                                                                </button>
-                                                            </div>
-                
-                                                        </form>
-                                                                      
-                                                 </div>
-                                             </div>
-                               
-
-                                @endif
                             </td>
                         </tr>
 
@@ -266,22 +151,41 @@
 
     <script>
 
-        // @if(session()->has('success'))
-        // setTimeout(function () {
-        //     showMessage('{{ session()->get('success') }}');
-        // }, 3000);
-        // @endif
+        function showMessage(message) {
+
+            var shortCutFunction = 'success';
+            var msg = message;
+            var title = 'نجاح!';
+            toastr.options = {
+                positionClass: 'toast-top-center',
+                onclick: null,
+                showMethod: 'slideDown',
+                hideMethod: "slideUp",
+            };
+            var $toast = toastr[shortCutFunction](msg, title);
+            // Wire up an event handler to a button in the toast, if it exists
+            $toastlast = $toast;
 
 
+        }
 
+        //activateUser
 
-        $('body').on('click', '.removeElement', function () {
+        $('body').on('click', '.activateElement', function () {
             var id = $(this).attr('data-id');
-            var $tr = $(this).closest($('#elementRow' + id).parent().parent());
+            var status = $(this).attr('data-status');
+            var url = $(this).attr('data-url');
+            console.log(url);
+            //var $tr = $(this).closest($('#preparedRow' + id).parent().parent());
+            var $tr = $($('#currentRowOn' + id));
+            var tr = $($('#currentRowOn' + id)).closest($('#currentRow' + id).parent().parent());
+
+            var data = {userId: id , status: status};
+            console.log(data);
             swal({
                 title: "هل انت متأكد؟",
                 text: "",
-                type: "error",
+                type: "success",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",
                 confirmButtonText: "موافق",
@@ -292,33 +196,60 @@
             }, function (isConfirm) {
                 if (isConfirm) {
                     $.ajax({
-                        type: 'POST',
-                        url: '{{ route('users.destroy','+id+') }}',
-                        data: {id: id},
-                        dataType: 'json',
-                        success: function (data) {
-                            $('#catTrashed').html(data.trashed);
-                            if (data) {
-                                var shortCutFunction = 'success';
-                                var msg = 'لقد تمت عملية الحذف بنجاح.';
-                                var title = data.title;
-                                toastr.options = {
-                                    positionClass: 'toast-top-center',
-                                    onclick: null,
-                                    showMethod: 'slideDown',
-                                    hideMethod: "slideUp",
-                                };
-                                var $toast = toastr[shortCutFunction](msg, title); // Wire up an event handler to a button in the toast, if it exists
-                                $toastlast = $toast;
-                            }
+                type: 'POST',
+                url: url,
+                data: data,
+                dataType: 'json',
+                success: function (data) {
+                    console.log('in',data);
+                    if (data.status == true) {
+                        var shortCutFunction = 'success';
+                        var msg = data.message;
+                        var title = 'نجاح';
+                        toastr.options = {
+                            positionClass: 'toast-top-center',
+                            onclick: null,
+                            showMethod: 'slideDown',
+                            hideMethod: "slideUp",
 
-                            $tr.find('td').fadeOut(1000, function () {
-                                $tr.remove();
-                            });
-                            
-                            //location.reload();
-                        }
-                    });
+                        };
+                        var $toast = toastr[shortCutFunction](msg, title); 
+                        $toastlast = $toast;
+                        console.log(data);
+                        $tr.fadeOut(1000, function () {
+                            $tr.remove();
+                        });
+
+                        // $tr.find('td').fadeOut(1000, function () {
+                        //     $tr.remove();
+                        // });
+
+                        //$($('#currentRowOn' + id)).remove();
+                        //location.reload();  
+                        Custombox.close();
+                        
+                    }
+
+                    if (data.status == false) {
+                        var shortCutFunction = 'error';
+                        var msg = data.message;
+                        var title = 'خطأ';
+                        toastr.options = {
+                            positionClass: 'toast-top-center',
+                            onclick: null,
+                            showMethod: 'slideDown',
+                            hideMethod: "slideUp",
+
+                        };
+                        var $toast = toastr[shortCutFunction](msg, title); 
+                        $toastlast = $toast;
+                    }
+
+                },
+                error: function (data) {
+
+                }
+            });
                 } else {
 
                     swal({
@@ -337,203 +268,6 @@
                 }
             });
         });
-
-        $('.getSelected').on('click', function () {
-            // var items = $('.checkboxes-items').val();
-            var sum = [];
-            $('.checkboxes-items').each(function () {
-                if ($(this).prop('checked') == true) {
-                    sum.push(Number($(this).val()));
-                }
-
-            });
-
-            if (sum.length > 0) {
-                //var $tr = $(this).closest($('#elementRow' + id).parent().parent());
-                swal({
-                    title: "هل انت متأكد؟",
-                    text: "",
-                    type: "error",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "موافق",
-                    cancelButtonText: "إلغاء",
-                    confirmButtonClass: 'btn-danger waves-effect waves-light',
-                    closeOnConfirm: true,
-                    closeOnCancel: true,
-                }, function (isConfirm) {
-                    if (isConfirm) {
-                        $.ajax({
-                            type: 'POST',
-                            url: '{{ route('users.group.delete') }}',
-                            data: {ids: sum},
-                            dataType: 'json',
-                            success: function (data) {
-                                $('#catTrashed').html(data.trashed);
-                                if (data) {
-                                    var shortCutFunction = 'success';
-                                    var msg = 'لقد تمت عملية الحذف بنجاح.';
-                                    var title = data.title;
-                                    toastr.options = {
-                                        positionClass: 'toast-top-left',
-                                        onclick: null
-                                    };
-                                    var $toast = toastr[shortCutFunction](msg, title); // Wire up an event handler to a button in the toast, if it exists
-                                    $toastlast = $toast;
-                                }
-
-                                $('.checkboxes-items').each(function () {
-                                    if ($(this).prop('checked') == true) {
-                                        $(this).parent('tr').remove();
-                                    }
-                                });
-//                        $tr.find('td').fadeOut(1000, function () {
-//                            $tr.remove();
-//                        });
-
-location.reload();
-                            }
-                        });
-                    } else {
-                        swal({
-                            title: "تم الالغاء",
-                            text: "انت لغيت عملية الحذف تقدر تحاول فى اى وقت :)",
-                            type: "error",
-                            showCancelButton: false,
-                            confirmButtonColor: "#DD6B55",
-                            confirmButtonText: "موافق",
-                            confirmButtonClass: 'btn-info waves-effect waves-light',
-                            closeOnConfirm: false,
-                            closeOnCancel: false
-                        });
-                    }
-                });
-            } else {
-                swal({
-                    title: "تحذير",
-                    text: "قم بتحديد عنصر على الاقل",
-                    type: "warning",
-                    showCancelButton: false,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "موافق",
-                    confirmButtonClass: 'btn-warning waves-effect waves-light',
-                    closeOnConfirm: false,
-                    closeOnCancel: false
-
-                });
-            }
-
-
-        });
-
-        $('.getSelectedAndSuspend').on('click', function () {
-
-            var sum = [];
-            $('.checkboxes-items').each(function () {
-                if ($(this).prop('checked') == true) {
-                    sum.push(Number($(this).val()));
-                }
-            });
-
-            if (sum.length > 0) {
-                //var $tr = $(this).closest($('#elementRow' + id).parent().parent());
-                swal({
-                    title: "هل انت متأكد؟",
-                    text: "يمكنك استرجاع المحذوفات مرة اخرى لا تقلق.",
-                    type: "error",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "موافق",
-                    cancelButtonText: "إلغاء",
-                    confirmButtonClass: 'btn-danger waves-effect waves-light',
-                    closeOnConfirm: true,
-                    closeOnCancel: true,
-                }, function (isConfirm) {
-                    if (isConfirm) {
-                        $.ajax({
-                            type: 'POST',
-                            url: '{{ route('users.group.suspend') }}',
-                            data: {ids: sum},
-                            dataType: 'json',
-                            success: function (data) {
-                                $('#catTrashed').html(data.trashed);
-                                if (data) {
-                                    location.reload();
-                                    var shortCutFunction = 'success';
-                                    var msg = 'لقد تمت عملية الحظر بنجاح.';
-                                    var title = data.title;
-                                    toastr.options = {
-                                        positionClass: 'toast-top-left',
-                                        onclick: null
-                                    };
-                                    var $toast = toastr[shortCutFunction](msg, title); // Wire up an event handler to a button in the toast, if it exists
-                                    $toastlast = $toast;
-                                }
-
-                                $('.checkboxes-items').each(function () {
-                                    if ($(this).prop('checked') == true) {
-                                        var user_id = Number($(this).val()) ;
-                                        //$(this).parent().parent().parent().remove();
-                                        var is_suspend = $(this).closest($('#is_suspend' + user_id)).data('suspend');
-                                        console.log('suspend',is_suspend);
-                                        // $(this).closest($('#is_suspend' + user_id).text('inas'));
-                                        // $(this).closest($('#is_suspend' + user_id)).data('suspend', 1);      
-                                        //$('#is_suspend').text('inas');
-                                    }
-                                });
-//                        $tr.find('td').fadeOut(1000, function () {
-//                            $tr.remove();
-//                        });
-                            }
-                        });
-                    } else {
-                        swal({
-                            title: "تم الالغاء",
-                            text: "انت لغيت عملية الحذف تقدر تحاول فى اى وقت :)",
-                            type: "error",
-                            showCancelButton: false,
-                            confirmButtonColor: "#DD6B55",
-                            confirmButtonText: "موافق",
-                            confirmButtonClass: 'btn-info waves-effect waves-light',
-                            closeOnConfirm: false,
-                            closeOnCancel: false
-                        });
-                    }
-                });
-            } else {
-                swal({
-                    title: "تحذير",
-                    text: "قم بتحديد عنصر على الاقل",
-                    type: "warning",
-                    showCancelButton: false,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "موافق",
-                    confirmButtonClass: 'btn-warning waves-effect waves-light',
-                    closeOnConfirm: false,
-                    closeOnCancel: false
-
-                });
-            }
-
-        });
-
-        function showMessage(message) {
-
-            var shortCutFunction = 'success';
-            var msg = message;
-            var title = 'نجاح!';
-            toastr.options = {
-                positionClass: 'toast-top-center',
-                onclick: null,
-                showMethod: 'slideDown',
-                hideMethod: "slideUp",
-            };
-            var $toast = toastr[shortCutFunction](msg, title);
-            // Wire up an event handler to a button in the toast, if it exists
-            $toastlast = $toast;
-
-
-        }
 
         $('form#activeForm').on('submit', function (e) {
             e.preventDefault();

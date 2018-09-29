@@ -21,6 +21,53 @@
                     </a>
                 </div>
 
+                <div class="col-sm-4 col-sm-offset-4 pull-left">
+                    @if(isset($type) && $type == 'search')
+                        <a href="{{ route('measurementUnits.index') }}" style="float: left; margin-right: 15px;" class="btn btn-primary btn-sm"><i class="fa fa-eye" style="margin-left: 5px"></i>مشاهدة وحدات القياس
+                        </a>
+                    @endif
+                </div>
+
+                @if(isset($type) && $type != 'search')
+                    <div class="row">
+                        <form action="{{route('measurementUnits.search')}}" method="get">
+                            
+                            @php 
+                                $old = date('Y-m-d', strtotime('-5days'));
+                                $new = date("Y-m-d"); 
+                            @endphp
+                            <div class="col-lg-4"> 
+                                <label>وحدة القياس</label>
+                                <select name="unit" class="form-control">
+                                    <option value="" disabled selected>وحدة القياس ...</option>
+                                    @forelse($list as $unit)
+                                        <option value="{{$unit->id}}">{{$unit->name}}</option>
+                                    @empty
+                                    <option value="" disabled>لا توجد وحدات قياس</option>
+                                    @endforelse
+                                </select>
+                                
+                            </div>
+
+                            <div class="col-lg-4">
+                                <label>حالة وحدة القياس</label>
+                                <select class="form-control" name="status">
+                                    <option value="" disabled selected>الحالة ...</option>
+                                    <option value="1">مفعل</option>
+                                    <option value="0">معطل</option>
+                                </select>
+                            </div>
+
+                            <div class="col-lg-2">
+                                <button type="submit" class="btn btn-primary">بحث</button>
+                            </div>
+                            
+                        </form>
+                    </div>
+                @endif
+
+                <br> <br>
+
                 <h4 class="header-title m-t-0 m-b-30">مشاهدة وحدات القياس</h4>
 
                 <table id="datatable-fixed-header" class="table table-striped table-hover table-condensed"

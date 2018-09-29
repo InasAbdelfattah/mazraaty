@@ -35,15 +35,79 @@ class OfferController extends Controller
     public function index(Request $request)
     {
 
-        if (!Gate::allows('offers_manage')) {
+        if (!Gate::allows('products_manage')) {
             return abort(401);
         }
 
         /**
          * Get all products
          */
-        $offers = Offer::all();
-        return view('admin.offers.index',compact('offers'));
+        $offers = Offer::join('products','offers.product_id','products.id')->select('offers.*','products.name as product_name')->get();
+
+        $cat = Category::where('parent_id',0)->where('status' , 1)->get();
+
+        $cat->map(function ($q) {
+            $subcats = Category::where('parent_id',$q->id)->where('status',1)->select('id','name')->get();
+            $subcats->map(function ($q) {
+                $q->products = json_encode(Product::where('subcategory_id',$q->id)->where('status',1)->select('id','name')->get());
+            });
+            $q->subcats = json_encode($subcats);
+        });
+
+        $type = 'offers';
+        $list = Product::all();
+
+
+        return view('admin.offers.index',compact('offers' , 'type' ,'list','cat'));
+    }
+
+    public function search(Request $request)
+    {
+        
+        if (!Gate::allows('products_manage')) {
+            return abort(401);
+        }
+
+        $offers = [] ;
+
+        $query = Offer::select();
+
+        if($request->id):
+            $query->where('offers.product_id',$request->id);
+        endif;
+
+        if($request->cat_id != null):
+            $query->where('offers.category_id',$request->cat_id);
+        endif;
+
+        if($request->subcat_id != null):
+            $query->where('offers.subcategory_id',$request->subcat_id);
+        endif;
+
+
+        if($request->status != null):
+            $query->where('offers.is_available',$request->status);
+        endif;
+        
+        $offers = $query->join('products','offers.product_id','products.id')->select('offers.*','products.name as product_name')->get();
+
+        // $offers = Offer::join('products','offers.product_id','products.id')->select('offers.*','products.name as product_name')->get();
+
+        $cat = Category::where('parent_id',0)->where('status' , 1)->get();
+
+        $cat->map(function ($q) {
+            $subcats = Category::where('parent_id',$q->id)->where('status',1)->select('id','name')->get();
+            $subcats->map(function ($q) {
+                $q->products = json_encode(Product::where('subcategory_id',$q->id)->where('status',1)->select('id','name')->get());
+            });
+            $q->subcats = json_encode($subcats);
+        });
+
+        $type = 'search';
+
+        $list = Product::all();
+
+        return view('admin.offers.index',compact('offers' , 'type' ,'list','cat'));
     }
 
     /**
@@ -53,7 +117,7 @@ class OfferController extends Controller
      */
     public function create()
     {
-        if (!Gate::allows('offers_manage')) {
+        if (!Gate::allows('products_manage')) {
             return abort(401);
         }
 
@@ -80,7 +144,7 @@ class OfferController extends Controller
     public function store(Request $request)
     {
         
-        if (!Gate::allows('offers_manage')) {
+        if (!Gate::allows('products_manage')) {
             return abort(401);
         }
      
@@ -93,9 +157,9 @@ class OfferController extends Controller
             'product_id' => 'required',
             'category_id' => 'required',
             'subcategory_id' => 'required',
-            'measurement_id' => 'required',
+            //'measurement_id' => 'required',
             'is_available' => 'required',
-            'image' => 'image',
+            //'image' => 'image',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -110,6 +174,7 @@ class OfferController extends Controller
                 ->withErrors($validator->errors());
         }
         //`name`, `image`, `description`, `price`, `amount`, `product_id`, `measurement_id`, `is_available`, `status`,'category_id','subcategory_id'
+
         $offer = new Offer;
         $offer->name = $request->name ? $request->name : '';
         $offer->description = $request->description ? $request->description : '';
@@ -118,7 +183,7 @@ class OfferController extends Controller
         $offer->product_id = $request->product_id;
         $offer->category_id = $request->category_id;
         $offer->subcategory_id = $request->subcategory_id;
-        $offer->measurement_id = $request->measurement_id;
+        $offer->measurement_id = $request->measurement_id ? $request->measurement_id : 0;
         $offer->is_available = $request->is_available;
         $offer->status = 1;
         if ($request->hasFile('image')):
@@ -127,7 +192,7 @@ class OfferController extends Controller
             $offer->image = '';
         endif;
         $offer->save();
-        session()->flash('success', 'لقد تم إضافة المنتج بنجاح : '  . $offer->name);
+        session()->flash('success', 'لقد تم إضافة العرض بنجاح ');
         return redirect(route('offers.index'));
     }
 
@@ -139,7 +204,7 @@ class OfferController extends Controller
      */
     public function show($id)
     {
-        if (!Gate::allows('offers_manage')) {
+        if (!Gate::allows('products_manage')) {
             return abort(401);
         }
 
@@ -156,7 +221,7 @@ class OfferController extends Controller
      */
     public function edit($id)
     {
-        if (!Gate::allows('offers_manage')) {
+        if (!Gate::allows('products_manage')) {
             return abort(401);
         }
 
@@ -237,7 +302,7 @@ class OfferController extends Controller
      */
     public function destroy(Request $request ,$id)
     {
-        if (!Gate::allows('offers_manage')) {
+        if (!Gate::allows('products_manage')) {
             return abort(401);
         }
 
@@ -273,13 +338,14 @@ class OfferController extends Controller
 
         if ($model) {
             
-            if($model->status != $request->status) {
-                if ($request->status == 1) {
-                    $msg = 'تم تفعيل العرض';
+            if($model->is_available != $request->status) {
+                if ($request->is_available == 1) {
+                    
+                    $msg = 'تم الغاء اتاحة العرض';
                 } else {
-                    $msg = 'تم تعطيل العرض';
+                    $msg = 'تم إتاحة العرض';
                 }
-                $model->status = $request->status;
+                $model->is_available = $request->status;
                 if ($model->save()) {
                     return response()->json([
                         'status' => true,
@@ -312,7 +378,7 @@ class OfferController extends Controller
     public function groupDelete(Request $request)
     {
 
-        if (!Gate::allows('offers_manage')) {
+        if (!Gate::allows('products_manage')) {
             return abort(401);
         }
 

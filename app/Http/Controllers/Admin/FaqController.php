@@ -20,7 +20,7 @@ class FaqController extends Controller
      */
     public function index()
     {
-        if (!Gate::allows('faqs_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -36,7 +36,7 @@ class FaqController extends Controller
      */
     public function create()
     {
-        if (!Gate::allows('faqs_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -51,7 +51,7 @@ class FaqController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Gate::allows('faqs_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -89,7 +89,7 @@ class FaqController extends Controller
      */
     public function show($id)
     {
-        if (!Gate::allows('faqs_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -106,7 +106,7 @@ class FaqController extends Controller
      */
     public function edit($id)
     {
-        if (!Gate::allows('faqs_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -125,7 +125,7 @@ class FaqController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Gate::allows('faqs_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 
@@ -163,7 +163,7 @@ class FaqController extends Controller
      */
     public function destroy($id)
     {
-        if (!Gate::allows('faqs_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
         
@@ -186,7 +186,7 @@ class FaqController extends Controller
     public function groupDelete(Request $request)
     {
 
-        if (!Gate::allows('faqs_manage')) {
+        if (!Gate::allows('settings_manage')) {
             return abort(401);
         }
 

@@ -143,14 +143,16 @@ class LoginController extends Controller
             ]);
         endif;
 
-        $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :null ;
-        $user->cityName = $user->city != null ? $user->city->name : null;
-    
-        $this->manageDevices($request, $user);
+        
                     
         if ($user->is_active == 0) {
             $user->is_active = 1;
-            $user->update();                
+            $user->update();      
+
+            $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :null ;
+            $user->cityName = $user->city != null ? $user->city->name : null;
+    
+        $this->manageDevices($request, $user);          
             return response()->json([
                 'status' => true,
                 'message' => 'تم تفعيل الحساب',
@@ -158,6 +160,11 @@ class LoginController extends Controller
             ]);
 
         }
+
+        $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :null ;
+        $user->cityName = $user->city != null ? $user->city->name : null;
+    
+        $this->manageDevices($request, $user);
 
         return response()->json([
             'status' => false,

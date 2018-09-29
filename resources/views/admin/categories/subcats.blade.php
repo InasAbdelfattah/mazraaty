@@ -23,6 +23,62 @@
                         <i class="fa fa-plus"></i> <span>إضافة</span> </span>
                 </a>
                 </div>
+
+                <div class="pull-right" style="margin-left: 10px;">
+                    @if(isset($type) && $type == 'search')
+                        <a href="{{ route('subcategories') }}" style="float: left; margin-right: 15px;" class="btn btn-primary btn-sm"><i class="fa fa-eye" style="margin-left: 5px"></i>مشاهدة الأقسام
+                        </a>
+                    @endif
+                </div>
+
+                @if(isset($type) && $type != 'search')
+                    <div class="row">
+                        <form action="{{route('categories.search')}}" method="get">
+                            
+                            <div class="col-lg-3"> 
+                                <label>اسم القسم الرئيسلى</label>
+                                <select name="parent_id" class="form-control">
+                                    <option value="" disabled selected>القسم الرئيسى...</option>
+                                    @forelse($cat as $value)
+                                        <option value="{{$value->id}}">{{$value->name}}</option>
+                                    @empty
+                                    <option value="" disabled>لا توجد أقسام رئيسية</option>
+                                    @endforelse
+                                </select>
+                                
+                            </div>
+
+                            <div class="col-lg-3"> 
+                                <label>اسم القسم الفرعى</label>
+                                <select name="id" class="form-control">
+                                    <option value="" disabled selected>القسم الفرعى...</option>
+                                    @forelse($subcat as $value)
+                                        <option value="{{$value->id}}">{{$value->name}}</option>
+                                    @empty
+                                    <option value="" disabled>لا توجد أقسام فرعية</option>
+                                    @endforelse
+                                </select>
+                                
+                            </div>
+
+                            <div class="col-lg-3">
+                                <label>حالة القسم</label>
+                                <select class="form-control" name="status">
+                                    <option value="" disabled selected>الحالة ...</option>
+                                    <option value="1">مفعل</option>
+                                    <option value="0">معطل</option>
+                                </select>
+                            </div>
+
+                            <div class="col-lg-3">
+                                <button type="submit" class="btn btn-primary">بحث</button>
+                            </div>
+                            
+                        </form>
+                    </div>
+                @endif
+
+                <br> <br>
                 
                 <h4 class="header-title m-t-0 m-b-30">مشاهدة الأقسام الفرعية</h4>
 

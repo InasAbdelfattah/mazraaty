@@ -11,6 +11,7 @@ use App\Coupon;
 use App\Libraries\PushNotification;
 use App\User;
 use App\Notification;
+use App\Order;
 
 class DiscountController extends Controller
 {
@@ -31,7 +32,7 @@ class DiscountController extends Controller
     public function index(Request $request)
     {
 
-        if (!Gate::allows('discounts_manage')) {
+        if (!Gate::allows('orders_manage')) {
             return abort(401);
         }
 
@@ -39,8 +40,58 @@ class DiscountController extends Controller
          * Get all discounts
          */
         $discounts = Coupon::all();
-        return view('admin.discounts.index',compact('discounts'));
+
+        $type = 'coupons';
+
+        return view('admin.discounts.index',compact('discounts' , 'type'));
     }
+    //users of coupons
+
+    public function getUserCoupons(Request $request)
+    {
+
+        if (!Gate::allows('orders_manage')) {
+            return abort(401);
+        }
+
+        /**
+         * Get all discounts
+         */
+
+        $discounts = Order::join('users','orders.user_id','users.id')->distinct('orders.user_id')->select('users.id as user_id','users.name as user_name', 'users.email as user_email' , 'users.phone as user_phone')->get();
+
+        $discounts->map(function ($q){
+            $q->coupon_count = Order::where('user_id',$q->user_id)->distinct('coupon_id')->count('coupon_id');
+            
+        });
+
+        $type = 'users_coupons';
+
+        return view('admin.discounts.users',compact('discounts' , 'type'));
+    }
+
+    public function showUserCoupons($id)
+    {
+        if (!Gate::allows('orders_manage')) {
+
+            return abort(401);
+        }
+
+        $user = User::findOrFail($id);
+
+        $user->coupons = Order::where('user_id',$id)->distinct('coupon_id')->select('coupon_id')->get();
+
+        $user->coupons->map(function ($q) use($id){
+
+            $q->coupon = Coupon::find($q->coupon_id);  
+            $q->coupon_times = Order::where('user_id',$id)->where('coupon_id',$q->coupon_id)->count();  
+
+        });
+        
+        return view('admin.discounts.show_userDiscount',compact('user'));
+    }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -50,7 +101,7 @@ class DiscountController extends Controller
     public function create()
     {
 
-        if (!Gate::allows('discounts_manage')) {
+        if (!Gate::allows('orders_manage')) {
             return abort(401);
         }
 
@@ -65,7 +116,7 @@ class DiscountController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Gate::allows('discounts_manage')) {
+        if (!Gate::allows('orders_manage')) {
             return abort(401);
         }
      
@@ -95,7 +146,7 @@ class DiscountController extends Controller
         $discount->to = $request->end_at;
         $discount->save();
 
-        $title = 'كود خصم من مزرعتى';
+        $title = 'كود خصم من '.config('app.name');
         $body = 'كود الخصم هو : '.$discount->code. ' وجارى استخدامه فى الفترة من : '.$discount->from.'الى : '.$discount->to;
         //$data = ['title' => $title , 'body'=>$body];
         $data = [];
@@ -143,13 +194,15 @@ class DiscountController extends Controller
      */
     public function show($id)
     {
-        if (!Gate::allows('discounts_manage')) {
+        if (!Gate::allows('orders_manage')) {
             return abort(401);
         }
 
         $discount = Coupon::findOrFail($id);
+        $user_no = Order::where('coupon_id',$discount->id)->distinct('user_id')->count('user_id');
+        //$ad->getcodes()->distinct('pid')->count('pid');
         
-        return view('admin.discounts.show')->with(compact('discount'));
+        return view('admin.discounts.show')->with(compact('discount','user_no'));
     }
 
     /**
@@ -160,7 +213,7 @@ class DiscountController extends Controller
      */
     public function edit($id)
     {
-        if (!Gate::allows('discounts_manage')) {
+        if (!Gate::allows('orders_manage')) {
             return abort(401);
         }
 
@@ -177,7 +230,7 @@ class DiscountController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Gate::allows('discounts_manage')) {
+        if (!Gate::allows('orders_manage')) {
             return abort(401);
         }
 
@@ -212,15 +265,17 @@ class DiscountController extends Controller
 
     public function search(Request $request)
     {
-        if (!Gate::allows('discounts_manage')) {
+        if (!Gate::allows('orders_manage')) {
             return abort(401);
         }
 
         $discounts = [] ;
 
-        if ($request->from_date != '' && $request->to_date != '' && $request->to_date > $request->from_date) {
+        if ($request->from_date != '' && $request->to_date != '' && $request->to_date >= $request->from_date) {
             
-            $discounts = Coupon::whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->get();
+            //$discounts = Coupon::whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->get();
+
+            $discounts = Coupon::whereDate('from','>=',$request->from_date)->whereDate('from','<=',$request->to_date)->get();
         }else{
 
             return back()->with(compact('discounts'))->with('error','من فضلك يرجى اختيار فترة زمنية صحيحة');
@@ -228,7 +283,37 @@ class DiscountController extends Controller
         }
         
         $type = 'search';
-        return view('admin.discounts.index' , compact('discounts'));
+        return view('admin.discounts.index' , compact('discounts' ,'type'));
+
+    }
+
+    public function searchDiscountsUsers(Request $request)
+    {
+        if (!Gate::allows('orders_manage')) {
+            return abort(401);
+        }
+
+        $discounts = [] ;
+
+        if ($request->from_date != '' && $request->to_date != '' && $request->to_date >= $request->from_date) {
+
+
+        $discounts = Order::join('users','orders.user_id','users.id')->distinct('orders.user_id')->whereDate('users.created_at','>=',$request->from_date)->whereDate('users.created_at','<=',$request->to_date)->select('users.id as user_id','users.name as user_name', 'users.email as user_email' , 'users.phone as user_phone')->get();
+
+        $discounts->map(function ($q){
+            $q->coupon_count = Order::where('user_id',$q->user_id)->distinct('coupon_id')->count('coupon_id');
+            
+        });
+
+        
+        }else{
+
+            return back()->with(compact('discounts'))->with('error','من فضلك يرجى اختيار فترة زمنية صحيحة');
+
+        }
+        
+        $type = 'search';
+        return view('admin.discounts.users',compact('discounts','type'));
 
     }
 }

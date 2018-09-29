@@ -45,7 +45,70 @@ class ProductController extends Controller
          * Get all products
          */
         $products = Product::all();
-        return view('admin.products.index',compact('products'));
+
+        $cat = Category::where('parent_id',0)->where('status' , 1)->get();
+
+        $cat->map(function ($q) {
+            $subcats = Category::where('parent_id',$q->id)->where('status',1)->select('id','name')->get();
+            $subcats->map(function ($q) {
+                $q->products = json_encode(Product::where('subcategory_id',$q->id)->where('status',1)->select('id','name')->get());
+            });
+            $q->subcats = json_encode($subcats);
+        });
+
+        $type = 'products';
+        $list = Product::all();
+
+        return view('admin.products.index',compact('products' ,'cat', 'type' ,'list'));
+    }
+
+
+    public function search(Request $request)
+    {
+        
+        if (!Gate::allows('settings_manage')) {
+            return abort(401);
+        }
+
+        $products = [] ;
+
+        $query = Product::select();
+
+        if($request->id):
+            $query->where('id',$request->id);
+        endif;
+
+        if($request->cat_id != null):
+            $query->where('category_id',$request->cat_id);
+        endif;
+
+        if($request->subcat_id != null):
+            $query->where('subcategory_id',$request->subcat_id);
+        endif;
+
+
+        if($request->status != null):
+            $status = (int)$request->status;
+            $query->where('status',$status);
+        endif;
+        
+        $products = $query->orderBy('id','DESC')->get();
+
+        $cat = Category::where('parent_id',0)->where('status' , 1)->get();
+
+        $cat->map(function ($q) {
+            $subcats = Category::where('parent_id',$q->id)->where('status',1)->select('id','name')->get();
+            $subcats->map(function ($q) {
+                $q->products = json_encode(Product::where('subcategory_id',$q->id)->where('status',1)->select('id','name')->get());
+            });
+            $q->subcats = json_encode($subcats);
+        });
+
+        $type = 'search';
+
+        $list = Product::all();
+
+        return view('admin.products.index',compact('products' ,'cat', 'type','list'));
     }
 
     /**
@@ -75,7 +138,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Gate::allows('cards_manage')) {
+        if (!Gate::allows('products_manage')) {
             return abort(401);
         }
      
@@ -185,7 +248,7 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        if (!Gate::allows('cards_manage')) {
+        if (!Gate::allows('products_manage')) {
             return abort(401);
         }
 
@@ -322,7 +385,7 @@ class ProductController extends Controller
     public function groupDelete(Request $request)
     {
 
-        if (!Gate::allows('cards_manage')) {
+        if (!Gate::allows('products_manage')) {
             return abort(401);
         }
 
@@ -358,7 +421,7 @@ class ProductController extends Controller
      */
     public function delete(Request $request)
     {
-        if (!Gate::allows('cards_manage')) {
+        if (!Gate::allows('products_manage')) {
             return abort(401);
         }
 
@@ -381,7 +444,7 @@ class ProductController extends Controller
 
     public function deleteService(Request $request)
     {
-        if (!Gate::allows('cards_manage')) {
+        if (!Gate::allows('products_manage')) {
             return abort(401);
         }
 

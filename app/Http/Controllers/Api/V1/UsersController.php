@@ -133,12 +133,13 @@ class UsersController extends Controller
                             $old->delete();
                         }
                     }
-                foreach($addresses as $day){
+                foreach($addresses as $address){
                     $model = new UserAddress;
                     $model->user_id = $user->id;
-                    $model->address = $day->address;
-                    $model->lat = $day->lat;
-                    $model->lng = $day->lng;
+                    $model->address = $address->address;
+                    $model->city = $address->city;
+                    $model->lat = $address->lat;
+                    $model->lng = $address->lng;
                     $model->save();
                 }
             }

@@ -5,26 +5,31 @@ namespace App\Http\Controllers\Admin;
 use App\User;
 use App\Order;
 use App\Category;
-use App\UserCard;
-use App\Card;
-use App\Payment;
+use App\Product;
+use App\Offer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use DB;
 use Illuminate\Support\Facades\Gate;
 use Carbon\Carbon;
 use DateTime ;
-
+use App\Libraries\PushNotification;
 use App\Notification;
-
-use LaravelFCM\Message\OptionsBuilder;
-use LaravelFCM\Message\PayloadDataBuilder;
-use LaravelFCM\Message\PayloadNotificationBuilder;
-use FCM;
+use App\UserAddress;
+use App\Item;
+use App\Coupon;
 
 
 class OrderController extends Controller
 {
+    
+    public $push;
+
+    public function __construct(PushNotification $push)
+    {
+ 
+        $this->push = $push;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -37,12 +42,50 @@ class OrderController extends Controller
             return abort(401);
         }
 
-        //`doc_photo`, `username`, `phone`, `phone2`, `delivered_time`, `address`, `card_id`, `user_id`, `payment_method`, `status`, `refuse_reason`
-        $categories = Category::where('status',1)->select('id' , 'name_ar as name')->get();
+        //`user_id`, `basket_id`, `coupon_id`, `total_price`, `discount`, `order_date`, `order_time`, `address_id`, `status`, `user_deliverd_time`
         
-        $cards = Card::where('status',1)->select('id' , 'name_ar as name')->get();
-        
-        $orders = Order::join('cards','orders.card_id','cards.id')->join('users','orders.user_id','users.id')->select('orders.*','cards.id as card_id' , 'cards.name_ar as card_name' ,'users.id as user_id' , 'users.name as user_name')->orderBy('id','Desc')->get();
+        $orders = Order::join('baskets','orders.basket_id','baskets.id')->join('users','orders.user_id','users.id')->join('user_addresses','orders.address_id','user_addresses.id')->select('orders.*','baskets.id as basket_id' ,'users.id as user_id' , 'users.name as user_name' , 'user_addresses.address as user_address', 'user_addresses.city as user_city')->orderBy('id','Desc')->get();
+
+        $orders->map(function ($q) {
+
+            if($q->coupon_id != null):
+                $coupon = Coupon::find($q->coupon_id);
+                $q->couponCode= $coupon ? $coupon->code : '';
+            endif;
+            $address = UserAddress::find($q->address_id);
+            $q->address= $address ? $address->address : '';    
+
+            $items = Item::where('basket_id',$q->basket_id)->select('id','itemable_id','amount','itemable_type')->get();
+            $items->map(function ($q) {
+                $product = Product::find($q->itemable_id);
+                $offer = Offer::find($q->itemable_id);
+                if($q->itemable_type == 'App\Product'):
+                    $q->product_name = $product->name;
+                    $q->product_price = $product->price;
+                    $q->product_image= Request()->root() . '/files/products/' . $product->image ;
+                    //$q->offer_name = null;
+                    $q->offer_price = null;
+                else:
+                    $offer_product = Product::find($offer->product_id);
+                    //$q->offer_name = $offer->name;
+                    $q->offer_price = $offer->price;
+                    $q->product_name = $offer_product->name;
+                    $q->product_price = $offer_product->price;
+                    $q->product_image= Request()->root() . '/files/products/' . $offer_product->image ;
+
+                endif;
+            });
+
+            $q->items = $items;        
+                  
+            /*status:
+                0 => 'new'
+                1 => 'accepted'
+                2 => 'rejected'
+                3 => 'finished'
+            */
+            
+         });
 
         return view('admin.orders.index' , compact('orders' , 'categories' , 'cards'));
     }
@@ -52,47 +95,134 @@ class OrderController extends Controller
         if (!Gate::allows('orders_manage')) {
             return abort(401);
         }
+        //return $request;
 
         $orders = [] ;
-        $categories = Category::where('status',1)->select('id' , 'name_ar as name')->get();
+
         
-        $cards = Card::where('status',1)->select('id' , 'name_ar as name')->get();
-        
-        if ($request->status != '' && $request->card_id == '') {
-            
-            //$cardType = Category::where('name_ar','like','%'.$request->service_type.'%')->first();
+        if ($request->from != '' && $request->to != '' && $request->status == '') {
+            if($request->from > $request->to){
+                return back()->with('error','يرجى ادخال فترة زمنية صحيحة');
+            }
+            $orders = Order::join('baskets','orders.basket_id','baskets.id')->join('users','orders.user_id','users.id')->join('user_addresses','orders.address_id','user_addresses.id')->whereDate('orders.created_at','>',$request->from)->whereDate('orders.created_at','<',$request->to)->select('orders.*','baskets.id as basket_id' ,'users.id as user_id' , 'users.name as user_name' , 'user_addresses.address as user_address', 'user_addresses.city as user_city')->orderBy('id','Desc')->get();
 
-                
-            $orders = Order::join('cards','orders.card_id','cards.id')->join('users','orders.user_id','users.id')->where('orders.status',$request->status)->select('orders.*','cards.id as card_id' , 'cards.name_ar as card_name' ,'users.id as user_id' , 'users.name as user_name')->get();
+            $orders->map(function ($q) {
 
-        }elseif ($request->status == '' && $request->card_id != '') {
-            //$user = User::where('name','like','%'.$request->service_provider.'%')->first();
-            
-            $orders = Order::join('cards','orders.card_id','cards.id')->join('users','orders.user_id','users.id')->where('orders.card_id',$request->card_id)->select('orders.*','cards.id as card_id' , 'cards.name_ar as card_name' ,'users.id as user_id' , 'users.name as user_name')->get();
+                if($q->coupon_id != null):
+                    $coupon = Coupon::find($q->coupon_id);
+                    $q->couponCode= $coupon ? $coupon->code : '';
+                endif;
+                $address = UserAddress::find($q->address_id);
+                $q->address= $address ? $address->address : '';    
 
-        }elseif ($request->status != '' && $request->card_id != '') {
-            
-            $orders = Order::join('cards','orders.card_id','cards.id')->join('users','orders.user_id','users.id')->where('orders.card_id',$request->card_id)->where('orders.status',$request->status)->select('orders.*','cards.id as card_id' , 'cards.name_ar as card_name' ,'users.id as user_id' , 'users.name as user_name')->get();
-        }elseif ($request->from != '' && $request->to != '' && $request->status != '' && $request->card_id != '') {
-            
-            $orders = Order::join('cards','orders.card_id','cards.id')->join('users','orders.user_id','users.id')->where('orders.card_id',$request->card_id)->where('orders.status',$request->status)->whereDate('orders.created_at','>',$request->from)->whereDate('orders.created_at','<',$request->to)->select('orders.*','cards.id as card_id' , 'cards.name_ar as card_name' ,'users.id as user_id' , 'users.name as user_name')->get();
-        }elseif ($request->from != '' && $request->to != '' && $request->card_type == '' && $request->card_id == '') {
-            
-            $orders = Order::join('cards','orders.card_id','cards.id')->join('users','orders.user_id','users.id')->whereDate('orders.created_at','>',$request->from)->whereDate('orders.created_at','<',$request->to)->select('orders.*','cards.id as card_id' , 'cards.name_ar as card_name' ,'users.id as user_id' , 'users.name as user_name')->get();
-        }elseif ($request->from != '' && $request->to != '' && $request->status != '' && $request->card_id == '') {
-            
-            $orders = Order::join('cards','orders.card_id','cards.id')->join('users','orders.user_id','users.id')->where('orders.status',$request->status)->whereDate('orders.created_at','>',$request->from)->whereDate('orders.created_at','<',$request->to)->select('orders.*','cards.id as card_id' , 'cards.name_ar as card_name' ,'users.id as user_id' , 'users.name as user_name')->get();
-        }elseif ($request->from != '' && $request->to != '' && $request->status == '' && $request->card_id != '') {
-            
-            $orders = Order::join('cards','orders.card_id','cards.id')->join('users','orders.user_id','users.id')->where('orders.card_id',$request->card_id)->whereDate('orders.created_at','>',$request->from)->whereDate('orders.created_at','<',$request->to)->select('orders.*','cards.id as card_id' , 'cards.name_ar as card_name' ,'users.id as user_id' , 'users.name as user_name')->get();
-        }
-        else{
+                $items = Item::where('basket_id',$q->basket_id)->select('id','itemable_id','amount','itemable_type')->get();
+                $items->map(function ($q) {
+                    $product = Product::find($q->itemable_id);
+                    $offer = Offer::find($q->itemable_id);
+                    if($q->itemable_type == 'App\Product'):
+                        $q->product_name = $product->name;
+                        $q->product_price = $product->price;
+                        $q->product_image= Request()->root() . '/files/products/' . $product->image ;
+                        //$q->offer_name = null;
+                        $q->offer_price = null;
+                    else:
+                        $offer_product = Product::find($offer->product_id);
+                        //$q->offer_name = $offer->name;
+                        $q->offer_price = $offer->price;
+                        $q->product_name = $offer_product->name;
+                        $q->product_price = $offer_product->price;
+                        $q->product_image= Request()->root() . '/files/products/' . $offer_product->image ;
 
-            return back()->with(compact('orders'))->with('fail','من فضلك يرجى كتابة اسم مزود الخدمة أو اختيار نوع الخدمة');
+                    endif;
+                });
+
+                $q->items = $items; 
+            });
+
+        }elseif ($request->from != '' && $request->to != '' && $request->status != '') {
+            if($request->from > $request->to){
+                return back()->with('error','يرجى ادخال فترة زمنية صحيحة');
+            }
+            $orders = Order::join('baskets','orders.basket_id','baskets.id')->join('users','orders.user_id','users.id')->join('user_addresses','orders.address_id','user_addresses.id')->whereDate('orders.created_at','>',$request->from)->whereDate('orders.created_at','<',$request->to)->where('orders.status',$request->status)->select('orders.*','baskets.id as basket_id' ,'users.id as user_id' , 'users.name as user_name' , 'user_addresses.address as user_address', 'user_addresses.city as user_city')->orderBy('id','Desc')->get();
+
+            $orders->map(function ($q) {
+
+                if($q->coupon_id != null):
+                    $coupon = Coupon::find($q->coupon_id);
+                    $q->couponCode= $coupon ? $coupon->code : '';
+                endif;
+                $address = UserAddress::find($q->address_id);
+                $q->address= $address ? $address->address : '';    
+
+                $items = Item::where('basket_id',$q->basket_id)->select('id','itemable_id','amount','itemable_type')->get();
+                $items->map(function ($q) {
+                    $product = Product::find($q->itemable_id);
+                    $offer = Offer::find($q->itemable_id);
+                    if($q->itemable_type == 'App\Product'):
+                        $q->product_name = $product->name;
+                        $q->product_price = $product->price;
+                        $q->product_image= Request()->root() . '/files/products/' . $product->image ;
+                        //$q->offer_name = null;
+                        $q->offer_price = null;
+                    else:
+                        $offer_product = Product::find($offer->product_id);
+                        //$q->offer_name = $offer->name;
+                        $q->offer_price = $offer->price;
+                        $q->product_name = $offer_product->name;
+                        $q->product_price = $offer_product->price;
+                        $q->product_image= Request()->root() . '/files/products/' . $offer_product->image ;
+
+                    endif;
+                });
+
+                $q->items = $items; 
+            });
+
+        }elseif ($request->from == '' && $request->to == '' && $request->status != '') {
+            
+            $orders = Order::join('baskets','orders.basket_id','baskets.id')->join('users','orders.user_id','users.id')->join('user_addresses','orders.address_id','user_addresses.id')->where('orders.status',$request->status)->select('orders.*','baskets.id as basket_id' ,'users.id as user_id' , 'users.name as user_name' , 'user_addresses.address as user_address', 'user_addresses.city as user_city')->orderBy('id','Desc')->get();
+
+            $orders->map(function ($q) {
+
+                if($q->coupon_id != null):
+                    $coupon = Coupon::find($q->coupon_id);
+                    $q->couponCode= $coupon ? $coupon->code : '';
+                endif;
+                $address = UserAddress::find($q->address_id);
+                $q->address= $address ? $address->address : '';    
+
+                $items = Item::where('basket_id',$q->basket_id)->select('id','itemable_id','amount','itemable_type')->get();
+                $items->map(function ($q) {
+                    $product = Product::find($q->itemable_id);
+                    $offer = Offer::find($q->itemable_id);
+                    if($q->itemable_type == 'App\Product'):
+                        $q->product_name = $product->name;
+                        $q->product_price = $product->price;
+                        $q->product_image= Request()->root() . '/files/products/' . $product->image ;
+                        //$q->offer_name = null;
+                        $q->offer_price = null;
+                    else:
+                        $offer_product = Product::find($offer->product_id);
+                        //$q->offer_name = $offer->name;
+                        $q->offer_price = $offer->price;
+                        $q->product_name = $offer_product->name;
+                        $q->product_price = $offer_product->price;
+                        $q->product_image= Request()->root() . '/files/products/' . $offer_product->image ;
+
+                    endif;
+                });
+
+                $q->items = $items; 
+            });
+
+        } else{
+
+            return back()->with(compact('orders'))->with('error','يرجى اختيار الفترة الزمنية المراد البحث خلالها');
 
         }
         $type = 'search';
-        return view('admin.orders.index' , compact('orders' , 'type' , 'categories' , 'cards'));
+        $order_type = $request->order_type;
+        return view('admin.orders.index' , compact('orders' , 'type' , 'order_type'));
 
     }
 
@@ -102,23 +232,50 @@ class OrderController extends Controller
             return abort(401);
         }
         
-        $order = Order::find($id);
+        // $order = Order::find($id);
         
-        if($order):
-            $card = Card::find($order->card_id);
-            $payment = Payment::where('order_id',$order->id)->first();
-            if($card):
-                $type = Category::find($card->category_id);
-            else:
-                $type = null ;
+        $order = Order::join('baskets','orders.basket_id','baskets.id')->join('users','orders.user_id','users.id')->join('user_addresses','orders.address_id','user_addresses.id')->where('orders.id',$id)->select('orders.*','baskets.id as basket_id' ,'users.id as user_id' , 'users.name as user_name' , 'user_addresses.address as user_address', 'user_addresses.lat as lat', 'user_addresses.lng as lng', 'user_addresses.city as user_city')->first();
+
+            if($order && $order->coupon_id != null):
+                $coupon = Coupon::find($order->coupon_id);
+                $order->couponCode= $coupon ? $coupon->code : '';
+                $order->discountRatio= $coupon ? $coupon->ratio : '';
             endif;
-        else:
-            $card = null;
-            $type = null ;
-            $payment = null;
-        endif;
+
+            if($order){
+                $address = UserAddress::find($order->address_id);
+                $order->address= $address ? $address->address : '';    
+            
+                $items = Item::where('basket_id',$order->basket_id)->select('id','itemable_id','amount','itemable_type')->get();
+                $items->map(function ($q) {
+                    $product = Product::find($q->itemable_id);
+                    $offer = Offer::find($q->itemable_id);
+                    if($q->itemable_type == 'App\Product'):
+                        $q->type = 'product';
+                        $q->cat_id = $product->category_id;
+                        $q->product_name = $product->name;
+                        $q->product_price = $product->price;
+                        $q->product_image= Request()->root() . '/files/products/' . $product->image ;
+                        //$q->offer_name = null;
+                        $q->offer_price = null;
+                    else:
+                        $q->type = 'offer';
+
+                        $offer_product = Product::find($offer->product_id);
+                        $q->cat_id = $offer_product->category_id;
+                        //$q->offer_name = $offer->name;
+                        $q->offer_price = $offer->price;
+                        $q->product_name = $offer_product->name;
+                        $q->product_price = $offer_product->price;
+                        $q->product_image= Request()->root() . '/files/products/' . $offer_product->image ;
+
+                    endif;
+                });
+
+                $order->items = $items; 
+            }
         
-        return view('admin.orders.show' , compact('order','card','type','payment'));
+        return view('admin.orders.show' , compact('order'));
     }
 
     public function getFinancialReports()
@@ -299,35 +456,7 @@ class OrderController extends Controller
 
         if ($order) {
             
-            if($order->status == 0){
-                $delivered_time = $order->delivered_time;
-            }elseif($order->status == 3){
-                $userCard = UserCard::where('card_id',$order->card_id)->where('user_id',$order->user_id)->first();
-                if($userCard):
-                    $delivered_time = $userCard->to;
-                endif;
-            }
-
             $order->status = $request->status ;
-            $card = Card::where('id',$order->card_id)->first();
-            if($request->status == 1){
-                
-                if($card){
-                    $effectiveDate = $delivered_time;
-                    $expiration = intval($card->expiration);
-                    $user_card = new UserCard();
-                    $user_card->user_id = $order->user_id;
-                    $user_card->card_id = $order->card_id;
-                    // $myDateTime = DateTime::createFromFormat('Y-m-d', $order->delivered_time);
-                    // $user_card->from = $myDateTime->format('d-m-Y');
-                    $user_card->from = $delivered_time;
-                    $effectiveDate = date('Y-m-d', strtotime("+".$expiration." months", strtotime($effectiveDate)));
-                    $user_card->to = $effectiveDate ;
-                    $user_card->save();
-
-                }
-            }
-            
         
             if($request ->status == 2){
                 $order->refuse_reason = $request->refuse_reason ;
@@ -335,27 +464,61 @@ class OrderController extends Controller
                 
             }else{
                 //$body = ' تم قبول الطلب';
-                $body = 'تم قبول طلب شراء البطاقة وسيتم تسلمها يوم '.$delivered_time;
+                $body = 'تم قبول الطلب وسيتم تسلمها يوم '.$order->delivered_time;
+
+
+            }
+
+            if($order->status == 1):
+                $order_status = 'جارى التجهيز';
+                $body = 'جارى تجهيز الطلب';
+            elseif($order->status == 2):
+                $order_status = 'مرفوض';
+                $body = 'تم رفض الطلب وسبب الرفض هو : '.$request->refuse_reason;
+
+            elseif($order->status == 3):
+                $order_status = 'جارى التوصيل';
+                $body = 'جارى توصيل الطلب';
+
+            else:
+                $order_status = 'جديد';
+                $body = 'طلبكم قيد الانتظار';
+
+            endif;
+
+            if($order->status != 0){
+                $title = 'الرد على الطلب';
+
+                $data = ['title' => $title , 'body'=>$body ,'targetType' => 'order' , 'targetId' =>$order->id];
+
+                $r = $this->push->sendPushNotification($order->user_id , $data, $title, $body,'global');
+
+
+                $notif_data = array(
+                    'user_id' => $order->user_id,
+                    'user_ids' => null,
+                    'push_type' => 'single',
+                    'target_id' => $order->id,
+                    'target_type' => 'order',
+                    'title' => $title,
+                    'body' => $body,
+                    'image' => null,
+                    'is_read' => 0,
+                    'data' => json_encode($data),
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
+                );
+
+                Notification::insert($notif_data);
             }
             
-            if($card):
-                $title = $card->name_ar;
-            else:
-                $title = 'الرد على طلب بطاقة';
-            endif;
-            
-            
-            
-            $notif = sendOneSignalNotif('single' ,$order->user_id , $title , $body ,$image=null , 'order');
-            
-            //dd($notif);
             
             if ($order->save()) {
                 return response()->json([
                     'status' => true,
                     'message' => 'تم الحفظ',
                     'id' => $order->id,
-                    'order_status' => $order->status == 1 ? 'سارى' : 'مرفوض',
+                    'order_status' => $order_status,
                    
                 ]);
             }
@@ -390,46 +553,57 @@ class OrderController extends Controller
         }
     }
 
-    public function getExport(){
-        \Excel::create('التقارير المالية', function($excel) {
+    public function getExport(Request $request){
+        \Excel::create('الطلبات', function($excel) use($request){
 
-        $excel->sheet('Sheet 1', function($sheet) {
+        $excel->sheet('Sheet 1', function($sheet) use($request){
 
 
-            $orders=\DB::table('orders')->get();
+            $query=\DB::table('orders')->join('baskets','orders.basket_id','baskets.id')->join('users','orders.user_id','users.id')->join('user_addresses','orders.address_id','user_addresses.id')->select();
+
+            if ($request->status) :
+                $query->where('status', $request->status);
+            endif;
+
+            if ($request->from != '' && $request->to != '' && $request->from < $request->to) :
+                $query->whereDate('orders.created_at','>',$request->from)->whereDate('orders.created_at','<',$request->to);
+            endif;
+
+            $orders = $query->select('orders.*','baskets.id as basket_id' ,'users.id as user_id' , 'users.name as user_name' , 'user_addresses.address as user_address')->orderBy('id','Desc')->get();
 
             $orders->map(function ($q) {
-                 $q->user= User::find($q->user_id) ? User::find($q->user_id)->name : '';
                  
-                if($q->payment_method  == 0):
-                     $method = 'تحويل بنكى';
-                elseif($q->payment_method  == 1):
-                    $method = 'بطاقة ائتمان';
-                else :
-                    $method = 'دفع عند الاستلام';    
+                if($q->status == 0):
+                    $status = 'جديد';
+                elseif($q->status ==1):
+                    $status = 'جارى التجهيز';
+                elseif($q->status ==2):
+                    $status = 'مرفوض';
+                elseif($q->status ==3):
+                    $status = 'جارى التوصيل';
+                else:
+                    $status = 'مكتمل';
                 endif;
-                    
-                 $q->payment_method= $method ;
-                 $q->payment_status= $q->payment_status  == 1 ? 'سدد' : 'لم يسدد';
-                 
+
+                $q->order_status = $status;
                  
              });
 
            // Add heading row
        
-        $data[] = array('الهاتف', 'اسم المستخدم', 'الرمز الترويجى', 'كود الموظف','وسيلة الدفع','حالة السداد');
+        $data[] = array('وقت وتاريخ الطلب', 'رقم الطلب', 'اسم المستخدم', 'حالة الطلب');
         $sheet->fromArray(array($data), null, 'A1', false, false);
 
 
         // Add data rows
                 foreach($orders as $order) {
                  $data[] = array(
-                    $order->phone,
-                    $order->user,
-                    $order->promo_code ,
-                    $order->emp_code ,
-                    $order->payment_method,
-                    $order->payment_status,
+                    $order->created_at,
+                    $order->id,
+                    $order->user_name ,
+                    $order->order_status ,
+
+                    
                     
                 );
             }
@@ -478,52 +652,4 @@ class OrderController extends Controller
    
     }
     
-    
-     private function sendSingleNotification($title , $msg , $user_id ,$notif_type){
-
-        $device = \App\Device::where('user_id',$user_id)->first();
-        if($device):
-            $token = $device->device;
-        else:
-            $token = '';
-        endif;
-
-        $optionBuilder = new OptionsBuilder();
-        $optionBuilder->setTimeToLive(60*20);
-        $notificationBuilder = new PayloadNotificationBuilder('طلتك');
-        $notificationBuilder->setBody($msg)
-            ->setSound('default');
-        $dataBuilder = new PayloadDataBuilder();
-        $dataBuilder->addData(['a_data' => 'my_data']);
-        $option = $optionBuilder->build();
-        $notification = $notificationBuilder->build();
-        $data = $dataBuilder->build();
-        $notif = new Notification();
-        $notif->msg = $msg;
-        $notif->title = $title;
-        $notif->image = '';
-        $notif->to_user = $user_id;
-        $notif->type = 'single';
-        $notif->notif_type = $notif_type;
-        $notif->save();
-        
-        if($token != ''){
-            $downstreamResponse = FCM::sendTo($token, $option, $notification, $data);
-            $downstreamResponse->numberSuccess();
-            $downstreamResponse->numberFailure();
-            $downstreamResponse->numberModification();
-            //return Array - you must remove all this tokens in your database
-            $downstreamResponse->tokensToDelete();
-            //return Array (key : oldToken, value : new token - you must change the token in your database )
-            $downstreamResponse->tokensToModify();
-            //return Array - you should try to resend the message to the tokens in the array
-            $downstreamResponse->tokensToRetry();
-            // return Array (key:token, value:errror) - in production you should remove from your database the tokens
-            
-            return true;
-        }
-        
-        return false;
-    }
-
 }
