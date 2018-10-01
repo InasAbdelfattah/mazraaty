@@ -34,10 +34,14 @@ Route::group(['prefix' => 'v1'], function () {
 
 
     Route::get('cities', 'Api\V1\CityController@index');
+    Route::get('all-cities', 'Api\V1\CityController@getAllCities');
+
     Route::get('categories', 'Api\V1\CategoryController@index');
     Route::get('measurements', 'Api\V1\MeasurementUnitController@index');
     Route::get('products', 'Api\V1\ProductController@index');
+    Route::get('product-details', 'Api\V1\ProductController@details');
     Route::get('offers', 'Api\V1\OfferController@index');
+    Route::get('offer-details', 'Api\V1\OfferController@details');
     Route::get('ads', 'Api\V1\AdController@index');
     Route::get('faqs', 'Api\V1\FaqController@index');
     Route::get('general-info', 'Api\V1\SettingController@index');
@@ -49,6 +53,7 @@ Route::group(['prefix' => 'v1'], function () {
 Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function () {
 
     Route::get('profile', 'Api\V1\UsersController@profile');
+    Route::get('user-addresses', 'Api\V1\UsersController@getUserAddresses');
 
     Route::post('profile/update', 'Api\V1\UsersController@profileUpdate');
 
@@ -70,5 +75,6 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function () {
     Route::get('setSeen', 'Api\V1\NotificationsController@seeNotif');
     Route::get('notifs-count', 'Api\V1\NotificationsController@countNotifs');
     Route::post('notification/delete', 'Api\V1\NotificationsController@delete');
+    Route::post('vote-for-city', 'Api\V1\CityController@voteForCity');
 
 });

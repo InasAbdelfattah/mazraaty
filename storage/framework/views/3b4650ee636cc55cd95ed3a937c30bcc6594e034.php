@@ -28,9 +28,7 @@
                 
                 <div class="row">
                     <form action="<?php echo e(route('discount_users.search')); ?>" method="get">
-                        <?php echo e(csrf_field()); ?>
 
-                        
                         <?php 
                             $old = date('Y-m-d', strtotime('-5days'));
                             $new = date("Y-m-d"); 

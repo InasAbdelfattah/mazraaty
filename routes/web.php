@@ -98,9 +98,11 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'admin'], function ()
     /**
      * Cities Routes
      */
+    Route::get('cities-votes', ['uses' => 'Admin\CitiesController@getCityVotes', 'as' => 'cities.city_votes']);
     Route::get('cities-search', ['uses' => 'Admin\CitiesController@search', 'as' => 'cities.search']);
     Route::post('city/activate-area', 'Admin\CitiesController@activateArea')->name('city.activateArea');
     Route::post('city/delete/group', 'Admin\CitiesController@groupDelete')->name('cities.group.delete');
+
     Route::resource('cities', 'Admin\CitiesController');
     
 

@@ -70,18 +70,18 @@ class OfferController extends Controller
             //$measurementUnit = MeasurementUnit::find($q->measurement_id);
             $product = Product::find($q->product_id);
 
-            $q->category = $category != null ? $category->name : null ;
-            $q->subcategory = $subcategory != null ? $subcategory->name : null ;
+            $q->category = $category != null ? $category->name : '' ;
+            $q->subcategory = $subcategory != null ? $subcategory->name : '' ;
             //$q->measurementUnit = $measurementUnit != null ? $measurementUnit->name : null ;
-            $q->productName = $product != null ? $product->name : null ;
-            $q->productPrice = $product != null ? $product->price : null ;
+            $q->productName = $product != null ? $product->name : '' ;
+            $q->productPrice = $product != null ? $product->price : '' ;
             if($product):
                 $measurementUnit = MeasurementUnit::find($product->measurement_id);
-                $q->measurementUnit = $measurementUnit != null ? $measurementUnit->name : null;
+                $q->measurementUnit = $measurementUnit != null ? $measurementUnit->name : '';
                 $q->productImage = $request->root() . '/' . $this->public_path . $product->image ;
             else:
-                $q->measurementUnit = null;
-                $q->productImage = null;
+                $q->measurementUnit = '';
+                $q->productImage = '';
             endif;
             
         });
@@ -91,10 +91,58 @@ class OfferController extends Controller
          */
 
         return response()->json([
-            'status' => true,
+            'status' => 200,
             'data' => $offers
         ]);
 
+    }
+
+    public function details(Request $request){
+
+        $rules = [
+            'offerId' => 'required'  
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+
+            return response()->json(['status'=>400,'errors' => $validator->errors()->all()]);
+        }
+
+        $offer = Offer::where('id',$request->offerId)->where('status',1)->select('id', 'price' ,'category_id' ,'subcategory_id' , 'measurement_id' ,'product_id','amount', 'is_available','created_at')->first();
+
+        if(!$offer){
+            return response()->json([
+                'status' => 400,
+                'errors' => ['العرض غير موجود بالتطبيق'],
+                'data' => []
+            ]);
+        }
+
+        $category = Category::find($offer->category_id);
+        $subcategory = Category::find($offer->subcategory_id);
+        //$measurementUnit = MeasurementUnit::find($offer->measurement_id);
+        $product = Product::find($offer->product_id);
+
+        $offer->category = $category != null ? $category->name : '' ;
+        $offer->subcategory = $subcategory != null ? $subcategory->name : '' ;
+        //$offer->measurementUnit = $measurementUnit != null ? $measurementUnit->name : null ;
+        $offer->productName = $product != null ? $product->name : '' ;
+        $offer->productPrice = $product != null ? $product->price : '' ;
+        if($product):
+            $measurementUnit = MeasurementUnit::find($product->measurement_id);
+            $offer->measurementUnit = $measurementUnit != null ? $measurementUnit->name : '';
+            $offer->productImage = $request->root() . '/' . $this->public_path . $product->image ;
+        else:
+            $offer->measurementUnit = '';
+            $offer->productImage = '';
+        endif;
+
+        return response()->json([
+            'status' => 200,
+            'data' => [$offer]
+        ]);
     }
 
 }

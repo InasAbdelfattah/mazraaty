@@ -9,6 +9,7 @@ use Hash;
 use Validator;
 use App\UserAddress;
 use App\Device;
+use App\City;
 
 class UsersController extends Controller
 {
@@ -27,11 +28,58 @@ class UsersController extends Controller
     public function profile(Request $request)
     {
         $user = User::whereApiToken($request->api_token)->first();
-        $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :null ;
-        $user->cityName = $user->city != null ? $user->city->name : null;
+
+        $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :'' ;
+        $user->cityName = $user->city != null ? $user->city->name : '';
+
+        $user->addresses = UserAddress::where('user_id',$user->id)->select('city','address')->get();
+
+        $user->addresses->map(function ($q) {
+            $city = City::where('id',$q->city)->select('name')->first();
+            $q->cityName = $city ? $city->name : '' ;
+        });
+
+        $data =  json_decode(json_encode($user),true);
+        $data  =array_filter($data, function($value){
+           return isset($value);
+        });
+
         return response()->json([
-            'status' => true,
-            'data' => $user
+            'status' => 200,
+            'data' => [$data]
+        ]);
+    }
+
+    public function getUserAddresses(Request $request){
+
+        $user = auth()->user();
+
+        if(! $user):
+             return response()->json([
+                'status' => 400,
+                'errors' => ['مستخدم غير مسجل بالتطبيق'] ,
+                'data' => []
+            ]);
+        endif;
+
+        $user_addresses = UserAddress::where('user_id',$user->id)->select('city','address')->get();
+
+        $user_addresses->map(function ($q) {
+            $city = City::where('id',$q->city)->select('name')->first();
+            $q->cityName = $city ? $city->name : '' ;
+            $q->cityId = $city ? $city->id : '' ;
+        });
+
+        $addresses = $user_addresses->map(function($q){
+               $data = json_decode(json_encode($q),true);
+              return $q= array_filter($data,function($value){
+                   return isset($value);
+               });
+           });
+
+        return response()->json([
+            'status' => 200,
+            'data' => $addresses
         ]);
     }
 
@@ -42,9 +90,10 @@ class UsersController extends Controller
 
         if(! $user):
              return response()->json([
-                'status' => false,
+                'status' => 400,
                 'message' => 'مستخدم غير مسجل بالتطبيق' ,
-                'data' => null
+                'errors' => ['مستخدم غير مسجل بالتطبيق'] ,
+                'data' => []
             ]);
         endif;
 
@@ -63,7 +112,7 @@ class UsersController extends Controller
         if ($validator->fails()) {
 
             $error_arr = validateRules($validator->errors(), $rules);
-            return response()->json(['status'=>false,'data' => $error_arr , 'message'=>'يرجى ادخال بيانات صحيحة']);
+            return response()->json(['status'=>400,'errors' => $validator->errors()->all() , 'message'=>'يرجى ادخال بيانات صحيحة']);
             //return response()->json(['status'=>false,'data' => $validator->errors()->all()]);
         }
 
@@ -71,7 +120,7 @@ class UsersController extends Controller
             $user->name = $request->name;
         endif;
 
-         if($request->has('email') && $request->email != ''):
+        if($request->has('email') && $request->email != ''):
                 $email_check = User::where('email',$request->email)->first();
                 if($email_check && $email_check->id != $user->id):
                     if(app()->getlocale() == 'ar'):
@@ -80,8 +129,8 @@ class UsersController extends Controller
                         $msg = 'the email has been used before';
                     endif;
                     return response()->json([
-                        'status' => false,
-                        'data' => $msg,
+                        'status' => 400,
+                        'errors' => [$msg],
                     ]);
                 endif;
                 
@@ -97,8 +146,8 @@ class UsersController extends Controller
                         $msg = 'the phone has been used before';
                     endif;
                     return response()->json([
-                        'status' => false,
-                        'data' => $msg,
+                        'status' => 400,
+                        'data' => [$msg],
                     ]);
                 endif;
 
@@ -114,14 +163,14 @@ class UsersController extends Controller
             $user->image = uploadImage($request, 'image', $this->public_path_user);
         endif;
             
-        if($request->has('city_id') && $request->city_id != ''):
-            $user->city_id = $request->city_id;
+        if($request->has('cityId') && $request->cityId != ''):
+            $user->city_id = $request->cityId;
         endif;
         
         $user->save();
         
-        $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :null ;
-        $user->cityName = $user->city != null ? $user->city->name : null;
+        $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :'' ;
+        $user->cityName = $user->city != null ? $user->city->name : '';
 
         if($request->has('addresses')){
             $addresses = json_decode($request->addresses);
@@ -137,18 +186,31 @@ class UsersController extends Controller
                     $model = new UserAddress;
                     $model->user_id = $user->id;
                     $model->address = $address->address;
-                    $model->city = $address->city;
-                    $model->lat = $address->lat;
-                    $model->lng = $address->lng;
+                    $model->city = $address->cityId;
+                    $model->lat = $address->lat ? $address->lat : '';
+                    $model->lng = $address->lng ? $address->lng : '';
                     $model->save();
                 }
             }
         }
+
+        $user->addresses = UserAddress::where('user_id',$user->id)->select('city','address')->get();
+
+        $user->addresses->map(function ($q) {
+            $city = City::where('id',$q->city)->select('name')->first();
+            $q->cityName = $city ? $city->name : '' ;
+        });
+
+        $data =  json_decode(json_encode($user),true);
+        $data  =array_filter($data, function($value){
+           return isset($value);
+       });
+
                 
         return response()->json([
-            'status' => true,
-            'data' => $user,
-            'code' => $user->action_code
+            'status' => 200,
+            'data' => [$data],
+            //'code' => $user->action_code
         ]);
 
     }
@@ -160,14 +222,14 @@ class UsersController extends Controller
         
         $validator = Validator::make($request->all(), [
             'oldPassword' => 'required',
-            'newPassword' => 'required|confirmed',
+            'newPassword' => 'required',
             //'newPassword_confirmation' => 'required|same:newpassword',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'status' => false,
-                'data' => $validator->errors(),
+                'status' => 400,
+                'errors' => $validator->errors()->all(),
             ]);
         }
         if (Hash::check($request->oldPassword, $user->password)) {
@@ -177,16 +239,17 @@ class UsersController extends Controller
             ])->save();
 
             return response()->json([
-                'status' => true,
+                'status' => 200,
                 'message' => 'لقد تم تعديل كلمة المرور بنجاح' ,
-                'data' => null
+                'data' => []
             ]);
         } else {
             
             return response()->json([
-                'status' => false,
+                'status' => 400,
                 'message' => 'كلمة المرور القديمة غير صحيحة' ,
-                'data' => null
+                'errors' => ['كلمة المرور القديمة غير صحيحة'] ,
+                'data' => []
             ]);
         }
     }
@@ -195,15 +258,22 @@ class UsersController extends Controller
         $user = User::where('id',$id)->select('id','name','phone','gender','image')->first();
         if(! $user){
             return response()->json([
-                'status' => false,
+                'status' => 400,
                 'message' => 'مستخدم غير موجود',
-                'data' => null
+                'errors' => ['مستخدم غير موجود'],
+                'data' => []
             ]);
         }
+
+        $data =  json_decode(json_encode($user),true);
+        $data  =array_filter($data, function($value){
+           return isset($value);
+       });
+
         return response()->json([
-            'status' => true,
+            'status' => 200,
             'message' => 'تم',
-            'data' => $user
+            'data' => [$data]
         ]);
     }
 
@@ -212,7 +282,7 @@ class UsersController extends Controller
         $user = User::where('api_token', $request->api_token)->first();
         if(!$user){
             return response()->json([
-                'status' => false,
+                'status' => 400,
             ]);
         }
 
@@ -220,12 +290,12 @@ class UsersController extends Controller
         if($device):
             $device->delete();
             return response()->json([
-                'status' => true,
+                'status' => 200,
             ]);
         
         else :
             return response()->json([
-                'status' => false,
+                'status' => 400,
             ]);
 
         endif;

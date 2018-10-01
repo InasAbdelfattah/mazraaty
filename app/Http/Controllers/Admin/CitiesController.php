@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Validator;
 use App\City;
+use App\Vote;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
@@ -176,19 +177,6 @@ class CitiesController extends Controller
         
         $model = City::findOrFail($id);
 
-        // if ($model->centers->count() > 0) {
-        //     return response()->json([
-        //         'status' => false,
-        //         'message' => "عفواً, لا يمكنك حذف المنطقة الرئيسية لوجود مراكز بها"
-        //     ]);
-        // }
-
-        // if ($model->districts->count() > 0) {
-        //     foreach($model->districts as $district){
-        //         $district->delete();
-        //     }
-        // }
-
         if ($model->delete()) {
             return response()->json([
                 'status' => true,
@@ -334,6 +322,26 @@ class CitiesController extends Controller
 
 
     }
+
+    public function getCityVotes(Request $request)
+    {
+
+        if (!Gate::allows('settings_manage')) {
+            return abort(401);
+        }
+
+        $cities = Vote::join('users','votes.user_id','users.id')->join('cities','votes.city_id','cities.id')->distinct('votes.city_id')->select('votes.city_id as city_id','cities.name as city_name')->get();
+
+        $cities->map(function ($q){
+            $q->vote_count = Vote::where('city_id',$q->city_id)->distinct('user_id')->count('user_id');
+            
+        });
+
+        $type = 'votes';
+
+        return view('admin.cities.votes',compact('cities' , 'type'));
+    }
+
 
 
 

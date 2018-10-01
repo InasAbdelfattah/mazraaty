@@ -6,6 +6,7 @@ use App\Events\NotifyAdminJoinApp;
 use App\Events\NotifyUsers;
 use App\Notifications\NotifyAdminForJoinCompanies;
 use App\User;
+use App\UserAddress;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Validator;
@@ -35,8 +36,9 @@ class RegistrationController extends Controller
         $rules = [
             'name' => 'required|min:3|max:255',
             'phone' => 'required|regex:/(05)[0-9]{8}/|unique:users,phone',
-            'password' => 'required|confirmed',
-            'city_id' => 'required',
+            'password' => 'required',
+            'cityId' => 'required',
+            'address' => 'required'
             
         ];
 
@@ -45,7 +47,7 @@ class RegistrationController extends Controller
         if ($validator->fails()) {
 
             $error_arr = validateRules($validator->errors(), $rules);
-            return response()->json(['status'=>false,'data' => $error_arr , 'message'=>'يرجى استكمال البيانات والتأكد من ادخال محتوى صالح']);
+            return response()->json(['status'=>400,'errors' => $validator->errors()->all()]);
             //return response()->json(['status'=>false,'data' => $validator->errors()->all()]);
         }
 
@@ -55,7 +57,7 @@ class RegistrationController extends Controller
         $user->phone = trim($request->phone);
         $user->password = trim($request->password);
         $user->api_token = str_random(60);
-        $user->city_id = $request->city_id ;
+        $user->city_id = $request->cityId ;
         $user->is_admin = 0;
         $actionCode = rand(1000, 9999);
         $actionCode = $user->actionCode($actionCode);
@@ -65,20 +67,35 @@ class RegistrationController extends Controller
         $user->is_new = 0;
 
         if($user->save()){
+
+            $model = new UserAddress;
+            $model->user_id = $user->id;
+            $model->address = $request->address;
+            $model->city = $request->cityId;
+            $model->lat = '';
+            $model->lng = '';
+            $model->save();
+
                 //send sms to user with activation code
             $phone = filter_mobile_number($user->phone);
             sendSms('activation code:'.$user->action_code , $phone);
 
+            $data =  json_decode(json_encode($user),true);
+            $data  =array_filter($data, function($value){
+               return isset($value);
+           });
+
             return response()->json([
-                'status' => true,
-                'data' => $user,
+                'status' => 200,
+                'data' => [$data],
             ]);
         }
 
         return response()->json([
-                'status' => false,
-                'data' => null,
-                'msg' => 'لم يكتمل التسجيلز يرجى المحاولة مرة أخرى'
+                'status' => 400,
+                'data' => [],
+                'message' => 'لم يكتمل التسجيلز يرجى المحاولة مرة أخرى',
+                'errors' => ['لم يكتمل التسجيلز يرجى المحاولة مرة أخرى']
             ]);
     }
 

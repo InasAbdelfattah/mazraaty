@@ -169,6 +169,10 @@
                         <li><a href="<?php echo e(route('ads.index')); ?>">الإعلانات</a></li>
                     <?php endif; ?>
 
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('settings_manage')): ?>
+                        <li><a href="<?php echo e(route('cities.city_votes')); ?>">التصويت على المدن</a></li>
+                    <?php endif; ?>
+
                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('orders_manage')): ?>
                         
                         <li class="has-submenu">

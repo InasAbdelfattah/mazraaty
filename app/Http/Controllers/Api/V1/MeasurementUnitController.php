@@ -55,7 +55,7 @@ class MeasurementUnitController extends Controller
          */
 
         return response()->json([
-            'status' => true,
+            'status' => 200,
             'data' => $measurement_units
         ]);
     }

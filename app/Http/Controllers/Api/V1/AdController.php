@@ -69,7 +69,7 @@ class AdController extends Controller
          */
 
         return response()->json([
-            'status' => true,
+            'status' => 200,
             'data' => $ads
         ]);
 

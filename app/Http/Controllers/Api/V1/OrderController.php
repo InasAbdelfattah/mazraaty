@@ -16,12 +16,13 @@ use App\Coupon;
 use App\User;
 use App\Product;
 use App\UserAddress;
+use App\City;
 
-use App\Notification;
-use LaravelFCM\Message\OptionsBuilder;
-use LaravelFCM\Message\PayloadDataBuilder;
-use LaravelFCM\Message\PayloadNotificationBuilder;
-use FCM;
+// use App\Notification;
+// use LaravelFCM\Message\OptionsBuilder;
+// use LaravelFCM\Message\PayloadDataBuilder;
+// use LaravelFCM\Message\PayloadNotificationBuilder;
+// use FCM;
 
 use Carbon\Carbon;
 
@@ -34,8 +35,9 @@ class OrderController extends Controller
         
         if(!$user){
             return response()->json([
-                'status' => false,
+                'status' => 400,
                 'message' => 'user not found',
+                'errors' => ['user not found'],
                 'data' => []
             ]);
         }
@@ -58,7 +60,7 @@ class OrderController extends Controller
                 $q->product_price = $product->price;
                 $q->product_image= Request()->root() . '/files/products/' . $product->image ;
                 //$q->offer_name = null;
-                $q->offer_price = null;
+                $q->offer_price = '';
             else:
                 $offer_product = Product::find($offer->product_id);
                 //$q->offer_name = $offer->name;
@@ -73,9 +75,9 @@ class OrderController extends Controller
         $order->items = $items;
         
         return response()->json([
-            'status' => true,
+            'status' => 200,
             //'message' => $status,
-            'data' => $order
+            'data' => [$order]
         ]);
     }
 
@@ -85,7 +87,7 @@ class OrderController extends Controller
         
         if(!$user){
             return response()->json([
-                'status' => false,
+                'status' => 400,
                 'message' => 'user not found',
                 'data' => []
             ]);
@@ -123,7 +125,7 @@ class OrderController extends Controller
                     $q->product_price = $product->price;
                     $q->product_image= Request()->root() . '/files/products/' . $product->image ;
                     //$q->offer_name = null;
-                    $q->offer_price = null;
+                    $q->offer_price = '';
                 else:
                     $offer_product = Product::find($offer->product_id);
                     //$q->offer_name = $offer->name;
@@ -147,7 +149,7 @@ class OrderController extends Controller
          });
 
         return response()->json([
-            'status' => true,
+            'status' => 200,
             //'message' => $status,
             'data' => $orders
         ]);
@@ -164,10 +166,18 @@ class OrderController extends Controller
 
             $error_arr = validateRules($validator->errors(), $rules);
 
-            return response()->json(['status'=>false,'data' => $error_arr]);
+            return response()->json(['status'=>400,'errors' => $validator->errors()->all()]);
         }
+
+        $user = auth()->user();
+
+        if($user):
+            //$basket = Basket::where('user_id',$user->id)->where('is_ordered',0)->first();
+            $basket = Basket::where('device',$request->playerId)->orWhere('user_id',$user->id)->where('is_ordered',0)->first();
+        else:
+            $basket = Basket::where('device',$request->playerId)->where('is_ordered',0)->first();
+        endif;
         
-        $basket = Basket::where('device',$request->playerId)->where('is_ordered',0)->first();
 //`itemable_id`, `itemable_type`, `amount`, `type`, `basket_id`
         if($basket):
             //$items = Item::where('basket_id',$basket->id)->get();
@@ -180,7 +190,7 @@ class OrderController extends Controller
                     $q->product_price = $product->price;
                     $q->product_image= Request()->root() . '/files/products/' . $product->image ;
                     //$q->offer_name = null;
-                    $q->offer_price = null;
+                    $q->offer_price = '';
                 else:
                     $offer_product = Product::find($offer->product_id);
                     //$q->offer_name = $offer->name;
@@ -196,7 +206,7 @@ class OrderController extends Controller
         endif;
 
         return response()->json([
-            'status' => true,
+            'status' => 200,
             'data' =>$items
         ]);
     }
@@ -212,16 +222,23 @@ class OrderController extends Controller
 
         if ($validator->fails()) {
 
-            $error_arr = validateRules($validator->errors(), $rules);
+            //$error_arr = validateRules($validator->errors(), $rules);
 
-            return response()->json(['status'=>false,'data' => $error_arr]);
+            return response()->json(['status'=>400,'errors' => $validator->errors()->all()]);
         }
-        
-        $basket = Basket::where('device',$request->playerId)->where('is_ordered',0)->first();
+        $user = auth()->user();
+        if($user):
+            $basket = Basket::where('device',$request->playerId)->orWhere('user_id',$user->id)->where('is_ordered',0)->first();
+            $userId = $user->id;
+        else:
+            $basket = Basket::where('device',$request->playerId)->where('is_ordered',0)->first();
+            $userId = null;
+        endif;
 
         if(! $basket):
             $basket = new Basket();
             $basket->device = $request->playerId;
+            $basket->user_id = $userId;
             $basket->is_ordered = 0 ;
             $basket->save();
         endif;
@@ -256,7 +273,7 @@ class OrderController extends Controller
         }
 
         return response()->json([
-            'status' => true,
+            'status' => 200,
             'message' => 'تم اضافة المنتجات للسلة بنجاح'
         ]);
     }
@@ -268,7 +285,8 @@ class OrderController extends Controller
         
         if(!$user){
             return response()->json([
-                'status' => false,
+                'status' => 400,
+                'errors' => ['مستخدم غير مسجل بالتطبيق'],
                 'message' => 'مستخدم غير مسجل بالتطبيق',
                 'data' => []
             ]);
@@ -286,7 +304,7 @@ class OrderController extends Controller
 
             $error_arr = validateRules($validator->errors(), $rules);
 
-            return response()->json(['status'=>false,'data' => $error_arr]);
+            return response()->json(['status'=>400,'errors' => $validator->errors()->all()]);
         }
 
         if($request->addressId){
@@ -295,40 +313,51 @@ class OrderController extends Controller
 
             if(!$userAddress){
                 return response()->json([
-                    'status' => false,
+                    'status' => 400,
                     'message' => 'عنوان غير مسجل ضمن عناوين المستخدم',
+                    'errors' => ['عنوان غير مسجل ضمن عناوين المستخدم'],
                     'data' => []
                 ]);
             }
         }else{
 
             $rules = [
-                'lat' => 'required',
-                'lng' => 'required',
+                //'lat' => 'required',
+                //'lng' => 'required',
                 'address' => 'required',
+                'cityId' => 'required'
             ];
 
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
-                $errors = validateRules($validator->errors(), $rules);
-                return response()->json(['status'=>false,'message' => $errors]);
+                //$errors = validateRules($validator->errors(), $rules);
+                return response()->json(['status'=>400, 'errors' => $validator->errors()->all()]);
             }
 
             $userAddress = new UserAddress();
             $userAddress->user_id = $user->id ;
-            $userAddress->lat = $request->lat ;
-            $userAddress->lng = $request->lng ;
+            $userAddress->lat = $request->lat ? $request->lat : '' ;
+            $userAddress->lng = $request->lng ? $request->lng : '' ;
             $userAddress->address = $request->address;
-            $userAddress->city = $request->city;
+            $userAddress->city = $request->cityId;
             $userAddress->save();
 
+        }
+
+        $address_city = City::where('id',$userAddress->city)->first();
+        if(!$address_city):
+            return response()->json(['status'=>400, 'errors' => ['المدينة غير مسجلة بالتطبيق']]);
+        endif;
+
+        if($address_city->status != 1){
+            return response()->json(['status'=>400, 'errors' => ['المدينة غير متاحة '] , 'data' => ['cityId' =>$address_city->id , 'cityName' => $address_city->name ] ]);
         }
 
         $basket = Basket::where('device',$request->playerId)->where('is_ordered',0)->first();
         if(!$basket){
             return response()->json([
-                'status' => false,
+                'status' => 400,
                 'message' => 'لا توجد منتجات خاصة بالمستخدم',
                 'data' => []
             ]);
@@ -407,7 +436,7 @@ class OrderController extends Controller
 
         $newModel->total_price = $cost + setting()->getBody('delivery');
         $newModel->address_id = $userAddress->id;
-        $newModel->user_deliverd_time = null;
+        $newModel->user_deliverd_time = '';
         $newModel->status = 0;
         $newModel->discount = 0;
         $newModel->coupon_id = null ;

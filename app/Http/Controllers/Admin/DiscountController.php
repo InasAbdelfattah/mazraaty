@@ -123,7 +123,7 @@ class DiscountController extends Controller
         // Declare Validation Rules.
         $rules = [
             'times' => 'required|numeric|min:1',
-            'code' => 'required|numeric|min:1',
+            'code' => 'required|numeric|min:1|unique:coupons',
             'ratio' => 'required|numeric|min:1',
             'start_from' => 'date_format:"Y-m-d"|required',
             'end_at' => 'date_format:"Y-m-d"|required|after:start_from',

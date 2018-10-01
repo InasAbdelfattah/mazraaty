@@ -21,27 +21,28 @@ class ForgotPasswordController extends Controller
 
         if ($validator->fails()):
             return response()->json([
-                'status' => false,
-                'message' => 'thisfieldrequired',
-                'data' => $validator->errors()->first()
-            ], 400);
+                'status' => 400,
+                //'message' => 'thisfieldrequired',
+                'errors' => $validator->errors()->all()
+            ]);
         endif;
         
         $user = User::where('phone',$request->phone)->first();
         
         if (!$user) {
             return response()->json([
-                'status' => false,
-                'message' => 'phoneincorrect',
-                'data' => null
-            ], 400);
+                'status' => 400,
+                'message' => 'رقم الهاتف غير صحيح',
+                'errors' => ['رقم الهاتف غير صحيح'],
+                'data' => []
+            ]);
         }
         
         return response()->json([
-                'status' => true,
+                'status' => 200,
                 'message' =>$user->is_active ,
-                'data' => $user->action_code
-            ], 200);
+                'data' => ['activation_code' => $user->action_code]
+            ]);
     }
 
     /**
@@ -60,20 +61,19 @@ class ForgotPasswordController extends Controller
 
         if ($validator->fails()):
             return response()->json([
-                'status' => false,
-                'message' => 'thisfieldrequired',
-                'data' => $validator->errors()
-            ], 400);
+                'status' => 400,
+                'errors' => $validator->errors()->all()
+            ]);
         endif;
 
         $user = User::where('phone',$request->phone)->first();
         
         if (!$user) {
             return response()->json([
-                'status' => false,
-                'message' => 'phoneincorrect',
-                'data' => null
-            ], 400);
+                'status' => 400,
+                'message' => 'رقم الهاتف غير صحيح',
+                'data' => []
+            ]);
         }
 
         $reset_code = rand(1000, 9999);
@@ -90,8 +90,8 @@ class ForgotPasswordController extends Controller
         //$s = Sms::sendActivationCode('Reset code:' . $user->action_code, $phone);
 
         return response()->json([
-                'status' => true,
-                'message' => 'resetcodesent',
+                'status' => 200,
+                'message' => 'تم الارسال',
                  'data' => [
                     'reset_code' => $user->action_code,
                 ]

@@ -168,6 +168,10 @@
                         <li><a href="{{ route('ads.index') }}">الإعلانات</a></li>
                     @endcan
 
+                    @can('settings_manage')
+                        <li><a href="{{ route('cities.city_votes') }}">التصويت على المدن</a></li>
+                    @endcan
+
                     @can('orders_manage')
                         
                         <li class="has-submenu">

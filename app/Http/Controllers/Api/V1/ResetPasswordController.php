@@ -18,15 +18,15 @@ class ResetPasswordController extends Controller
         $rules = [
             'reset_code' => 'required',
             'phone' => 'required|regex:/(05)[0-9]{8}/',
-            'password' => 'required|confirmed',
+            'password' => 'required',
         ];
 
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
 
-            $error_arr = validateRules($validator->errors(), $rules);
-            return response()->json(['status'=>false,'data' => $error_arr]);
+            //$error_arr = validateRules($validator->errors(), $rules);
+            return response()->json(['status'=>400,'errors' => $validator->errors()->all()]);
         }
 
         $user = User::whereActionCode($request->reset_code)->where('phone', $request->phone)
@@ -35,15 +35,16 @@ class ResetPasswordController extends Controller
             $user->password = bcrypt(trim($request->password));
             $user->save();
             return response()->json([
-                'status' => true,
+                'status' => 200,
                 'data' => [],
-                'message' => 'Password Reset Successfully.'
+                'message' => 'تم تغيير كلمة المرور.'
             ]);
         } else {
             return response()->json([
-                'status' => false,
-                'data' => null,
-                'message' => 'Reset Code or phone is invalid.',
+                'status' => 400,
+                'data' => [],
+                'errors' =>['الهاتف او كود التاكيد غير صحيحة.'],
+                'message' => 'الهاتف او كود التاكيد غير صحيحة.',
             ]);
         }
     }
@@ -58,8 +59,8 @@ class ResetPasswordController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'status' => false,
-                'errors' => $validator->errors()
+                'status' => 400,
+                'errors' => $validator->errors()->all()
             ]);
         }
 
@@ -67,13 +68,13 @@ class ResetPasswordController extends Controller
             ->first();
         if ($code) {
             return response()->json([
-                'status' => true,
-                'message' => 'activationSuccess'
+                'status' => 200,
+                //'message' => ''
             ]);
         } else {
             return response()->json([
-                'status' => false,
-                'message' => 'activationError',
+                'status' => 400,
+               // 'message' => 'activationError',
             ]);
         }
     }
@@ -87,8 +88,8 @@ class ResetPasswordController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'status' => false,
-                'errors' => $validator->errors()
+                'status' => 400,
+                'errors' => $validator->errors()->all()
             ]);
         }
 
@@ -99,13 +100,13 @@ class ResetPasswordController extends Controller
             $user->phone = $request->phone;
             $user->save();
             return response()->json([
-                'status' => true,
+                'status' => 200,
                 'message' => 'code and phone correct',
                 'data' => $user
             ]);
         } else {
             return response()->json([
-                'status' => false,
+                'status' => 400,
                 'message' => 'code or phone incorrect'
             ]);
         }

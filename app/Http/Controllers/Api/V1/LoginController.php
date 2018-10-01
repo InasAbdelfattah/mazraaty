@@ -10,7 +10,7 @@ use Auth;
 use App\Device;
 use App\Setting;
 use App\City;
-
+use App\Basket;
 
 class LoginController extends Controller
 {
@@ -37,21 +37,38 @@ class LoginController extends Controller
         if ($validator->fails()) {
 
             $error_arr = validateRules($validator->errors(), $rules);
-            return response()->json(['status'=>false,'data' => $error_arr]);
-            //return response()->json(['status'=>false,'data' => $validator->errors()->all()]);
+            //return response()->json(['status'=>400,'data' => $error_arr]);
+            return response()->json(['status'=>400,'errors' => $validator->errors()->all()]);
         }
 
         if ($user = Auth::attempt(['phone' => $request->phone, 'password' => $request->password ])) {
 
             $user = auth()->user();
 
+            if($request->playerId):
+
+                $basket = Basket::where('device',$request->playerId)->where('is_ordered',0)->first();
+
+                if($basket && $basket->user_id == null):
+                    $basket->user_id = $user->id;
+                    $basket->save();
+                endif;
+
+            endif;
+
+            $data =  json_decode(json_encode($user),true);
+            $data  =array_filter($data, function($value){
+               return isset($value);
+           });
+
             if (!$user->is_active):
 
                 return response()->json([
-                    'status' => false,
+                    'status' => 400,
                     'message' => 'هذا الحساب غير مفعل',
-                    'data' => $user
-                ], 401);
+                    'errors' => ['هذا الحساب غير مفعل'],
+                    'data' => [$data]
+                ]);
 
             endif;
 
@@ -62,21 +79,27 @@ class LoginController extends Controller
 
             $this->manageDevices($request, auth()->user());
 
-            $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :null ;
+            $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :'' ;
             
             $user->cityName = $user->city != null ? $user->city->name : null;
             
+            $data =  json_decode(json_encode($user),true);
+            $data  =array_filter($data, function($value){
+               return isset($value);
+           });
+
             return response()->json([
-                'status' => true,
-                'data' => $user,
+                'status' => 200,
+                'data' => [$data],
                 
-            ], 200);
+            ]);
         } else {
             return response()->json([
-                'status' => false,
+                'status' => 400,
                 'message' => 'الهاتف او كلمة المرور غير صحيحة',
-                'data' => null
-            ], 400);
+                'errors' => ['الهاتف او كلمة المرور غير صحيحة'],
+                'data' => []
+            ]);
         }
     
     }
@@ -127,19 +150,21 @@ class LoginController extends Controller
 
         if ($validator->fails()) {
 
-            $error_arr = validateRules($validator->errors(), $rules);
-            return response()->json(['status'=>false,'data' => $error_arr]);
+            //$error_arr = validateRules($validator->errors(), $rules);
+            return response()->json(['status'=>400,'errors' => $validator->errors()->all()]);
         }
 
         $user = User::where(['phone' => $request->phone,
             'action_code' => $request->activation_code])
             ->first();
+        
 
         if(! $user):
             return response()->json([
-                'status' => 'false',
+                'status' => 400,
                 'message' => 'كود التفعيل غير صحيح',
-                'data' => $user
+                'errors' => ['كود التفعيل غير صحيح'],
+                'data' => []
             ]);
         endif;
 
@@ -151,27 +176,37 @@ class LoginController extends Controller
 
             $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :null ;
             $user->cityName = $user->city != null ? $user->city->name : null;
+
+            $data =  json_decode(json_encode($user),true);
+            $data  =array_filter($data, function($value){
+               return isset($value);
+           });
     
         $this->manageDevices($request, $user);          
             return response()->json([
-                'status' => true,
+                'status' => 200,
                 'message' => 'تم تفعيل الحساب',
-                'data' => $user
+                'data' => [$data]
             ]);
 
         }
 
-        $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :null ;
-        $user->cityName = $user->city != null ? $user->city->name : null;
+        $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :'' ;
+        $user->cityName = $user->city != null ? $user->city->name : '';
+
+        $data =  json_decode(json_encode($user),true);
+        $data  =array_filter($data, function($value){
+           return isset($value);
+       });
     
         $this->manageDevices($request, $user);
 
         return response()->json([
-            'status' => false,
+            'status' => 400,
             'message' => 'تم تفعيل الحساب من قبل',
-            'data' => $user
-        ], 400); 
-
+            'errors' => ['تم تفعيل الحساب من قبل'],
+            'data' => [$data]
+        ]); 
     }
 
 }
