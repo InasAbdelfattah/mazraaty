@@ -1,0 +1,885 @@
+{
+	"variables": [],
+	"info": {
+		"name": "mazraaty",
+		"_postman_id": "a1cea9cf-6405-4b42-0e4d-c969e459c932",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "login",
+			"request": {
+				"url": "http://mazratyred.saned.ml/api/v1/user/login",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "phone",
+							"value": "0553338881",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "playerId",
+							"value": "123456789aaa",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "forgetPass -> send phone and get activation code",
+			"request": {
+				"url": "http://mazratyred.saned.ml/api/v1/password/forgot",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "phone",
+							"value": "0553338881",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "forgetPass ->resetPass by sending phone , reset_code &newPass",
+			"request": {
+				"url": "http://mazratyred.saned.ml/api/v1/password/reset",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "reset_code",
+							"value": "5955",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "phone",
+							"value": "0553338881",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "1234",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "resend reset_code",
+			"request": {
+				"url": "http://mazratyred.saned.ml/api/v1/password/forgot/resend",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "phone",
+							"value": "0553338881",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "register ",
+			"request": {
+				"url": "http://mazratyred.saned.ml/api/v1/user/register",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "inas",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "phone",
+							"value": "0553338881",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "cityId",
+							"value": "1",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "address",
+							"value": "address",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "activate account after registeration",
+			"request": {
+				"url": "http://mazratyred.saned.ml/api/v1/user/activation",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "phone",
+							"value": "0553338881",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "activation_code",
+							"value": "9738",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "user profile",
+			"request": {
+				"url": {
+					"raw": "http://mazratyred.saned.ml/api/v1/profile?api_token=5KmyzNW9JWMP0PLRTCrc2axqpGPHjjMTHmfVefeSZ10qvrVyTGOEmA3It2U0",
+					"protocol": "http",
+					"host": [
+						"mazratyred",
+						"saned",
+						"ml"
+					],
+					"path": [
+						"api",
+						"v1",
+						"profile"
+					],
+					"query": [
+						{
+							"key": "api_token",
+							"value": "5KmyzNW9JWMP0PLRTCrc2axqpGPHjjMTHmfVefeSZ10qvrVyTGOEmA3It2U0",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "update profile",
+			"request": {
+				"url": {
+					"raw": "http://mazratyred.saned.ml/api/v1/profile/update?api_token=5KmyzNW9JWMP0PLRTCrc2axqpGPHjjMTHmfVefeSZ10qvrVyTGOEmA3It2U0",
+					"protocol": "http",
+					"host": [
+						"mazratyred",
+						"saned",
+						"ml"
+					],
+					"path": [
+						"api",
+						"v1",
+						"profile",
+						"update"
+					],
+					"query": [
+						{
+							"key": "api_token",
+							"value": "5KmyzNW9JWMP0PLRTCrc2axqpGPHjjMTHmfVefeSZ10qvrVyTGOEmA3It2U0",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "samia",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "phone",
+							"value": "0543020202",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "addresses",
+							"value": "[{\"lat\":\"21.33333333333333\",\"lng\":\"12.3333333\",\"address\":\"ryad\",\"cityId\":2},{\"lat\":\"21.33333333333333\",\"lng\":\"12.3333333\",\"address\":\"ryad\" ,\"cityId\":2},{\"lat\":\"41.33333333333333\",\"lng\":\"16.3333333\",\"address\":\"dddd\",\"cityId\":2}]",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "cityId",
+							"value": "",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "image",
+							"value": "",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "change password",
+			"request": {
+				"url": {
+					"raw": "http://mazratyred.saned.ml/api/v1/password/change?api_token=5KmyzNW9JWMP0PLRTCrc2axqpGPHjjMTHmfVefeSZ10qvrVyTGOEmA3It2U0",
+					"protocol": "http",
+					"host": [
+						"mazratyred",
+						"saned",
+						"ml"
+					],
+					"path": [
+						"api",
+						"v1",
+						"password",
+						"change"
+					],
+					"query": [
+						{
+							"key": "api_token",
+							"value": "5KmyzNW9JWMP0PLRTCrc2axqpGPHjjMTHmfVefeSZ10qvrVyTGOEmA3It2U0",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "oldPassword",
+							"value": "1234",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "newPassword",
+							"value": "123",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "app settings",
+			"request": {
+				"url": "http://mazratyred.saned.ml/api/v1/general-info",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "cities",
+			"request": {
+				"url": "http://mazratyred.saned.ml/api/v1/cities",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "faqs",
+			"request": {
+				"url": "http://mazratyred.saned.ml/api/v1/faqs",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ads",
+			"request": {
+				"url": "http://mazratyred.saned.ml/api/v1/ads",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "measurement units",
+			"request": {
+				"url": "http://mazratyred.saned.ml/api/v1/measurements",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "categories",
+			"request": {
+				"url": "http://mazratyred.saned.ml/api/v1/categories",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "products",
+			"request": {
+				"url": {
+					"raw": "http://mazratyred.saned.ml/api/v1/products?subcategory_id=5&category_id=3",
+					"protocol": "http",
+					"host": [
+						"mazratyred",
+						"saned",
+						"ml"
+					],
+					"path": [
+						"api",
+						"v1",
+						"products"
+					],
+					"query": [
+						{
+							"key": "subcategory_id",
+							"value": "5",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "category_id",
+							"value": "3",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "offers",
+			"request": {
+				"url": "http://mazratyred.saned.ml/api/v1/offers",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "save Basket",
+			"request": {
+				"url": "http://mazratyred.saned.ml/api/v1/orders/saveBasket",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "playerId",
+							"value": "ddddddddddd",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "items",
+							"value": "[{\"item_id\":1,\"amount\":2,\"type\":\"product\"},{\"item_id\":2,\"amount\":5,\"type\":\"offer\"}]",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "confirm order",
+			"request": {
+				"url": {
+					"raw": "http://mazratyred.saned.ml/api/v1/orders/save-new-order?api_token=4meXTP5jbm437xpjC3DcjDO71pV09Hs76Y19Wyf2Tu4DTPJsdvfdIfVmqW4p",
+					"protocol": "http",
+					"host": [
+						"mazratyred",
+						"saned",
+						"ml"
+					],
+					"path": [
+						"api",
+						"v1",
+						"orders",
+						"save-new-order"
+					],
+					"query": [
+						{
+							"key": "api_token",
+							"value": "4meXTP5jbm437xpjC3DcjDO71pV09Hs76Y19Wyf2Tu4DTPJsdvfdIfVmqW4p",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "api_token",
+							"value": "4meXTP5jbm437xpjC3DcjDO71pV09Hs76Y19Wyf2Tu4DTPJsdvfdIfVmqW4p",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "playerId",
+							"value": "ddddddddddd",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "addressId",
+							"value": "10",
+							"description": "send user address id if exists or send new address : lat , lng , address",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "order_date",
+							"value": "2018-10-20",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "order_time",
+							"value": "13:00:00",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "couponCode",
+							"value": "789",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "lat",
+							"value": "10.33333333",
+							"description": "if param : addressId hasn't been sent",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "lng",
+							"value": "21.22222222",
+							"description": "if param : addressId hasn't been sent",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "address",
+							"value": "ryadh-sa",
+							"description": "if param : addressId hasn't been sent",
+							"type": "text"
+						},
+						{
+							"key": "cityId",
+							"value": "1",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "user orders",
+			"request": {
+				"url": {
+					"raw": "http://mazratyred.saned.ml/api/v1/orders/user-orders?api_token=4meXTP5jbm437xpjC3DcjDO71pV09Hs76Y19Wyf2Tu4DTPJsdvfdIfVmqW4p",
+					"protocol": "http",
+					"host": [
+						"mazratyred",
+						"saned",
+						"ml"
+					],
+					"path": [
+						"api",
+						"v1",
+						"orders",
+						"user-orders"
+					],
+					"query": [
+						{
+							"key": "api_token",
+							"value": "4meXTP5jbm437xpjC3DcjDO71pV09Hs76Y19Wyf2Tu4DTPJsdvfdIfVmqW4p",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "get user basket depending on his playerId",
+			"request": {
+				"url": {
+					"raw": "http://mazratyred.saned.ml/api/v1/orders/getBasket?playerId=ddddddddddd",
+					"protocol": "http",
+					"host": [
+						"mazratyred",
+						"saned",
+						"ml"
+					],
+					"path": [
+						"api",
+						"v1",
+						"orders",
+						"getBasket"
+					],
+					"query": [
+						{
+							"key": "playerId",
+							"value": "ddddddddddd",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "user-recent-order",
+			"request": {
+				"url": {
+					"raw": "http://mazratyred.saned.ml/api/v1/orders/user-recent-order?api_token=4meXTP5jbm437xpjC3DcjDO71pV09Hs76Y19Wyf2Tu4DTPJsdvfdIfVmqW4p",
+					"protocol": "http",
+					"host": [
+						"mazratyred",
+						"saned",
+						"ml"
+					],
+					"path": [
+						"api",
+						"v1",
+						"orders",
+						"user-recent-order"
+					],
+					"query": [
+						{
+							"key": "api_token",
+							"value": "4meXTP5jbm437xpjC3DcjDO71pV09Hs76Y19Wyf2Tu4DTPJsdvfdIfVmqW4p",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"url": {
+					"raw": "http://mazratyred.saned.ml/api/v1/user/logout?api_token=4meXTP5jbm437xpjC3DcjDO71pV09Hs76Y19Wyf2Tu4DTPJsdvfdIfVmqW4p",
+					"protocol": "http",
+					"host": [
+						"mazratyred",
+						"saned",
+						"ml"
+					],
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"logout"
+					],
+					"query": [
+						{
+							"key": "api_token",
+							"value": "4meXTP5jbm437xpjC3DcjDO71pV09Hs76Y19Wyf2Tu4DTPJsdvfdIfVmqW4p",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "vote-for-city",
+			"request": {
+				"url": {
+					"raw": "http://mazratyred.saned.ml/api/v1/vote-for-city?api_token=5KmyzNW9JWMP0PLRTCrc2axqpGPHjjMTHmfVefeSZ10qvrVyTGOEmA3It2U0",
+					"protocol": "http",
+					"host": [
+						"mazratyred",
+						"saned",
+						"ml"
+					],
+					"path": [
+						"api",
+						"v1",
+						"vote-for-city"
+					],
+					"query": [
+						{
+							"key": "api_token",
+							"value": "5KmyzNW9JWMP0PLRTCrc2axqpGPHjjMTHmfVefeSZ10qvrVyTGOEmA3It2U0",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "cityId",
+							"value": "2",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "all-cities",
+			"request": {
+				"url": "http://mazratyred.saned.ml/api/v1/all-cities",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "product-details",
+			"request": {
+				"url": {
+					"raw": "http://mazratyred.saned.ml/api/v1/product-details?productId=2",
+					"protocol": "http",
+					"host": [
+						"mazratyred",
+						"saned",
+						"ml"
+					],
+					"path": [
+						"api",
+						"v1",
+						"product-details"
+					],
+					"query": [
+						{
+							"key": "productId",
+							"value": "2",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "offer-details",
+			"request": {
+				"url": {
+					"raw": "http://mazratyred.saned.ml/api/v1/offer-details?offerId=1",
+					"protocol": "http",
+					"host": [
+						"mazratyred",
+						"saned",
+						"ml"
+					],
+					"path": [
+						"api",
+						"v1",
+						"offer-details"
+					],
+					"query": [
+						{
+							"key": "offerId",
+							"value": "1",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "user-addresses",
+			"request": {
+				"url": {
+					"raw": "http://mazratyred.saned.ml/api/v1/user-addresses?api_token=4meXTP5jbm437xpjC3DcjDO71pV09Hs76Y19Wyf2Tu4DTPJsdvfdIfVmqW4p",
+					"protocol": "http",
+					"host": [
+						"mazratyred",
+						"saned",
+						"ml"
+					],
+					"path": [
+						"api",
+						"v1",
+						"user-addresses"
+					],
+					"query": [
+						{
+							"key": "api_token",
+							"value": "4meXTP5jbm437xpjC3DcjDO71pV09Hs76Y19Wyf2Tu4DTPJsdvfdIfVmqW4p",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
