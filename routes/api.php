@@ -28,6 +28,8 @@ Route::group(['prefix' => 'v1'], function () {
     // forget pass :
     Route::post('password/forgot', 'Api\V1\ForgotPasswordController@getResetTokens');
     Route::post('password/forgot/resend', 'Api\V1\ForgotPasswordController@resendResetPasswordCode');
+    // After arrive reset code send to check is true.
+    Route::post('check-code', 'Api\V1\ResetPasswordController@check');
     Route::post('password/reset', 'Api\V1\ResetPasswordController@reset');
     //end forget pass
     Route::post('/user/login', 'Api\V1\LoginController@login');
@@ -73,8 +75,9 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function () {
      */
     Route::get('notifications', 'Api\V1\NotificationsController@getUserNotifications');    
     Route::get('setSeen', 'Api\V1\NotificationsController@seeNotif');
-    Route::get('notifs-count', 'Api\V1\NotificationsController@countNotifs');
-    Route::post('notification/delete', 'Api\V1\NotificationsController@delete');
+    Route::get('notifications-count', 'Api\V1\NotificationsController@countNotifs');
+    Route::post('delete-notification', 'Api\V1\NotificationsController@delete');
+
     Route::post('vote-for-city', 'Api\V1\CityController@voteForCity');
 
 });

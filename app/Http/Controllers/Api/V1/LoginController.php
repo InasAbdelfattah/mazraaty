@@ -67,7 +67,7 @@ class LoginController extends Controller
                     'status' => 400,
                     'message' => 'هذا الحساب غير مفعل',
                     'errors' => ['هذا الحساب غير مفعل'],
-                    'data' => [$data]
+                    'data' => $data
                 ]);
 
             endif;
@@ -81,7 +81,7 @@ class LoginController extends Controller
 
             $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :'' ;
             
-            $user->cityName = $user->city != null ? $user->city->name : null;
+            $user->cityName = $user->city != null ? $user->city->name : '';
             
             $data =  json_decode(json_encode($user),true);
             $data  =array_filter($data, function($value){
@@ -90,7 +90,7 @@ class LoginController extends Controller
 
             return response()->json([
                 'status' => 200,
-                'data' => [$data],
+                'data' => $data,
                 
             ]);
         } else {
@@ -98,7 +98,6 @@ class LoginController extends Controller
                 'status' => 400,
                 'message' => 'الهاتف او كلمة المرور غير صحيحة',
                 'errors' => ['الهاتف او كلمة المرور غير صحيحة'],
-                'data' => []
             ]);
         }
     
@@ -164,7 +163,6 @@ class LoginController extends Controller
                 'status' => 400,
                 'message' => 'كود التفعيل غير صحيح',
                 'errors' => ['كود التفعيل غير صحيح'],
-                'data' => []
             ]);
         endif;
 
@@ -186,7 +184,7 @@ class LoginController extends Controller
             return response()->json([
                 'status' => 200,
                 'message' => 'تم تفعيل الحساب',
-                'data' => [$data]
+                'data' => $data
             ]);
 
         }
@@ -205,7 +203,7 @@ class LoginController extends Controller
             'status' => 400,
             'message' => 'تم تفعيل الحساب من قبل',
             'errors' => ['تم تفعيل الحساب من قبل'],
-            'data' => [$data]
+            'data' => $data
         ]); 
     }
 

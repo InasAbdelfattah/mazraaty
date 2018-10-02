@@ -141,7 +141,7 @@ class OfferController extends Controller
 
         return response()->json([
             'status' => 200,
-            'data' => [$offer]
+            'data' => $offer
         ]);
     }
 

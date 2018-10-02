@@ -37,8 +37,8 @@ class RegistrationController extends Controller
             'name' => 'required|min:3|max:255',
             'phone' => 'required|regex:/(05)[0-9]{8}/|unique:users,phone',
             'password' => 'required',
-            'cityId' => 'required',
-            'address' => 'required'
+            //'cityId' => 'required',
+            //'address' => 'required'
             
         ];
 
@@ -57,7 +57,7 @@ class RegistrationController extends Controller
         $user->phone = trim($request->phone);
         $user->password = trim($request->password);
         $user->api_token = str_random(60);
-        $user->city_id = $request->cityId ;
+        $user->city_id = $request->cityId ? $request->cityId : 0 ;
         $user->is_admin = 0;
         $actionCode = rand(1000, 9999);
         $actionCode = $user->actionCode($actionCode);
@@ -68,13 +68,13 @@ class RegistrationController extends Controller
 
         if($user->save()){
 
-            $model = new UserAddress;
-            $model->user_id = $user->id;
-            $model->address = $request->address;
-            $model->city = $request->cityId;
-            $model->lat = '';
-            $model->lng = '';
-            $model->save();
+            // $model = new UserAddress;
+            // $model->user_id = $user->id;
+            // $model->address = $request->address;
+            // $model->city = $request->cityId;
+            // $model->lat = '';
+            // $model->lng = '';
+            // $model->save();
 
                 //send sms to user with activation code
             $phone = filter_mobile_number($user->phone);
@@ -87,13 +87,12 @@ class RegistrationController extends Controller
 
             return response()->json([
                 'status' => 200,
-                'data' => [$data],
+                'data' => $data,
             ]);
         }
 
         return response()->json([
                 'status' => 400,
-                'data' => [],
                 'message' => 'لم يكتمل التسجيلز يرجى المحاولة مرة أخرى',
                 'errors' => ['لم يكتمل التسجيلز يرجى المحاولة مرة أخرى']
             ]);

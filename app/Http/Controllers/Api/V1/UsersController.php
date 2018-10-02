@@ -46,7 +46,7 @@ class UsersController extends Controller
 
         return response()->json([
             'status' => 200,
-            'data' => [$data]
+            'data' => $data
         ]);
     }
 
@@ -58,7 +58,6 @@ class UsersController extends Controller
              return response()->json([
                 'status' => 400,
                 'errors' => ['مستخدم غير مسجل بالتطبيق'] ,
-                'data' => []
             ]);
         endif;
 
@@ -93,7 +92,6 @@ class UsersController extends Controller
                 'status' => 400,
                 'message' => 'مستخدم غير مسجل بالتطبيق' ,
                 'errors' => ['مستخدم غير مسجل بالتطبيق'] ,
-                'data' => []
             ]);
         endif;
 
@@ -147,7 +145,7 @@ class UsersController extends Controller
                     endif;
                     return response()->json([
                         'status' => 400,
-                        'data' => [$msg],
+                        'errors' => [$msg],
                     ]);
                 endif;
 
@@ -209,7 +207,7 @@ class UsersController extends Controller
                 
         return response()->json([
             'status' => 200,
-            'data' => [$data],
+            'data' => $data,
             //'code' => $user->action_code
         ]);
 
@@ -241,7 +239,6 @@ class UsersController extends Controller
             return response()->json([
                 'status' => 200,
                 'message' => 'لقد تم تعديل كلمة المرور بنجاح' ,
-                'data' => []
             ]);
         } else {
             
@@ -249,7 +246,6 @@ class UsersController extends Controller
                 'status' => 400,
                 'message' => 'كلمة المرور القديمة غير صحيحة' ,
                 'errors' => ['كلمة المرور القديمة غير صحيحة'] ,
-                'data' => []
             ]);
         }
     }
@@ -261,7 +257,6 @@ class UsersController extends Controller
                 'status' => 400,
                 'message' => 'مستخدم غير موجود',
                 'errors' => ['مستخدم غير موجود'],
-                'data' => []
             ]);
         }
 
@@ -273,7 +268,7 @@ class UsersController extends Controller
         return response()->json([
             'status' => 200,
             'message' => 'تم',
-            'data' => [$data]
+            'data' => $data
         ]);
     }
 

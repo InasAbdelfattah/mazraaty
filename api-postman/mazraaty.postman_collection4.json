@@ -62,6 +62,27 @@
 			"response": []
 		},
 		{
+			"name": "check reset code",
+			"request": {
+				"url": "http://mazratyred.saned.ml/api/v1/check-code",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "reset_code",
+							"value": "1234",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
 			"name": "forgetPass ->resetPass by sending phone , reset_code &newPass",
 			"request": {
 				"url": "http://mazratyred.saned.ml/api/v1/password/reset",
@@ -146,13 +167,15 @@
 							"key": "cityId",
 							"value": "1",
 							"description": "",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "address",
 							"value": "address",
 							"description": "",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						}
 					]
 				},
@@ -877,6 +900,127 @@
 				"method": "GET",
 				"header": [],
 				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "notifications",
+			"request": {
+				"url": {
+					"raw": "http://mazratyred.saned.ml/api/v1/notifications?api_token=3RBhB56yiYTXQuzdazbJVkJni75ljfHqIS6jCz8ErvOMTY6unDdWt7CRM78O&pageSize=5&skipCount=1",
+					"protocol": "http",
+					"host": [
+						"mazratyred",
+						"saned",
+						"ml"
+					],
+					"path": [
+						"api",
+						"v1",
+						"notifications"
+					],
+					"query": [
+						{
+							"key": "api_token",
+							"value": "3RBhB56yiYTXQuzdazbJVkJni75ljfHqIS6jCz8ErvOMTY6unDdWt7CRM78O",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "pageSize",
+							"value": "5",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "skipCount",
+							"value": "1",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "notifications count",
+			"request": {
+				"url": {
+					"raw": "http://mazratyred.saned.ml/api/v1/notifications-count?api_token=3RBhB56yiYTXQuzdazbJVkJni75ljfHqIS6jCz8ErvOMTY6unDdWt7CRM78O",
+					"protocol": "http",
+					"host": [
+						"mazratyred",
+						"saned",
+						"ml"
+					],
+					"path": [
+						"api",
+						"v1",
+						"notifications-count"
+					],
+					"query": [
+						{
+							"key": "api_token",
+							"value": "3RBhB56yiYTXQuzdazbJVkJni75ljfHqIS6jCz8ErvOMTY6unDdWt7CRM78O",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "delete-notification",
+			"request": {
+				"url": {
+					"raw": "http://mazratyred.saned.ml/api/v1/delete-notification?api_token=3RBhB56yiYTXQuzdazbJVkJni75ljfHqIS6jCz8ErvOMTY6unDdWt7CRM78O",
+					"protocol": "http",
+					"host": [
+						"mazratyred",
+						"saned",
+						"ml"
+					],
+					"path": [
+						"api",
+						"v1",
+						"delete-notification"
+					],
+					"query": [
+						{
+							"key": "api_token",
+							"value": "3RBhB56yiYTXQuzdazbJVkJni75ljfHqIS6jCz8ErvOMTY6unDdWt7CRM78O",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "notifId",
+							"value": "9",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
 				"description": ""
 			},
 			"response": []
