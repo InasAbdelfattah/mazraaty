@@ -73,11 +73,16 @@ class OrderController extends Controller
         });
 
         $order->items = $items;
+
+        $data =  json_decode(json_encode($order),true);
+            $data  =array_filter($data, function($value){
+               return isset($value);
+           });
         
         return response()->json([
             'status' => 200,
             //'message' => $status,
-            'data' => [$order]
+            'data' => $data
         ]);
     }
 
@@ -105,16 +110,9 @@ class OrderController extends Controller
         $query->skip($skipCount);
         $query->take($pageSize);
 
-        $orders = $query->select('id','user_id', 'basket_id', 'coupon_id', 'total_price', 'discount', 'order_date', 'order_time', 'address_id', 'status', 'user_deliverd_time')->get();
+        $orders = $query->select('id','total_price', 'status','user_id', 'basket_id')->get();
         
         $orders->map(function ($q) {
-
-            if($q->coupon_id != null):
-                $coupon = Coupon::find($q->coupon_id);
-                $q->couponCode= $coupon ? $coupon->code : '';
-            endif;
-            $address = UserAddress::find($q->address_id);
-            $q->address= $address ? $address->address : '';    
 
             $items = Item::where('basket_id',$q->basket_id)->select('id','itemable_id','amount','itemable_type')->get();
             $items->map(function ($q) {
@@ -123,21 +121,24 @@ class OrderController extends Controller
                 if($q->itemable_type == 'App\Product'):
                     $q->product_name = $product->name;
                     $q->product_price = $product->price;
-                    $q->product_image= Request()->root() . '/files/products/' . $product->image ;
-                    //$q->offer_name = null;
                     $q->offer_price = '';
                 else:
                     $offer_product = Product::find($offer->product_id);
-                    //$q->offer_name = $offer->name;
                     $q->offer_price = $offer->price;
                     $q->product_name = $offer_product->name;
                     $q->product_price = $offer_product->price;
-                    $q->product_image= Request()->root() . '/files/products/' . $offer_product->image ;
-
                 endif;
             });
 
-            $q->items = $items;        
+            $item_names = [];
+            if(count($items)>0){
+                foreach($items as $item){
+                    array_push($item_names, $item->product_name);
+                }
+            }
+
+            $q->items_names = $item_names;
+            $q->items = $items;      
                   
             /*status:
                 0 => 'new'
@@ -148,10 +149,21 @@ class OrderController extends Controller
             
          });
 
+        $user_orders = [];
+
+        if(count($orders) > 0):
+            $user_orders = $orders->map(function($q){
+                   $data = json_decode(json_encode($q),true);
+                  return $q= array_filter($data,function($value){
+                       return isset($value);
+                   });
+               });
+        endif;
+
         return response()->json([
             'status' => 200,
             //'message' => $status,
-            'data' => $orders
+            'data' => $user_orders,
         ]);
     }
     
@@ -205,9 +217,19 @@ class OrderController extends Controller
             $items = [];
         endif;
 
+        $user_items = [];
+        if(count($items) > 0):
+            $user_items = $items->map(function($q){
+                   $data = json_decode(json_encode($q),true);
+                  return $q= array_filter($data,function($value){
+                       return isset($value);
+                   });
+               });
+        endif;
+
         return response()->json([
             'status' => 200,
-            'data' =>$items
+            'data' =>$user_items
         ]);
     }
 
@@ -367,8 +389,9 @@ class OrderController extends Controller
 
         if(! count($items) > 0){
             return response()->json([
-                'status' => false,
+                'status' => 400,
                 'message' => 'السلة فارغة',
+                'errors' => ['السلة فارغة'],
                 'data' => []
             ]);
         }
@@ -379,8 +402,9 @@ class OrderController extends Controller
         if($request->order_date == $mytime->toDateString()){
             if($orderTime <= $mytime->toTimeString()){
                 return response()->json([
-                    'status' => false,
+                    'status' => 400,
                     'message' => 'غير متاح الحجز فى وقت سابق',
+                    'errors' => ['غير متاح الحجز فى وقت سابق'],
                     'data' => []
                 ]);
             }
@@ -394,8 +418,9 @@ class OrderController extends Controller
         if(!in_array($day, $days)){
 
             return response()->json([
-                'status' => false,
+                'status' => 400,
                 'message' => 'هذا اليوم خارج نطاق ايام العمل',
+                'errors' => ['هذا اليوم خارج نطاق ايام العمل'],
                 'data' => $day
             ]);
         }
@@ -405,8 +430,9 @@ class OrderController extends Controller
         if(!( $request->order_time >= $time_range->from && $request->order_time <= $time_range->to )){
 
             return response()->json([
-                'status' => false,
+                'status' => 400,
                 'message' => 'الوقت خارج دوام العمل',
+                'errors' => ['الوقت خارج دوام العمل'],
                 'data' => $day
             ]);
         }
@@ -434,9 +460,12 @@ class OrderController extends Controller
             endif;  
         }
 
+        //$cost += setting()->getBody('delivery');
+
+        //$newModel->total_price = $cost;
         $newModel->total_price = $cost + setting()->getBody('delivery');
         $newModel->address_id = $userAddress->id;
-        $newModel->user_deliverd_time = '';
+        $newModel->user_deliverd_time = null;
         $newModel->status = 0;
         $newModel->discount = 0;
         $newModel->coupon_id = null ;
@@ -465,7 +494,7 @@ class OrderController extends Controller
                     endif;
                     
                     return response()->json([
-                        'status' => true,
+                        'status' => 200,
                         'message' => $message
                     ]);
                 
@@ -481,7 +510,7 @@ class OrderController extends Controller
                 endif;
                 
                 return response()->json([
-                    'status' => true,
+                    'status' => 200,
                     'message' => $message
                 ]);
             }
@@ -512,7 +541,7 @@ class OrderController extends Controller
         //$noti =$this->sendSingleNotification($title , $msg , $company->user_id ,'new_order' ,$newModel->id);
             
         return response()->json([
-            'status' => true,
+            'status' => 200,
             'message' => 'تم اضافة الطلب بنجاح',
             'data' => []
         ]);
@@ -524,15 +553,26 @@ class OrderController extends Controller
         
         // $now = Carbon::now();
         // $current_time = $now->toTimeString();
+
+        $user = auth()->user();
         
-        $order = Order::where('id',$request->orderId)->orderBy('id','Desc')->select('id','user_id', 'basket_id', 'coupon_id', 'total_price', 'discount', 'order_date', 'order_time', 'address_id', 'status', 'user_deliverd_time')->first();
+        if(!$user){
+            return response()->json([
+                'status' => 400,
+                'errors' => ['مستخدم غير مسجل بالتطبيق'],
+                'message' => 'مستخدم غير مسجل بالتطبيق',
+                'data' => []
+            ]);
+        }
+        
+        $order = Order::where('user_id',$user->id)->where('id',$request->orderId)->orderBy('id','Desc')->select('id','user_id', 'basket_id', 'coupon_id', 'total_price', 'discount', 'order_date', 'order_time', 'address_id', 'status', 'user_deliverd_time')->first();
 
         if(!$order){
             
             return response()->json([
-                'status' => false ,
+                'status' => 400 ,
                 'message' => 'الحجز غير موجود' ,
-                'data' => []
+                'errors' => ['الحجز غير موجود'] ,
             ]);
         }
 
@@ -541,7 +581,15 @@ class OrderController extends Controller
             $order->couponCode= $coupon ? $coupon->code : '';
         endif;
         $address = UserAddress::find($order->address_id);
-        $order->address= $address ? $address->address : '';    
+        if($address):
+            $order->address= $address->address ;
+            $city = City::find($address->city);
+            $order->city= $city ? $city->name : '' ;
+        else:    
+            $order->address= '';
+            $order->city= '' ;
+
+        endif;    
 
         $items = Item::where('basket_id',$order->basket_id)->select('id','itemable_id','amount','itemable_type')->get();
         $items->map(function ($q) {
@@ -551,23 +599,34 @@ class OrderController extends Controller
                 $q->product_name = $product->name;
                 $q->product_price = $product->price;
                 $q->product_image= Request()->root() . '/files/products/' . $product->image ;
-                $q->offer_price = null;
+                $q->offer_price = '';
+                $q->item_cost = $product->price * $q->amount ;
             else:
                 $offer_product = Product::find($offer->product_id);
                 $q->offer_price = $offer->price;
                 $q->product_name = $offer_product->name;
                 $q->product_price = $offer_product->price;
                 $q->product_image= Request()->root() . '/files/products/' . $offer_product->image ;
+                $q->item_cost = $offer->price * $q->amount ;
 
             endif;
         });
 
+        $order->username = $user->name;
+        $order->user_phone = $user->phone;
+        $order ->delivery_cost = setting()->getBody('delivery');
+
         $order->items = $items;
+
+        $data = json_decode(json_encode($order),true);
+          return $order= array_filter($data,function($value){
+               return isset($value);
+           });
         
         return response()->json([
-                'status' => true ,
+                'status' => 200 ,
                 'message' => '' ,
-                'data' => $order
+                'data' => $data
             ]);
     }
 

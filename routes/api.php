@@ -56,7 +56,11 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function () {
 
     Route::get('profile', 'Api\V1\UsersController@profile');
     Route::get('user-addresses', 'Api\V1\UsersController@getUserAddresses');
+    Route::get('delete-address', 'Api\V1\UsersController@deleteAddress');
 
+    Route::post('create-address', 'Api\V1\UsersController@createAddress');
+    Route::post('update-address', 'Api\V1\UsersController@updateAddress');
+    
     Route::post('profile/update', 'Api\V1\UsersController@profileUpdate');
 
     Route::post('password/change', 'Api\V1\UsersController@changePassword');
@@ -67,6 +71,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function () {
 
     Route::get('orders/user-recent-order', 'Api\V1\OrderController@getUserRecentOrder');
     Route::get('orders/user-orders', 'Api\V1\OrderController@getUserOrders');
+    Route::get('order-details', 'Api\V1\OrderController@getOrderDetails');
     Route::post('orders/save-new-order', 'Api\V1\OrderController@saveOrder');
     Route::post('user/logout', 'Api\V1\UsersController@logout');
 

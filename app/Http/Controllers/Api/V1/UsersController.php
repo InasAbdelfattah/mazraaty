@@ -61,7 +61,7 @@ class UsersController extends Controller
             ]);
         endif;
 
-        $user_addresses = UserAddress::where('user_id',$user->id)->select('city','address')->get();
+        $user_addresses = UserAddress::where('user_id',$user->id)->select('id','city','address')->get();
 
         $user_addresses->map(function ($q) {
             $city = City::where('id',$q->city)->select('name')->first();
@@ -82,6 +82,145 @@ class UsersController extends Controller
         ]);
     }
 
+    public function updateAddress(Request $request)
+    {
+        $user = auth()->user();
+
+        if(! $user):
+             return response()->json([
+                'status' => 400,
+                'message' => 'مستخدم غير مسجل بالتطبيق' ,
+                'errors' => ['مستخدم غير مسجل بالتطبيق'] ,
+            ]);
+        endif;
+
+        $rules = [
+            'address' => 'min:3',
+            'cityId' => 'required',
+            'addressId' => 'required'
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+
+            $error_arr = validateRules($validator->errors(), $rules);
+            return response()->json(['status'=>400,'errors' => $validator->errors()->all() , 'message'=>'يرجى ادخال بيانات صحيحة']);
+        }
+
+        $model = UserAddress::find($request->addressId);
+
+        if(!$model):
+            return response()->json([
+                'status' => 400,
+                'message' => 'عنوان غير مسجل' ,
+                'errors' => ['عنوان غير مسجل'] ,
+            ]);
+        endif;
+
+        $model->user_id = $user->id;
+        $model->address = $request->address;
+        $model->city = $request->cityId;
+        $model->lat = $request->lat ? $request->lat : '';
+        $model->lng = $request->lng ? $request->lng : '';
+        $model->save();
+
+        $addresses = UserAddress::where('user_id',$user->id)->select('id','city','address')->get();
+   
+        return response()->json([
+            'status' => 200,
+            'data' => $addresses,
+        ]);
+
+    }
+
+    public function createAddress(Request $request)
+    {
+        $user = auth()->user();
+
+        if(! $user):
+             return response()->json([
+                'status' => 400,
+                'message' => 'مستخدم غير مسجل بالتطبيق' ,
+                'errors' => ['مستخدم غير مسجل بالتطبيق'] ,
+            ]);
+        endif;
+
+        $rules = [
+            'address' => 'min:3',
+            'cityId' => 'required',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+
+            $error_arr = validateRules($validator->errors(), $rules);
+            return response()->json(['status'=>400,'errors' => $validator->errors()->all() , 'message'=>'يرجى ادخال بيانات صحيحة']);
+        }
+
+        $model = new UserAddress ;
+
+        $model->user_id = $user->id;
+        $model->address = $request->address;
+        $model->city = $request->cityId;
+        $model->lat = $request->lat ? $request->lat : '';
+        $model->lng = $request->lng ? $request->lng : '';
+        $model->save();
+
+        $addresses = UserAddress::where('user_id',$user->id)->select('id','city','address')->get();
+   
+        return response()->json([
+            'status' => 200,
+            'data' => $addresses,
+        ]);
+
+    }
+
+    public function deleteAddress(Request $request)
+    {
+        $user = auth()->user();
+
+        if(! $user):
+             return response()->json([
+                'status' => 400,
+                'message' => 'مستخدم غير مسجل بالتطبيق' ,
+                'errors' => ['مستخدم غير مسجل بالتطبيق'] ,
+            ]);
+        endif;
+
+        $rules = [
+            'addressId' => 'required',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+
+            $error_arr = validateRules($validator->errors(), $rules);
+            return response()->json(['status'=>400,'errors' => $validator->errors()->all() , 'message'=>'يرجى ادخال بيانات صحيحة']);
+        }
+
+        $model = UserAddress::where('id',$request->addressId)->where('user_id',$user->id)->first() ;
+
+        if(!$model):
+            return response()->json([
+                'status' => 400,
+                'message' => 'عنوان غير مسجل' ,
+                'errors' => ['عنوان غير مسجل'] ,
+            ]);
+        endif;
+
+        $model->delete();
+
+        $addresses = UserAddress::where('user_id',$user->id)->select('id','city','address')->get();
+   
+        return response()->json([
+            'status' => 200,
+            'data' => $addresses,
+        ]);
+
+    }
 
     public function profileUpdate(Request $request)
     {
