@@ -38,7 +38,7 @@
                 <div class="form-group">
                     <div class="col-xs-12">
                         <input id="email" type="email" class="form-control" name="provider"
-                               value="{{ old('provider') }}" required autofocus
+                               value="{{ old('provider') }}" required data-parsley-required-message="هذا الحقل الزامى" data-parsley-type="email" data-parsley-type-message="يرجى ادخال صيغة بريد الكترونى صحيحة" autofocus
                                placeholder="اسم المستخدم او البريد الإلكتروني...">
 
                         @if ($errors->has('email'))
@@ -52,7 +52,7 @@
 
                 <div class="form-group">
                     <div class="col-xs-12">
-                        <input id="password" type="password" class="form-control" name="password" required
+                        <input id="password" type="password" class="form-control" name="password" required data-parsley-required-message="هذا الحقل الزامى"
                                placeholder="كلمة المرور...">
 
                         @if ($errors->has('password'))

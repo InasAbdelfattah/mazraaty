@@ -40,7 +40,7 @@ class NotificationController extends Controller {
 
         // $data = Device::join('users','devices.user_id','users.id')->select('devices.*','users.id as user_id', 'users.name as username')->get();
         
-        $notifs = Notification::whereIn('push_type',['global','cities'])->orderBy('id','DESC')->get();
+        $notifs = Notification::where('push_type','global')->groupBy('created_at')->orderBy('id','DESC')->get();
         $type = 'notifs';
 
         $cities = City::all();
@@ -56,13 +56,13 @@ class NotificationController extends Controller {
 
         $notifs = [] ;
 
-        $query = Notification::whereIn('push_type',['global','cities'])->select();
-        if($request->city):
-            $query->where('push_type','cities')->where('target_id',$request->city);
-        endif;
+        $query = Notification::where('push_type','global')->select();
+        // if($request->city):
+        //     $query->where('push_type','cities')->where('target_id',$request->city);
+        // endif;
 
-        if($request->notif_date):
-            $query->where('created_at',$request->notif_date);
+        if($request->notif_date != ''):
+            $query->whereDate('created_at',$request->notif_date);
         endif;
 
         $notifs = $query->orderBy('id','DESC')->get();
@@ -109,7 +109,12 @@ class NotificationController extends Controller {
         $title = config('app.name');
         $data = ['title' => $title , 'body'=>$request->body];
 
-        $r = $this->push->sendPushNotification(null , $data, $title, $request->body ,$request->push_type);
+        //$r = $this->push->sendPushNotification(null , $data, $title, $request->body ,$request->push_type);
+
+        $devices = Device::pluck('device')->toArray();
+        //return $devices;
+        $r = $this->push->sendPushNotification($devices , $data, $title, $request->body ,'multi');
+        //return $r;
         
         
         $users = [];
@@ -164,12 +169,18 @@ class NotificationController extends Controller {
     }
     
     public function delete(Request $request){
-        if (!Gate::allows('notifications_manage')) {
-            return abort(401);
-        }
+        // if (!Gate::allows('notifications_manage')) {
+        //     return abort(401);
+        // }
 
         $model = Notification::findOrFail($request->id);
+        $query = Notification::where('id','!=',$model->id)->where('created_at',$model->created_at)->get();
 
+        if(count($query) > 0){
+            foreach ($query as $q) {
+                $q->delete();
+            }
+        }
         
         if ($model->delete()) {
             return response()->json([

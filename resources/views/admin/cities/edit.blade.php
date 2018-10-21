@@ -51,7 +51,7 @@
                                 تفعيل
                             </option>
 
-                            <option value="1" {{$city->status == 0 ? 'selected' : ''}}>
+                            <option value="0" {{$city->status == 0 ? 'selected' : ''}}>
                                 تعطيل
                             </option>                                
                         </select>

@@ -45,6 +45,7 @@
 
 
 <script>
+
 @if(session()->has('success'))
     setTimeout(function () {
         showMessage('{{ session()->get('success') }}' , 'success');
@@ -76,6 +77,15 @@
 <!-- App js -->
 <script src="{{ request()->root() }}/assets/admin/js/jquery.core.js"></script>
 <script src="{{ request()->root() }}/assets/admin/js/jquery.app.js"></script>
+<!-- Validation js (Parsleyjs) -->
+<script type="text/javascript"
+        src="{{ request()->root() }}/assets/admin/plugins/parsleyjs/dist/parsley.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('form').parsley();
+    });
+</script>
 
 </body>
 </html>

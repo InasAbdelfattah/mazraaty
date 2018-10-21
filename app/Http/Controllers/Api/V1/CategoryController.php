@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Category;
+use App\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -68,7 +69,9 @@ class CategoryController extends Controller
 
             $q->image = Request()->root() . '/' . $this->public_path . $q->image ;
 
+            $q->products_count = Product::where('status',1)->where('category_id',$q->id)->count();
             $q->subcategories = $subcategories;
+
             
         });
 

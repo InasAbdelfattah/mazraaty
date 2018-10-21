@@ -129,7 +129,6 @@ class CityController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'مستخدم غير مسجل بالتطبيق',
-                'data' => []
             ]);
         }
 
@@ -154,7 +153,6 @@ class CityController extends Controller
                 'status' => 400,
                 'message' => 'مدينة غير مسجلة فى لوحة التحكم',
                 'errors' => ['مدينة غير مسجلة فى لوحة التحكم'],
-                'data' => []
             ]);
         }
 
@@ -165,7 +163,6 @@ class CityController extends Controller
                 'status' => 400,
                 'message' => 'هذه المدينة متاحة فى التطبيق',
                 'errors' => ['هذه المدينة متاحة فى التطبيق'],
-                'data' => []
             ]);
         }
 
@@ -177,7 +174,6 @@ class CityController extends Controller
                 'status' => 400,
                 'message' => 'تم التصويت من قبل',
                 'errors' => ['تم التصويت من قبل'],
-                'data' => []
             ]);
         }
 
@@ -190,7 +186,6 @@ class CityController extends Controller
         return response()->json([
             'status' => 200,
             'message' => 'تم التصويت للمدينة بنجاح',
-            'data' => []
         ]);
     }
 

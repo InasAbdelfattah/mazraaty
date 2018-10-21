@@ -20,9 +20,9 @@
                         <i class="fa fa-plus"></i></span>
                     </a> -->
 
-                    <button type="button" class="btn btn-custom  waves-effect waves-light" style="float: left; margin-right: 15px;" onclick="window.history.back();return false;"> رجوع <span class="m-l-5"><i
+                    <!-- <button type="button" class="btn btn-custom  waves-effect waves-light" style="float: left; margin-right: 15px;" onclick="window.history.back();return false;"> رجوع <span class="m-l-5"><i
                                     class="fa fa-reply"></i></span>
-                    </button>
+                    </button> -->
                 </div>
 
 

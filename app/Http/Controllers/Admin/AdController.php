@@ -125,7 +125,8 @@ class AdController extends Controller
              */
 
             if ($request->hasFile('image')):
-                $model->image = uploadImage($request, 'image', $this->public_path);
+                //$model->image = uploadImage($request, 'image', $this->public_path );
+                $model->image = uploadImage($request, 'image', $this->public_path , 600 , 300);
             endif;
 
             if ($model->save()) {
@@ -196,7 +197,9 @@ class AdController extends Controller
         $model = Ad::findOrFail($id);
       
         if ($request->hasFile('image')):
-            $model->image =  uploadImage($request, 'image', $this->public_path);
+            //$model->image =  uploadImage($request, 'image', $this->public_path);
+            $model->image = uploadImage($request, 'image', $this->public_path , 600 , 300);
+
         endif;
 
 

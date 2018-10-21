@@ -16,7 +16,7 @@
             <div class="menu-extras">
 
                 <ul class="nav navbar-nav navbar-right pull-right">
-                    @can('notifs_manage')
+                    @can('notifications_manage')
                     <li>
                   
                         <div class="notification-box">
@@ -129,8 +129,10 @@
                                         <li><a href="{{ route('measurementUnits.index') }}">وحدات القياس</a></li>
                                         <li><a href="{{ route('categories.index') }}">الأقسام الرئيسية</a></li>
                                         <li><a href="{{route('subcategories')}}">الأقسام الفرعية</a></li>
-                                        <li><a href="{{ route('products.index') }}">المنتجات</a></li>
-                                        <li><a href="{{route('offers.index')}}">العروض</a></li>
+                                        @can('products_manage')
+                                            <li><a href="{{ route('products.index') }}">المنتجات</a></li>
+                                            <li><a href="{{route('offers.index')}}">العروض</a></li>
+                                        @endcan
                                        
                                     </ul>
                                 </li>
@@ -138,7 +140,7 @@
                         </li>
                     @endcan
 
-                    @can('content_manage')
+                    @can('setting_manage')
                         <li class="has-submenu">
                             <a href="#"><i class="zmdi zmdi-settings"></i><span>محتوى التطبيق </span> </a>
                             <ul class="submenu megamenu">
@@ -168,25 +170,35 @@
                         <li><a href="{{ route('ads.index') }}">الإعلانات</a></li>
                     @endcan
 
-                    @can('settings_manage')
-                        <li><a href="{{ route('cities.city_votes') }}">التصويت على المدن</a></li>
+                    @can('orders_manage')
+                        <li><a href="{{ route('orders.index').'?order_type=orders&status=-1&from=""&to=""' }}">الطلبات</a></li>
                     @endcan
 
-                    @can('orders_manage')
-                        
-                        <li class="has-submenu">
-                            <a href="{{ route('orders.index').'?order_type=orders&status=""&from=""&to=""' }}"><i class="zmdi zmdi-invert-colors"></i> <span>الطلبات</span> </a>
-                            <!-- <ul class="submenu megamenu">
+                    @can('reports_manage')
+                        <li><a href="{{ route('orders.index').'?order_type=reports&status=-1&from=""&to=""' }}">تقارير الطلبات</a></li>
+                    @endcan
+
+                    
+                        <!-- <li class="has-submenu">
+                            <a href="#"><i class="zmdi zmdi-invert-colors"></i> <span>الطلبات</span> </a>
+                            <ul class="submenu megamenu">
                                 <li>
                                     <ul>
-                                        <li><a href="{{ route('orders.index').'?status=""&from=""&to=""' }}">طلبات جديدة لمزرعتى</a></li>
+                                        @can('orders_manage')
+                                            <li><a href="{{ route('orders.index').'?order_type=orders&status=-1&from=""&to=""' }}">الطلبات </a></li>
+                                        @endcan
+
+                                        @can('reports_manage')
+                                            <li><a href="{{ route('orders.index').'?order_type=reports&status=-1&from=""&to=""' }}">تقارير طلبات</a></li>
+                                        @endcan
                                     </ul>
                                 </li>
-                            </ul> -->
-                        </li>
-                    @endcan
+                            </ul>
+                        </li> -->
 
-                    @can('coupons_manage')
+                    
+
+                    @can('orders_manage')
                         <li class="has-submenu">
                             <a href="#"><i class="zmdi zmdi-invert-colors"></i> <span>الرموز الترويجية</span> </a>
                             <ul class="submenu megamenu">
@@ -201,21 +213,19 @@
                     @endcan
 
 
-                    @can('users_manage')
+                    <!-- @can('users_manage')
                         <li class="has-submenu">
                             <a href="#"><i class="zmdi zmdi-invert-colors"></i> <span>التقارير</span> </a>
                             <ul class="submenu megamenu">
                                 <li>
                                     <ul>
-                                        <!-- <li><a href="#">المنتجات الأكثر مبيعا</a></li> -->
                                         <li><a href="{{ route('orders.index').'?order_type=reports&status=""&from=""&to=""' }}">طلبات مزرعتى</a></li>
-                                        <!-- <li><a href="#">تقارير أكواد الخصم</a></li> -->
                                 
                                     </ul>
                                 </li>
                             </ul>
                         </li>
-                    @endcan
+                    @endcan -->
 
                     <!-- @can('notifs_manage')
                         <li><a href="{{ route('notifs') }}"><i class="zmdi zmdi-invert-colors"></i> الإشعارات</a></li>

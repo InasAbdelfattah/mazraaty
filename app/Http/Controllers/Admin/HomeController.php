@@ -7,6 +7,7 @@ use App\Order;
 use App\User;
 use App\Offer;
 use App\Product;
+use App\Vote;
 use Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -29,7 +30,7 @@ class HomeController extends Controller
         $data['accepted_orders'] = Order::whereIn('status',[1,3])->count();
         $data['refused_orders'] = Order::where('status',2)->count();
         $data['excuted_orders'] = 0;
-        $data['votes'] = 0;
+        $data['votes'] = Vote::count();
         return view('admin.home.index')->with(compact('data'));
         
     }

@@ -21,8 +21,8 @@ class SettingController extends Controller
                 'twitter' => Setting::getBody('twitter'),
                 'instagram' => Setting::getBody('instagram'),
                 'googlePlus' => Setting::getBody('googlePlus'),
-                //'hotNos' => Setting::where('key', 'like', 'hot_no%')->select('body as number')->get(),
-                'hotNos' => Setting::where('key', 'like', 'hot_no%')->pluck('body'),
+                'hotNos' => Setting::where('key', 'like', 'hot_no%')->select('body as number')->get(),
+                //'hotNos' => Setting::where('key', 'like', 'hot_no%')->pluck('body'),
                 'workDays' => WorkDay::select('day','from','to')->get()
             ];
 
@@ -33,7 +33,7 @@ class SettingController extends Controller
 
         return response()->json([
             'status' => 200,
-            'data' => [$data]
+            'data' => $data
         ]);
     }
 

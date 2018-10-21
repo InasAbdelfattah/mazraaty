@@ -13,34 +13,33 @@ use Validator;
 class ForgotPasswordController extends Controller
 {
 
-    public function getActivationCodeApi(Request $request){
+    public function getActivationCodeApi($phone){
         
-        $validator = Validator::make($request->all(), [
-            'phone' => 'required'
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'phone' => 'required'
+        // ]);
 
-        if ($validator->fails()):
-            return response()->json([
-                'status' => 400,
-                //'message' => 'thisfieldrequired',
-                'errors' => $validator->errors()->all()
-            ]);
-        endif;
+        // if ($validator->fails()):
+        //     return response()->json([
+        //         'status' => 400,
+        //         //'message' => 'thisfieldrequired',
+        //         'errors' => $validator->errors()->all()
+        //     ]);
+        // endif;
         
-        $user = User::where('phone',$request->phone)->first();
+        $user = User::where('phone',$phone)->first();
         
         if (!$user) {
             return response()->json([
                 'status' => 400,
                 'message' => 'رقم الهاتف غير صحيح',
                 'errors' => ['رقم الهاتف غير صحيح'],
-                'data' => []
             ]);
         }
         
         return response()->json([
                 'status' => 200,
-                'message' =>$user->is_active ,
+                //'message' =>$user->is_active ,
                 'data' => ['activation_code' => $user->action_code]
             ]);
     }
@@ -72,7 +71,7 @@ class ForgotPasswordController extends Controller
             return response()->json([
                 'status' => 400,
                 'message' => 'رقم الهاتف غير صحيح',
-                'data' => []
+                'errors' =>[ 'رقم الهاتف غير صحيح'],
             ]);
         }
 

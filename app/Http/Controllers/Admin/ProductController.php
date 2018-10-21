@@ -11,6 +11,9 @@ use App\Category;
 use App\MeasurementUnit;
 use App\Libraries\PushNotification;
 use App\User;
+use App\Order;
+use App\Basket;
+use App\Item;
 use App\Notification;
 
 class ProductController extends Controller
@@ -144,7 +147,7 @@ class ProductController extends Controller
      
         // Declare Validation Rules.
         $rules = [
-            'name' => 'required|min:3|max:50',
+            'name' => 'required|min:3|max:50|unique:products,name',
             'description' => 'required|min:3|max:10000',
             'price' => 'required|numeric|min:1',
             'category_id' => 'required',
@@ -275,13 +278,13 @@ class ProductController extends Controller
         }
 
         $rules = [
-            'name' => 'required|min:3|max:50',
+            'name' => 'required|min:3|max:50|unique:products,name,'.$id,
             'description' => 'required|min:3|max:10000',
             'price' => 'required|numeric|min:1',
             'category_id' => 'required',
             'subcategory_id' => 'required',
             'measurement_id' => 'required',
-            'is_available' => 'required',
+            'status' => 'required',
             'image' => 'image',
         ];
 
@@ -295,13 +298,27 @@ class ProductController extends Controller
         }
 
         $product = Product::findOrFail($id);
+
+        if($request->status == 0){
+            $orders = Order::whereIn('status',[0,1])->pluck('basket_id')->toArray();
+            if(count($orders) > 0){
+                $baskets = Basket::whereIn('id',$orders)->pluck('id')->toArray();
+                if(count($baskets) > 0){
+                    $item = Item::whereIn('basket_id',$baskets)->where('itemable_id',$product->id)->where('itemable_type','App\Product')->first();
+                    if($item){
+                        return redirect()->route('products.index')->with('error', 'لا يمكن تعطيل المنتج لوجوده فى طلبات جارية ');
+                    }
+                }
+            }
+        }
+
         $product->name = $request->name;
         $product->description = $request->description;
         $product->price = $request->price;
         $product->category_id = $request->category_id;
         $product->subcategory_id = $request->subcategory_id;
         $product->measurement_id = $request->measurement_id;
-        $product->is_available = $request->is_available;
+        $product->status = $request->status;
         if ($request->hasFile('image')):
             $product->image = uploadImage($request, 'image', $this->public_path);
         endif;
@@ -327,29 +344,28 @@ class ProductController extends Controller
     {
 
         $model = Product::findOrFail($request->id);
-        //dd($request);
-
-//        if ($model->companies->count() > 0) {
-//            return response()->json([
-//                'status' => false,
-//                'message' => "عفواً, لا يمكنك حذف النوع ($model->name) نظراً لوجود مراكز ملتحقة بهذا النوع"
-//            ]);
-//        }
 
         if ($model) {
+
             
-            // $user_cards = UserCard::where('card_id',$model->id)->where('to','>=',date('Y-m-d'))->count();
-            // if($user_cards > 0 && $request->status == 0){
-            //     return response()->json([
-            //         'status' => false,
-            //         'message' => 'لا يمكن تعطيل البطاقة لوجود مستخدمين مشترين للبطاقة',
-            //     ]);
-            // }
 
             if($model->status != $request->status) {
                 if ($request->status == 1) {
                     $msg = 'تم تفعيل المنتج';
                 } else {
+                    $orders = Order::whereIn('status',[0,1])->pluck('basket_id')->toArray();
+            if(count($orders) > 0){
+                $baskets = Basket::whereIn('id',$orders)->pluck('id')->toArray();
+                if(count($baskets) > 0){
+                    $item = Item::whereIn('basket_id',$baskets)->where('itemable_id',$model->id)->where('itemable_type','App\Product')->first();
+                    if($item){
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'لا يمكن تعطيل المنتج لوجوده فى طلبات جارية ',
+                        ]);
+                    }
+                }
+            }
                     $msg = 'تم تعطيل المنتج';
                 }
                 $model->status = $request->status;

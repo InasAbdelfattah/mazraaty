@@ -53,8 +53,13 @@ class LoginController extends Controller
             return redirect()->back();
         }
 
+        if($is_user->is_suspend == 1){
+            return redirect()->route('admin.login')->with('error', 'مستخدم معطل');
+        }
+
         if (Auth::attempt(['email' => $request->provider, 'password' => $request->password ,'is_active'=>1])) {
             $user = auth()->user();
+            
             $login = UserLogin::where('user_id',$user->id)->first();
             if($login){
                 $login->logins_count = $login->logins_count + 1;

@@ -24,7 +24,7 @@
 
                         <div class="panel-body">
 
-                            <form action="{{ route('notif-send') }}" method="post">
+                            <form action="{{ route('notif-send') }}" method="post" data-parsley-validate novalidate>
                                 <!-- Highlighting rows and columns -->
                                 <div class="panel panel-flat">
 
@@ -35,7 +35,7 @@
                                             <label>فئة الإشعار</label>
                                             <select class="form-control select" name="push_type" id="push_type" required data-parsley-required-message="هذا الحقل إلزامي">
                                                 <option value="global">المستخدمين</option>
-                                                <option value="cities">بناء على المدينة</option>
+                                                <!-- <option value="cities">بناء على المدينة</option> -->
                                             </select>
                                         </div>
 
@@ -53,12 +53,12 @@
                                         <div class="form-group">
 
                                             <label>نص الإشعار</label>
-                                            <textarea class="form-control description" rows="10" cols="9" name="body" placeholder="نص الرسالة"> {{ old('body') }} </textarea>
+                                            <textarea class="form-control description" rows="10" cols="9" name="body" placeholder="نص الرسالة" required data-parsley-required-message="هذا الحقل الزامى" data-parsley-minlength="3" data-parsley-minlength-message="يجب الا يقل الحق عن 3 احرف" data-parsley-maxlength="500" data-parsley-maxlength-message="يجب الا يزيد الحق عن 500 حرف"> {{ old('body') }} </textarea>
 
                                         </div>
 
-                                        <input type="hidden" value="إرسال" name="type">
-
+                                        <!-- <input type="hidden" value="إرسال" name="type">
+ -->
                                         {{ csrf_field() }}
 
                                         <button type="submit" style="padding: 10px 30px; margin-top: 20px;" class="btn btn-lg btn-primary">

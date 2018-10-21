@@ -66,7 +66,7 @@ class CitiesController extends Controller
         }
 
         $rules = [
-            'name' => 'required|min:3|max:50',
+            'name' => 'required|min:3|max:50|unique:cities,name',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -141,7 +141,7 @@ class CitiesController extends Controller
         $city = City::findOrFail($id);
 
         $rules = [
-            'name' => 'required|min:3|max:50',
+            'name' => 'required|min:3|max:50|unique:cities,name,'.$city->id,
         ];
 
         $validator = Validator::make($request->all(), $rules);

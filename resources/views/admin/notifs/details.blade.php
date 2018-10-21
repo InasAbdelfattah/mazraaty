@@ -28,7 +28,7 @@
                     <div class="col-xs-6">
                         <div class="form-group">
                             <label for="userName">فئة الاشعار</label>
-                            <p>{{ $data->push_type =='global' ? 'جماعى' : 'بناء على مدينة'}}</p>
+                            <p>{{ $data->push_type =='global' ? 'المستخدمين' : 'بناء على مدينة'}}</p>
                         </div>
                     </div>
 

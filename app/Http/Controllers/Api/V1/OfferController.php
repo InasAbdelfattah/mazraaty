@@ -75,13 +75,18 @@ class OfferController extends Controller
             //$q->measurementUnit = $measurementUnit != null ? $measurementUnit->name : null ;
             $q->productName = $product != null ? $product->name : '' ;
             $q->productPrice = $product != null ? $product->price : '' ;
+            $q->offerPrice = $q->price ;
             if($product):
+                $offer_percentage = (($product->price - $q->price)/$product->price )*100 ;
+                $q->discount_percentage = (string)$offer_percentage ;
                 $measurementUnit = MeasurementUnit::find($product->measurement_id);
                 $q->measurementUnit = $measurementUnit != null ? $measurementUnit->name : '';
                 $q->productImage = $request->root() . '/' . $this->public_path . $product->image ;
             else:
                 $q->measurementUnit = '';
                 $q->productImage = '';
+                $q->discount_percentage = '' ;
+
             endif;
             
         });
@@ -130,13 +135,18 @@ class OfferController extends Controller
         //$offer->measurementUnit = $measurementUnit != null ? $measurementUnit->name : null ;
         $offer->productName = $product != null ? $product->name : '' ;
         $offer->productPrice = $product != null ? $product->price : '' ;
+        $offer->offerPrice = $offer->price ;
         if($product):
+            $offer_percentage = (($product->price - $offer->price)/$product->price )*100;
+            $offer->discount_percentage = (string)$offer_percentage ;
             $measurementUnit = MeasurementUnit::find($product->measurement_id);
             $offer->measurementUnit = $measurementUnit != null ? $measurementUnit->name : '';
             $offer->productImage = $request->root() . '/' . $this->public_path . $product->image ;
         else:
             $offer->measurementUnit = '';
             $offer->productImage = '';
+            $offer->discount_percentage = '' ;
+
         endif;
 
         return response()->json([

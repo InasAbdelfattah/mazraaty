@@ -461,5 +461,23 @@
         return $results;
     }
 
+    function manageDevices($playerId, $userId)
+    {
+
+        if ($playerId) {
+            //$devices = Device::where('device',$request->playerId)->toArray();
+            
+            $devices = App\Device::where('device',$playerId)->where('user_id',$userId)->first();
+            
+            
+            if ( !$devices) {
+                $device = new App\Device;
+                $device->device = $playerId;
+                $device->user_id = $userId;
+                $device->save();
+            }
+        }
+    }
+
 
 ?>

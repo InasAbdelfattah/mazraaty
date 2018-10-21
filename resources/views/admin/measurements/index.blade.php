@@ -153,10 +153,10 @@
             
             if(status == 1){
                 status = 0;
-                var type = 'success';
+                var type = 'error';
             }else{
                 status = 1;
-                var type = 'error';
+                var type = 'success';
             }
             
             console.log('statusss',status);

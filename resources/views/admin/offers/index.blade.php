@@ -130,8 +130,8 @@
                             <td>{{category($row->category_id)}}</td>
                             <td>{{category($row->subcategory_id)}}</td>
                             <td>{{ $row->product_name }}</td>
-                            <td>{{ $row->price }}</td>
                             <td>{{ $row->amount }}</td>
+                            <td>{{ $row->price }}</td>
                             <td>{{ $row->is_available == 1 ? 'متاح':'غير متاح' }}</td>
                             <td>
                                 

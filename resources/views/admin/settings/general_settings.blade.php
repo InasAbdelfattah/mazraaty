@@ -1,5 +1,5 @@
 @extends('admin.layouts.master')
-
+@section('title','اعدادات النظام')
 @section('content')
     <form action="{{ route('administrator.settings.store') }}" data-parsley-validate="" novalidate="" method="post"
           enctype="multipart/form-data">
@@ -10,7 +10,7 @@
 
         <div class="row">
             <div class="col-sm-12">
-                <h4 class="page-title">نسبة توصيل الطلب</h4>
+                <h4 class="page-title">اعدادات النظام</h4>
             </div>
         </div>
 
@@ -20,16 +20,42 @@
 
 
                     <div id="errorsHere"></div>
-                    <h4 class="header-title m-t-0 m-b-30">نسبة توصيل الطلب</h4>
+                    <h4 class="header-title m-t-0 m-b-30">اعدادات النظام</h4>
 
 
                     <div class="col-xs-12">
+
+                        <div class="form-group{{ $errors->has('support_no') ? ' has-error' : '' }}">
+                            <label for="userName">رقم الدعم الفنى الموحد *</label>
+                            <input type="text" name="support_no"
+                                   value="{{ setting()->getBody('support_no') }}" class="form-control numbersOnly"
+                                   required
+                                   placeholder = "رقم الدعم الفنى الموحد"/>
+                            <p class="help-block"></p>
+                            @if ($errors->has('support_no'))
+                            <span class="help-block">
+                                <strong>{{ $errors->first('support_no') }}</strong>
+                            </span>
+                        @endif
+
+                        </div>
+
                         <div class="form-group">
-                            <label for="userName">نسبة توصيل الطلب *</label>
+                            <label for="userName">قيمة توصيل الطلب *</label>
                             <input type="number" name="delivery"
                                    value="{{ setting()->getBody('delivery') }}" class="form-control"
                                    required
                                    placeholder = "2 ryal"/> ريال
+                            <p class="help-block"></p>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label for="userName">نسبة الضريبة المضافة *</label>
+                            <input type="number" name="tax"
+                                   value="{{ setting()->getBody('tax') }}" class="form-control"
+                                   required
+                                   placeholder = "2%"/>
                             <p class="help-block"></p>
 
                         </div>

@@ -90,8 +90,9 @@ class PushNotification
 
         if ($push_type == 'global') {
             $json = $push->getPushData();
+            $push = $push->getPushNotification();
             $response = $firebase->sendToTopic('global', $json, $push);
-        } else if ($push_type == 'individual') {
+        } elseif ($push_type == 'individual') {
             $json = $push->getPushData();
             $response = $firebase->send($json, $push);
 

@@ -88,7 +88,7 @@
     <!--    CKEDITOR.replace( 'description_en' );-->
     <!--</script>-->
     <script>
-       CKEDITOR.replace( 'answer' );
+       // CKEDITOR.replace( 'answer' );
     </script>
 @endsection
 

@@ -32,7 +32,9 @@ class UsersController extends Controller
         $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :'' ;
         $user->cityName = $user->city != null ? $user->city->name : '';
 
-        $user->addresses = UserAddress::where('user_id',$user->id)->select('city','address')->get();
+        $user->addresses = UserAddress::where('user_id',$user->id)->select('id as addressId','city','address')->get();
+
+        $user->deviceTokens = Device::where('user_id',$user->id)->select('device as device_token')->get();
 
         $user->addresses->map(function ($q) {
             $city = City::where('id',$q->city)->select('name')->first();
@@ -61,7 +63,26 @@ class UsersController extends Controller
             ]);
         endif;
 
-        $user_addresses = UserAddress::where('user_id',$user->id)->select('id','city','address')->get();
+        $user = User::whereApiToken($request->api_token)->first();
+
+        $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :'' ;
+        $user->cityName = $user->city != null ? $user->city->name : '';
+
+        $user->addresses = UserAddress::where('user_id',$user->id)->select('id as addressId','city','address')->get();
+
+        $user->deviceTokens = Device::where('user_id',$user->id)->select('device as device_token')->get();
+
+        $user->addresses->map(function ($q) {
+            $city = City::where('id',$q->city)->select('name')->first();
+            $q->cityName = $city ? $city->name : '' ;
+        });
+
+        $data =  json_decode(json_encode($user),true);
+        $data  =array_filter($data, function($value){
+           return isset($value);
+        });
+
+        $user_addresses = UserAddress::where('user_id',$user->id)->select('id as addressId','city','address')->get();
 
         $user_addresses->map(function ($q) {
             $city = City::where('id',$q->city)->select('name')->first();
@@ -78,7 +99,8 @@ class UsersController extends Controller
 
         return response()->json([
             'status' => 200,
-            'data' => $addresses
+            'data' => $addresses,
+            'user' =>$user
         ]);
     }
 
@@ -125,11 +147,29 @@ class UsersController extends Controller
         $model->lng = $request->lng ? $request->lng : '';
         $model->save();
 
-        $addresses = UserAddress::where('user_id',$user->id)->select('id','city','address')->get();
+        //$addresses = UserAddress::where('user_id',$user->id)->select('id','city','address')->get();
+        $user = User::whereApiToken($request->api_token)->first();
+
+        $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :'' ;
+        $user->cityName = $user->city != null ? $user->city->name : '';
+
+        $user->addresses = UserAddress::where('user_id',$user->id)->select('id as addressId','city','address')->get();
+
+        $user->deviceTokens = Device::where('user_id',$user->id)->select('device as device_token')->get();
+
+        $user->addresses->map(function ($q) {
+            $city = City::where('id',$q->city)->select('name')->first();
+            $q->cityName = $city ? $city->name : '' ;
+        });
+
+        $data =  json_decode(json_encode($user),true);
+        $data  =array_filter($data, function($value){
+           return isset($value);
+        });
    
         return response()->json([
             'status' => 200,
-            'data' => $addresses,
+            'data' => $data,
         ]);
 
     }
@@ -168,11 +208,29 @@ class UsersController extends Controller
         $model->lng = $request->lng ? $request->lng : '';
         $model->save();
 
-        $addresses = UserAddress::where('user_id',$user->id)->select('id','city','address')->get();
+        //$addresses = UserAddress::where('user_id',$user->id)->select('id','city','address')->get();
+        $user = User::whereApiToken($request->api_token)->first();
+
+        $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :'' ;
+        $user->cityName = $user->city != null ? $user->city->name : '';
+
+        $user->addresses = UserAddress::where('user_id',$user->id)->select('id as addressId','city','address')->get();
+
+        $user->deviceTokens = Device::where('user_id',$user->id)->select('device as device_token')->get();
+
+        $user->addresses->map(function ($q) {
+            $city = City::where('id',$q->city)->select('name')->first();
+            $q->cityName = $city ? $city->name : '' ;
+        });
+
+        $data =  json_decode(json_encode($user),true);
+        $data  =array_filter($data, function($value){
+           return isset($value);
+        });
    
         return response()->json([
             'status' => 200,
-            'data' => $addresses,
+            'data' => $data,
         ]);
 
     }
@@ -213,11 +271,30 @@ class UsersController extends Controller
 
         $model->delete();
 
-        $addresses = UserAddress::where('user_id',$user->id)->select('id','city','address')->get();
+        //$addresses = UserAddress::where('user_id',$user->id)->select('id','city','address')->get();
+
+        $user = User::whereApiToken($request->api_token)->first();
+
+        $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :'' ;
+        $user->cityName = $user->city != null ? $user->city->name : '';
+
+        $user->addresses = UserAddress::where('user_id',$user->id)->select('id as addressId','city','address')->get();
+
+        $user->deviceTokens = Device::where('user_id',$user->id)->select('device as device_token')->get();
+
+        $user->addresses->map(function ($q) {
+            $city = City::where('id',$q->city)->select('name')->first();
+            $q->cityName = $city ? $city->name : '' ;
+        });
+
+        $data =  json_decode(json_encode($user),true);
+        $data  =array_filter($data, function($value){
+           return isset($value);
+        });
    
         return response()->json([
             'status' => 200,
-            'data' => $addresses,
+            'data' => $data,
         ]);
 
     }
@@ -291,7 +368,7 @@ class UsersController extends Controller
                 $user->phone = $request->phone;
                 $reset_code = rand(1000, 9999);
                 $user->is_active =0;
-                $user->action_code = $reset_code;
+                $user->action_code = (string)$reset_code;
                 sendSms('activation code:'.$user->action_code , $user->phone);
                 
             endif;
@@ -337,6 +414,8 @@ class UsersController extends Controller
             $city = City::where('id',$q->city)->select('name')->first();
             $q->cityName = $city ? $city->name : '' ;
         });
+
+        $user->deviceTokens = Device::where('user_id',$user->id)->select('device as device_token')->get();
 
         $data =  json_decode(json_encode($user),true);
         $data  =array_filter($data, function($value){
@@ -417,6 +496,7 @@ class UsersController extends Controller
         if(!$user){
             return response()->json([
                 'status' => 400,
+                'errors' => ['مستخدم غير مسجل بالتطبيق']
             ]);
         }
 
@@ -425,11 +505,17 @@ class UsersController extends Controller
             $device->delete();
             return response()->json([
                 'status' => 200,
+                'message' => 'تم تسجيل الخروج بنجاح'
             ]);
         
         else :
+            // return response()->json([
+            //     'status' => 400,
+            //     'errors'  => ['unknown device token']
+            // ]);
+
             return response()->json([
-                'status' => 400,
+                'status' => 200,
             ]);
 
         endif;

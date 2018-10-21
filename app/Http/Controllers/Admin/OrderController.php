@@ -7,6 +7,7 @@ use App\Order;
 use App\Category;
 use App\Product;
 use App\Offer;
+use App\City;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use DB;
@@ -18,6 +19,7 @@ use App\Notification;
 use App\UserAddress;
 use App\Item;
 use App\Coupon;
+use App\Device;
 
 
 class OrderController extends Controller
@@ -38,9 +40,9 @@ class OrderController extends Controller
     public function index()
     {
 
-        if (!Gate::allows('orders_manage')) {
-            return abort(401);
-        }
+        // if (!Gate::allows('orders_manage') || !Gate::allows('reports_manage')) {
+        //     return abort(401);
+        // }
 
         //`user_id`, `basket_id`, `coupon_id`, `total_price`, `discount`, `order_date`, `order_time`, `address_id`, `status`, `user_deliverd_time`
         
@@ -54,8 +56,10 @@ class OrderController extends Controller
             endif;
             $address = UserAddress::find($q->address_id);
             $q->address= $address ? $address->address : '';    
+            $city = City::find($q->user_city); 
+            $q->city= $city ? $city->name : ''; 
 
-            $items = Item::where('basket_id',$q->basket_id)->select('id','itemable_id','amount','itemable_type')->get();
+            $items = Item::where('basket_id',$q->basket_id)->select('id','itemable_id','amount','item_price','itemable_type')->get();
             $items->map(function ($q) {
                 $product = Product::find($q->itemable_id);
                 $offer = Offer::find($q->itemable_id);
@@ -92,19 +96,26 @@ class OrderController extends Controller
 
     public function search(Request $request)
     {
-        if (!Gate::allows('orders_manage')) {
-            return abort(401);
-        }
+        // if (!Gate::allows('orders_manage')) {
+        //     return abort(401);
+        // }
+
         //return $request;
 
         $orders = [] ;
 
         
-        if ($request->from != '' && $request->to != '' && $request->status == '') {
+        if ($request->from != '' && $request->to != '' && $request->status == -1) {
             if($request->from > $request->to){
-                return back()->with('error','يرجى ادخال فترة زمنية صحيحة');
+
+                //return back()->with('error','يرجى ادخال فترة زمنية صحيحة');
+                $type = 'search';
+                $orders = [];
+                $order_type = $request->order_type;
+                session()->flash('error', 'يرجى ادخال فترة زمنية صحيحة');
+                return view('admin.orders.index' , compact('orders' , 'type' , 'order_type'));
             }
-            $orders = Order::join('baskets','orders.basket_id','baskets.id')->join('users','orders.user_id','users.id')->join('user_addresses','orders.address_id','user_addresses.id')->whereDate('orders.created_at','>',$request->from)->whereDate('orders.created_at','<',$request->to)->select('orders.*','baskets.id as basket_id' ,'users.id as user_id' , 'users.name as user_name' , 'user_addresses.address as user_address', 'user_addresses.city as user_city')->orderBy('id','Desc')->get();
+            $orders = Order::join('baskets','orders.basket_id','baskets.id')->join('users','orders.user_id','users.id')->join('user_addresses','orders.address_id','user_addresses.id')->whereDate('orders.created_at','>=',$request->from)->whereDate('orders.created_at','<=',$request->to)->select('orders.*','baskets.id as basket_id' ,'users.id as user_id' , 'users.name as user_name' , 'user_addresses.address as user_address', 'user_addresses.city as user_city')->orderBy('id','Desc')->get();
 
             $orders->map(function ($q) {
 
@@ -113,7 +124,9 @@ class OrderController extends Controller
                     $q->couponCode= $coupon ? $coupon->code : '';
                 endif;
                 $address = UserAddress::find($q->address_id);
-                $q->address= $address ? $address->address : '';    
+                $q->address= $address ? $address->address : ''; 
+                $city = City::find($q->user_city); 
+                $q->city= $city ? $city->name : '';   
 
                 $items = Item::where('basket_id',$q->basket_id)->select('id','itemable_id','amount','itemable_type')->get();
                 $items->map(function ($q) {
@@ -139,11 +152,11 @@ class OrderController extends Controller
                 $q->items = $items; 
             });
 
-        }elseif ($request->from != '' && $request->to != '' && $request->status != '') {
+        }elseif ($request->from != '' && $request->to != '' && $request->status != -1) {
             if($request->from > $request->to){
                 return back()->with('error','يرجى ادخال فترة زمنية صحيحة');
             }
-            $orders = Order::join('baskets','orders.basket_id','baskets.id')->join('users','orders.user_id','users.id')->join('user_addresses','orders.address_id','user_addresses.id')->whereDate('orders.created_at','>',$request->from)->whereDate('orders.created_at','<',$request->to)->where('orders.status',$request->status)->select('orders.*','baskets.id as basket_id' ,'users.id as user_id' , 'users.name as user_name' , 'user_addresses.address as user_address', 'user_addresses.city as user_city')->orderBy('id','Desc')->get();
+            $orders = Order::join('baskets','orders.basket_id','baskets.id')->join('users','orders.user_id','users.id')->join('user_addresses','orders.address_id','user_addresses.id')->whereDate('orders.created_at','>=',$request->from)->whereDate('orders.created_at','<=',$request->to)->where('orders.status',$request->status)->select('orders.*','baskets.id as basket_id' ,'users.id as user_id' , 'users.name as user_name' , 'user_addresses.address as user_address', 'user_addresses.city as user_city')->orderBy('id','Desc')->get();
 
             $orders->map(function ($q) {
 
@@ -152,7 +165,9 @@ class OrderController extends Controller
                     $q->couponCode= $coupon ? $coupon->code : '';
                 endif;
                 $address = UserAddress::find($q->address_id);
-                $q->address= $address ? $address->address : '';    
+                $q->address= $address ? $address->address : '';
+                $city = City::find($q->user_city); 
+                $q->city= $city ? $city->name : '';       
 
                 $items = Item::where('basket_id',$q->basket_id)->select('id','itemable_id','amount','itemable_type')->get();
                 $items->map(function ($q) {
@@ -178,7 +193,7 @@ class OrderController extends Controller
                 $q->items = $items; 
             });
 
-        }elseif ($request->from == '' && $request->to == '' && $request->status != '') {
+        }elseif ($request->from == '' && $request->to == '' && $request->status != -1) {
             
             $orders = Order::join('baskets','orders.basket_id','baskets.id')->join('users','orders.user_id','users.id')->join('user_addresses','orders.address_id','user_addresses.id')->where('orders.status',$request->status)->select('orders.*','baskets.id as basket_id' ,'users.id as user_id' , 'users.name as user_name' , 'user_addresses.address as user_address', 'user_addresses.city as user_city')->orderBy('id','Desc')->get();
 
@@ -189,7 +204,9 @@ class OrderController extends Controller
                     $q->couponCode= $coupon ? $coupon->code : '';
                 endif;
                 $address = UserAddress::find($q->address_id);
-                $q->address= $address ? $address->address : '';    
+                $q->address= $address ? $address->address : '';  
+                $city = City::find($q->user_city); 
+                $q->city= $city ? $city->name : '';     
 
                 $items = Item::where('basket_id',$q->basket_id)->select('id','itemable_id','amount','itemable_type')->get();
                 $items->map(function ($q) {
@@ -217,7 +234,12 @@ class OrderController extends Controller
 
         } else{
 
-            return back()->with(compact('orders'))->with('error','يرجى اختيار الفترة الزمنية المراد البحث خلالها');
+            //return back()->with(compact('orders'))->with('error','يرجى اختيار الفترة الزمنية المراد البحث خلالها');
+            $type = 'search';
+            $orders = [];
+            $order_type = $request->order_type;
+            session()->flash('error', 'من فضلك يرجى اختيار فترة زمنية صحيحة');
+            return view('admin.orders.index' , compact('orders' , 'type' , 'order_type'));
 
         }
         $type = 'search';
@@ -228,9 +250,9 @@ class OrderController extends Controller
 
     public function show($id){
 
-        if (!Gate::allows('orders_manage')) {
-            return abort(401);
-        }
+        // if (!Gate::allows('orders_manage')) {
+        //     return abort(401);
+        // }
         
         // $order = Order::find($id);
         
@@ -244,9 +266,11 @@ class OrderController extends Controller
 
             if($order){
                 $address = UserAddress::find($order->address_id);
-                $order->address= $address ? $address->address : '';    
+                $order->address= $address ? $address->address : '';  
+                $city = City::find($order->user_city); 
+                $order->city= $city ? $city->name : '';   
             
-                $items = Item::where('basket_id',$order->basket_id)->select('id','itemable_id','amount','itemable_type')->get();
+                $items = Item::where('basket_id',$order->basket_id)->select('id','itemable_id','amount','item_price','itemable_type')->get();
                 $items->map(function ($q) {
                     $product = Product::find($q->itemable_id);
                     $offer = Offer::find($q->itemable_id);
@@ -278,164 +302,12 @@ class OrderController extends Controller
         return view('admin.orders.show' , compact('order'));
     }
 
-    public function getFinancialReports()
-    {
-        //status = 3 when order is finished
-        if (!Gate::allows('orders_manage')) {
-            return abort(401);
-        }
-
-        $users = User::where('is_user',1)->where('is_active',1)->select('id' , 'name')->get();
-        $categories = Category::where('status',1)->select('id' , 'name_ar as name')->get();
-        $orders = Order::join('cards','orders.card_id','cards.id')->join('users','orders.user_id','users.id')->select('orders.*','cards.id as card_id' , 'cards.name_ar as card_name' ,'users.id as user_id' , 'users.name as user_name')->orderBy('updated_at','Desc')->get();
-
-        return view('admin.orders.reports' , compact('orders' , 'categories' , 'users'));
-    }
-    
-    public function searchFinancialReports2(Request $request)
-    {
-        if (!Gate::allows('orders_manage')) {
-            return abort(401);
-        }
-        $categories = Category::where('status',1)->select('id' , 'name_ar as name')->get();
-        $users = User::where('is_user',1)->where('is_active',1)->select('id' , 'name')->get();
-
-        $orders = [] ;
-        //dd($request);
-        if($request->from != '' && $request->to != ''){
-            if($request->from < $request->to){
-
-                $orders = Order::join('cards','orders.card_id','cards.id')->join('users','orders.user_id','users.id')->whereDate('orders.created_at','>',$request->from)->whereDate('orders.created_at','<',$request->to)->select('orders.*','cards.id as card_id' , 'cards.name_ar as card_name' ,'users.id as user_id' , 'users.name as user_name')->get();
-            }else{
-                //return 'fail';
-                return back()->with('error','يرجى ادخال فترة زمنية صحيحة');
-            }
-        }elseif ($request->card_type != '' && $request->user == '') {
-            
-            $orders = Order::join('cards','orders.card_id','cards.id')->join('users','orders.user_id','users.id')->where('cards.category_id',$request->card_type)->select('orders.*','cards.id as card_id' , 'cards.name_ar as card_name' ,'users.id as user_id' , 'users.name as user_name')->get();
-
-        }elseif ($request->card_type == '' && $request->user != '') {
-            
-            //$user = User::where('name','like','%'.$request->user.'%')->first();
-            
-            $orders = Order::join('cards','orders.card_id','cards.id')->join('users','orders.user_id','users.id')->where('orders.user_id',$request->user)->select('orders.*','cards.id as card_id' , 'cards.name_ar as card_name' ,'users.id as user_id' , 'users.name as user_name')->get();
-
-        }elseif ($request->card_type != '' && $request->user != '') {
-            
-            //$user = User::where('name','like',$request->user)->first();
-            //$cardType = Category::where('name_ar','like',$request->card_type)->first();
-             $orders = Order::join('cards','orders.card_id','cards.id')->join('users','orders.user_id','users.id')->where('cards.category_id',$request->card_type)->where('cards.user_id',$request->user)->select('orders.*','cards.id as card_id' , 'cards.name_ar as card_name' ,'users.id as user_id' , 'users.name as user_name')->get();
-        }else{
-
-            return back()->with(compact('orders'))->with('error','من فضلك يرجى المستخدم أو فئة البطاقة');
-        }
-
-        $type = 'search';
-        
-        return view('admin.orders.reports' , compact('orders' , 'users' , 'categories' , 'type'));
-
-    }
-
-    public function searchFinancialReports(Request $request)
-    {
-        if (!Gate::allows('orders_manage')) {
-            return abort(401);
-        }
-        $categories = Category::where('status',1)->select('id' , 'name_ar as name')->get();
-        $users = User::where('is_user',1)->where('is_active',1)->select('id' , 'name')->get();
-
-        if($request->card_type == '' && $request->user == '' && $request->from == '' && $request->to == '' && $request->payment_method == '' && $request->payment_status == ''):
-            return back()->with('error','يرجى اختيار حقول البحث');
-        endif;
-
-        $query = Order::join('cards','orders.card_id','cards.id')->join('users','orders.user_id','users.id')->select('orders.*','cards.id as card_id' , 'cards.name_ar as card_name' ,'users.id as user_id' , 'users.name as user_name');
-
-        if ($request->from != '' && $request->to != '') :
-            if($request->from < $request->to){
-                $query->whereDate('orders.created_at','>',$request->from)->whereDate('orders.created_at','<',$request->to);
-            }else{
-                return back()->with('error','يرجى ادخال فترة زمنية صحيحة');
-            }
-        endif;
-
-        if ($request->card_type && $request->card_type != '') :
-            $query->where('cards.category_id',$request->card_type);
-        endif;
-
-        if ($request->user != '') :
-            $query->where('orders.user_id',$request->user);
-        endif;
-
-        if ($request->payment_method != '') :
-            $query->where('orders.payment_method',$request->payment_method);
-        endif;
-
-        if ($request->payment_status != '') :
-            $query->where('orders.payment_status',$request->payment_status);
-        endif;
-
-        $orders = $query->get();
-
-        $type = 'search';
-        
-        return view('admin.orders.reports' , compact('orders' , 'users' , 'categories' , 'type'));
-
-    }
-    
-     public function getUsersReports(){
-        if (!Gate::allows('orders_manage')) {
-            return abort(401);
-        }
-        
-        //$users = User::where('is_user',1)->select('users.id' , 'users.name','users.phone','users.address')->get();
-        $users = User::join('user_cards','users.id','user_cards.user_id')->where('users.is_active',1)->groupBy('users.id')->select('users.id' , 'users.name','users.phone','users.address')->get();
-
-    
-        return view('admin.orders.user_reports' , compact('users'));
-     }
-     
-    
-    public function searchUsersReports(Request $request){
-        if (!Gate::allows('orders_manage')) {
-            return abort(401);
-        }
-        
-        // $users = DB::table('users')
-        //     ->leftJoin('user_cards', 'users.id', '=', 'user_cards.user_id')
-        //     ->select('users.id' , 'users.name','users.phone','users.address')->get();
-            
-             //->whereNull('orders.customer_id')
-        
-        if($request->type == ''):
-            return back()->with('error','يرجى اختيار نوع البحث');
-        endif;
-
-        if ($request->type == 0) :
-            //users bought card
-        $users = User::join('user_cards','users.id','user_cards.user_id')->where('users.is_active',1)->groupBy('users.id')->select('users.id' , 'users.name','users.phone','users.address')->get();
-        endif;
-        
-        if ($request->type == 1) :
-            //users didn't bought card
-        $users = User::join('user_cards','users.id','!=','user_cards.user_id')->where('users.is_active',1)->groupBy('users.id')->select('users.id' , 'users.name','users.phone','users.address')->get();
-        endif;
-        
-        if ($request->type == 2) :
-            //users didn't complete order buying card
-        $users = User::join('orders','users.id','orders.user_id')->where('users.is_active',1)->where('orders.status','!=',1)->groupBy('users.id')->select('users.id' , 'users.name','users.phone','users.address')->get();
-        endif;
-
-        $type = 'search';
-        
-        return view('admin.orders.user_reports' , compact('users' ,'type'));
-    }
-
     
     public function confirmOrder(Request $request){
 
-        if (!Gate::allows('orders_manage')) {
-            return abort(401);
-        }
+        // if (!Gate::allows('orders_manage')) {
+        //     return abort(401);
+        // }
 
         $order = Order::find($request->orderId);
         
@@ -460,25 +332,25 @@ class OrderController extends Controller
         
             if($request ->status == 2){
                 $order->refuse_reason = $request->refuse_reason ;
-                $body = 'تم رفض الطلب وسبب الرفض هو : '.$request->refuse_reason;
+                $body = 'تم رفض الطلب رقم : '.$order->id.' وسبب الرفض هو : '.$request->refuse_reason;
                 
             }else{
                 //$body = ' تم قبول الطلب';
-                $body = 'تم قبول الطلب وسيتم تسلمها يوم '.$order->delivered_time;
+                $body = 'تم قبول الطلب رقم : '.$order->id.' وسيتم تسلمها يوم '.$order->delivered_time;
 
 
             }
 
             if($order->status == 1):
                 $order_status = 'جارى التجهيز';
-                $body = 'جارى تجهيز الطلب';
+                $body = 'جارى تجهيز الطلب  رقم : '.$order->id;
             elseif($order->status == 2):
                 $order_status = 'مرفوض';
-                $body = 'تم رفض الطلب وسبب الرفض هو : '.$request->refuse_reason;
+                $body = 'تم رفض الطلب رقم : '.$order->id.' وسبب الرفض هو : '.$request->refuse_reason;
 
             elseif($order->status == 3):
                 $order_status = 'جارى التوصيل';
-                $body = 'جارى توصيل الطلب';
+                $body = 'جارى توصيل الطلب  رقم : '.$order->id;
 
             else:
                 $order_status = 'جديد';
@@ -490,8 +362,8 @@ class OrderController extends Controller
                 $title = 'الرد على الطلب';
 
                 $data = ['title' => $title , 'body'=>$body ,'targetType' => 'order' , 'targetId' =>$order->id];
-
-                $r = $this->push->sendPushNotification($order->user_id , $data, $title, $body,'global');
+                $devices = Device::where('user_id',$order->user_id)->pluck('device')->toArray();
+                $this->push->sendPushNotification($devices , $data, $title, $body,'multi');
 
 
                 $notif_data = array(
@@ -532,9 +404,9 @@ class OrderController extends Controller
 
     public function delete(Request $request)
     {
-        if (!Gate::allows('orders_manage')) {
-            return abort(401);
-        }
+        // if (!Gate::allows('orders_manage')) {
+        //     return abort(401);
+        // }
 
         $model = Order::findOrFail($request->id);
 
@@ -561,13 +433,15 @@ class OrderController extends Controller
 
             $query=\DB::table('orders')->join('baskets','orders.basket_id','baskets.id')->join('users','orders.user_id','users.id')->join('user_addresses','orders.address_id','user_addresses.id')->select();
 
-            if ($request->status) :
-                $query->where('status', $request->status);
+            if ($request->from != '' && $request->to != '') :
+                $query->whereDate('orders.created_at','>=',$request->from)->whereDate('orders.created_at','<=',$request->to);
             endif;
 
-            if ($request->from != '' && $request->to != '' && $request->from < $request->to) :
-                $query->whereDate('orders.created_at','>',$request->from)->whereDate('orders.created_at','<',$request->to);
+            if ($request->status != -1) :
+                $query->where('orders.status', $request->status);
             endif;
+
+            
 
             $orders = $query->select('orders.*','baskets.id as basket_id' ,'users.id as user_id' , 'users.name as user_name' , 'user_addresses.address as user_address')->orderBy('id','Desc')->get();
 
@@ -601,10 +475,7 @@ class OrderController extends Controller
                     $order->created_at,
                     $order->id,
                     $order->user_name ,
-                    $order->order_status ,
-
-                    
-                    
+                    $order->order_status ,                    
                 );
             }
             /*print_r($data);
@@ -615,41 +486,5 @@ class OrderController extends Controller
     })->download('xls');
    
     }
-    
-    
-     public function getExportUsers(){
-        \Excel::create('تقارير المستخدمين', function($excel) {
-
-        $excel->sheet('Sheet 1', function($sheet) {
-
-
-            //$users=\DB::table('users')->get();
-            $users = User::join('user_cards','users.id','user_cards.user_id')->where('users.is_active',1)->groupBy('users.id')->select('users.id' , 'users.name','users.phone','users.address')->get();
-            
-           // Add heading row
-       
-       
-        $data[] = array('رقم الجوال' , 'اسم المستخدم' , 'العنوان');
-        $sheet->fromArray(array($data), null, 'A1', false, false);
-
-
-        // Add data rows
-                foreach($users as $user) {
-                 $data[] = array(
-                    $user->phone,
-                    $user->name,
-                    $user->address ,
-                    
-                    
-                );
-            }
-            /*print_r($data);
-        die();*/
-            //$sheet->fromArray($data); 
-            $sheet->fromArray($data, null, 'A1', false, false);
-        });
-    })->download('xls');
-   
-    }
-    
+        
 }

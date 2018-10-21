@@ -3,39 +3,12 @@
 @section('styles')
     <style>
 
-
-        /*
- _____   _           _         _                        _
-|_   _| | |         | |       | |                      | |
-  | |   | |__   __ _| |_ ___  | |_ ___  _ __ ___   __ _| |_ ___   ___  ___
-  | |   | '_ \ / _` | __/ _ \ | __/ _ \| '_ ` _ \ / _` | __/ _ \ / _ \/ __|
- _| |_  | | | | (_| | ||  __/ | || (_) | | | | | | (_| | || (_) |  __/\__ \
- \___/  |_| |_|\__,_|\__\___|  \__\___/|_| |_| |_|\__,_|\__\___/ \___||___/
-
-Oh nice, welcome to the stylesheet of dreams.
-It has it all. Classes, ID's, comments...the whole lot:)
-Enjoy responsibly!
-
-
-
-        @ihatetomatoes
-
- */
-
-        /* ==========================================================================
-           Chrome Frame prompt
-           ========================================================================== */
-
         .chromeframe {
             margin: 0.2em 0;
             background: #ccc;
             color: #000;
             padding: 0.2em 0;
         }
-
-        /* ==========================================================================
-           Author's custom styles
-           ========================================================================== */
         p {
             line-height: 1.33em;
             color: #7E7E7E;
@@ -736,6 +709,28 @@ Enjoy responsibly!
                 </div>
             </div><!-- end col -->
 
+            <div class="col-lg-3 col-md-6">
+                <div class="card-box">
+                    <h4 class="header-title m-t-0 m-b-30">عدد التصويتات كاملة فى التطبيق</h4>
+                    <div class="widget-box-2">
+                        <div class="widget-detail-2">
+                                <span class="badge badge-success pull-left m-t-20">{{ $data['votes'] }}<i class="zmdi zmdi-trending-up"></i> </span>
+                            <h2 class="m-b-0">{{ $data['votes'] }}</h2>
+                            <p class="text-muted m-b-25">عدد التصويتات كاملة فى التطبيق</p>
+
+                        </div>
+
+                        <div class="progress progress-bar-success-alt progress-sm m-b-0">
+                            <div class="progress-bar progress-bar-success" role="progressbar"
+                                 aria-valuenow="77" aria-valuemin="0" aria-valuemax="100"
+                                 style="width: {{$data['votes']}}%;">
+                                <!-- <span class="sr-only">77% Complete</span> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end col -->
+
             
         </div>
         <!-- end row -->
@@ -750,7 +745,7 @@ Enjoy responsibly!
 
             <strong>مرحباً بك!</strong>
             <b style="color: #000;">{{ auth()->user()->name }}</b>
-            لوحة تحكم بيع البطاقات
+            لوحة تحكم {{ config('app.name') }}
             </a>
 
         </div>

@@ -37,9 +37,9 @@
                     </span>
                 </a>
                 
-                <button type="button" class="btn btn-custom  waves-effect waves-light"
+                <!-- <button type="button" class="btn btn-custom  waves-effect waves-light"
                             onclick="window.history.back();return false;"> رجوع <span class="m-l-5"><i class="fa fa-reply"></i></span>
-                </button>
+                </button> -->
 
             </div>
 

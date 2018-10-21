@@ -5,6 +5,7 @@
 
 
     <div class="m-t-40 card-box">
+        
         <div class="text-center">
             <h4 class="text-uppercase font-bold m-b-0">استعادة ضبط كلمة المرور</h4>
 
@@ -44,6 +45,14 @@
                 </div>
 
             </form>
+
+            <div class="form-group m-t-30 m-b-0">
+                <div class="col-sm-12">
+                    <a href="{{ route('admin.login') }}" class="text-muted"><i
+                                class="fa fa-sign-in m-r-5"></i>
+                        تسجيل الدخول</a>
+                </div>
+            </div>
 
         </div>
     </div>

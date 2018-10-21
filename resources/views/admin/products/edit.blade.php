@@ -78,11 +78,11 @@
                     </div>
 
                     <div class="col-xs-6">
-                        <div class="form-group{{ $errors->has('is_available') ? ' has-error' : '' }}">
+                        <div class="form-group{{ $errors->has('status') ? ' has-error' : '' }}">
                             <label for="pass1"> حالة المنتج*</label>
-                            <select class="form-control" name="is_available">
-                                <option value="1" {{$product->is_available == 1 ? 'selected' : ''}}>متاح</option>
-                                <option value="0" {{$product->is_available == 0 ? 'selected' : ''}}>غير متاح</option>
+                            <select class="form-control" name="status">
+                                <option value="1" {{$product->status == 1 ? 'selected' : ''}}>مفعل</option>
+                                <option value="0" {{$product->status == 0 ? 'selected' : ''}}>معطل</option>
                             </select>
                         </div> 
                     </div>

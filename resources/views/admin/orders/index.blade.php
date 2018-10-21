@@ -18,7 +18,7 @@
                         <i class="fa fa-trash" style="margin-left: 5px"></i> حذف المحدد
                     </a> -->
                     @if(isset($type) && $type == 'search')
-                    <a href="{{route('orders.index')}}" style="float: left; margin-right: 15px;" class="btn btn-primary btn-sm"><i class="fa fa-eye" style="margin-left: 5px"></i>عرض جميع الطلبات
+                    <a href="{{ route('orders.index').'?order_type=orders&status=""&from=""&to=""' }}" style="float: left; margin-right: 15px;" class="btn btn-primary btn-sm"><i class="fa fa-eye" style="margin-left: 5px"></i>عرض جميع الطلبات
                     </a>
                     @endif
 
@@ -27,7 +27,7 @@
                         if(isset($_GET['status'])):
                             $status = $_GET['status'];
                         else:
-                            $status = '';
+                            $status = -1;
                         endif;
                     @endphp
 
@@ -42,7 +42,7 @@
                             @if((isset($_GET['order_type']) && $_GET['order_type'] == 'reports') || (isset($order_type) && $order_type == 'reports'))
                             <div class="col-lg-2"> 
                                 <select name="status" class="form-control">
-                                    <option value="" disabled selected>حالة الطلب</option>
+                                    <option value="-1" selected>حالة الطلب</option>
                                         <option value="0">جديد</option>
                                         <option value="1">جارى التجهيز</option>
                                         <option value="2">مرفوض</option>
@@ -116,7 +116,7 @@
                                 <td>{{ $row->id }}</td>
                                 <td> {{$row->user_name}} </td>
                                 @if((isset($_GET['order_type']) && $_GET['order_type'] != 'reports') || (isset($order_type) && $order_type != 'reports'))
-                                <td>{{ $row->user_city }} </td>
+                                <td>{{ $row->city }} </td>
                                 @endif
                                 <!--<td> {{ $row->delivered_time }} </td>-->
                                 <td id="order_status{{ $row->id }}"> 

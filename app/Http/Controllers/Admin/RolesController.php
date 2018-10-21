@@ -20,7 +20,7 @@ class RolesController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Gate::allows('admin_manage')) {
+        if (!Gate::allows('users_manage')) {
             return abort(401);
         }
 
@@ -71,7 +71,7 @@ class RolesController extends Controller
      */
     public function create()
     {
-        if (!Gate::allows('admin_manage')) {
+        if (!Gate::allows('users_manage')) {
             return abort(401);
         }
 
@@ -98,7 +98,7 @@ class RolesController extends Controller
     public function store(StoreRolesRequest $request)
     {
 
-        if (!Gate::allows('admin_manage')) {
+        if (!Gate::allows('users_manage')) {
             return abort(401);
         }
 
@@ -148,7 +148,7 @@ class RolesController extends Controller
      */
     public function edit($id)
     {
-        if (!Gate::allows('admin_manage')) {
+        if (!Gate::allows('users_manage')) {
             return abort(401);
         }
 
@@ -175,7 +175,7 @@ class RolesController extends Controller
     public function update(UpdateRolesRequest $request, $id)
     {
         
-        if (!Gate::allows('admin_manage')) {
+        if (!Gate::allows('users_manage')) {
             return abort(401);
         }
         $role = Role::findOrFail($id);
@@ -203,7 +203,7 @@ class RolesController extends Controller
      */
     public function destroy($id)
     {
-        if (!Gate::allows('admin_manage')) {
+        if (!Gate::allows('users_manage')) {
             return abort(401);
         }
 
@@ -222,7 +222,7 @@ class RolesController extends Controller
      */
     public function delete(Request $request)
     {
-        if (!Gate::allows('admin_manage')) {
+        if (!Gate::allows('users_manage')) {
             return abort(401);
         }
 
@@ -282,7 +282,7 @@ class RolesController extends Controller
     public function groupDelete(Request $request)
     {
 
-        if (!Gate::allows('admin_manage')) {
+        if (!Gate::allows('users_manage')) {
             return abort(401);
         }
 
@@ -309,7 +309,7 @@ class RolesController extends Controller
      */
     public function massDestroy(Request $request)
     {
-        if (!Gate::allows('admin_manage')) {
+        if (!Gate::allows('users_manage')) {
             return abort(401);
         }
         

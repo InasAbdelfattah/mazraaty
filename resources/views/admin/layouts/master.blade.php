@@ -337,6 +337,7 @@
 
 
         this.value = this.value.replace(/[^0-9\.]/g, '');
+        //this.value = this.value.replace(/(05)[0-9]{8}, '');
     });
 
 </script>

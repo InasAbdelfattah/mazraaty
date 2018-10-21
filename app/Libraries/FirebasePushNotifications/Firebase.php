@@ -61,7 +61,7 @@ class Firebase
 
         $headers = array(
 //            'Authorization: key=' . FIREBASE_API_KEY,
-            'Authorization: key=AAAAafslh4M:APA91bE7zOP3mq_YfEbsH8dyiEdznGaFRpsSH1gepaDu3FNKiPJHELHEaK6bS6G_ZukEnc-uDN8YcFIRQyICzGqZ-sIo9JkTDesVXmd2HjMxQnPULrNJha026pNyqqxt2qosKIkRTuAz',
+            'Authorization: key=AAAA8vC9dcc:APA91bHGtILjO8TtBCFEweYKUAz90PwlSMQZN-jaaEa-xjNcEHEJPuo1o8tNPSHTBxdVrffincJbBYv9kvCN-wQWx6dcD5657UG1fhS_VHRXgCitSVRYmKS72ksmiLjx6-RyiyvkV38J',
             'Content-Type: application/json'
         );
         // Open connection

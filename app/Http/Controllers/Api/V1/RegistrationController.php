@@ -61,10 +61,12 @@ class RegistrationController extends Controller
         $user->is_admin = 0;
         $actionCode = rand(1000, 9999);
         $actionCode = $user->actionCode($actionCode);
-        $user->action_code = $actionCode;
+        $user->action_code = (string)$actionCode;
         $user->is_active = 0;
         $user->is_suspend = 0;
         $user->is_new = 0;
+        $user->plateform = $request->plateform ? $request->plateform : '';
+
 
         if($user->save()){
 
@@ -75,6 +77,10 @@ class RegistrationController extends Controller
             // $model->lat = '';
             // $model->lng = '';
             // $model->save();
+
+            if($request->playerId):
+                manageDevices($request->playerId, $user->id);
+            endif;
 
                 //send sms to user with activation code
             $phone = filter_mobile_number($user->phone);

@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Auth;
 use UploadImage;
+use App\Product;
 
 class MeasurementUnitController extends Controller
 {
@@ -89,7 +90,7 @@ class MeasurementUnitController extends Controller
         }
 
         $rules = [
-            'name' => 'required|min:3|max:50',
+            'name' => 'required|min:3|max:50|unique:measurement_units,name',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -145,7 +146,7 @@ class MeasurementUnitController extends Controller
 
         $measurement = MeasurementUnit::findOrFail($id);
         $rules = [
-            'name' => 'required|min:3|max:50',
+            'name' => 'required|min:3|max:50|unique:measurement_units,name,'.$measurement->id,
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -157,6 +158,13 @@ class MeasurementUnitController extends Controller
             $valErrors = $validator->messages();
             return redirect()->back()->withInput()
                 ->withErrors($valErrors);
+        }
+
+        if($request->status == 0){
+            $products = Product::where('measurement_id',$measurement->id)->where('status',1)->get();
+            if (count($products) > 0) {
+                return redirect()->route('measurementUnits.index')->with('error', 'لا يمكنك تعطيل وحدة القياس لاستخدامها فى منتجات مفعلة');
+            }
         }
 
         $measurement->name = $request->name;
@@ -243,6 +251,14 @@ class MeasurementUnitController extends Controller
                     $msg = 'تم تفعيل وحدة القياس';
                 } else {
 
+                    $products = Product::where('measurement_id',$model->id)->where('status',1)->get();
+                    if (count($products) > 0) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'لا يمكنك تعطيل وحدة القياس لاستخدامها فى منتجات مفعلة',
+                        'id' => $model->id
+                    ]);
+                }
                     $msg = 'تم تعطيل وحدة القياس';
                 }
                 $model->status = $request->status;

@@ -34,7 +34,7 @@
 
                     <h4 class="header-title m-t-0 m-b-30">تعديل بيانات المستخدم</h4>
 
-                    <div class="col-xs-6">
+                    <div class="col-xs-12">
                         <div class="form-group">
                             <label for="userName">الاسم الكامل*</label>
                             <input type="text" name="name" value="{{ $user->name or old('name') }}" class="form-control" placeholder="اسم المستخدم بالكامل..."/>

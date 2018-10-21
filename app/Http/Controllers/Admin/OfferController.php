@@ -12,6 +12,9 @@ use App\Offer;
 use App\MeasurementUnit;
 use UploadImage;
 
+use App\Order;
+use App\Basket;
+use App\Item;
 
 class OfferController extends Controller
 {
@@ -173,6 +176,12 @@ class OfferController extends Controller
             return redirect()->back()->withInput()
                 ->withErrors($validator->errors());
         }
+
+        $product = Product::find($request->product_id);
+        //dd($product);
+        // if(!$product):
+        //     return redirect()->back()->with('error','منتج غير متاح');
+        // endif;
         //`name`, `image`, `description`, `price`, `amount`, `product_id`, `measurement_id`, `is_available`, `status`,'category_id','subcategory_id'
 
         $offer = new Offer;
@@ -186,6 +195,13 @@ class OfferController extends Controller
         $offer->measurement_id = $request->measurement_id ? $request->measurement_id : 0;
         $offer->is_available = $request->is_available;
         $offer->status = 1;
+
+        $sale_product_price = $request->price /$request->amount;
+        $offer->insale_product_price = $sale_product_price;
+        $offer->product_price = $product->price;
+        $offer->sale = $product->price - $sale_product_price;
+        $offer->sale_percntage = (($product->price - $sale_product_price)/$product->price)*100;
+
         if ($request->hasFile('image')):
             $offer->image = uploadImage($request, 'image', $this->public_path);
         else:
@@ -327,20 +343,24 @@ class OfferController extends Controller
     {
 
         $model = Offer::findOrFail($request->id);
-        //dd($request);
-
-//        if ($model->products->count() > 0) {
-//            return response()->json([
-//                'status' => false,
-//                'message' => "عفواً, لا يمكنك حذف النوع ($model->name) نظراً لوجود مراكز ملتحقة بهذا النوع"
-//            ]);
-//        }
 
         if ($model) {
             
             if($model->is_available != $request->status) {
                 if ($request->is_available == 1) {
-                    
+                    // $orders = Order::whereIn('status',[0,1])->pluck('basket_id')->toArray();
+                    // if(count($orders) > 0){
+                    //     $baskets = Basket::whereIn('id',$orders)->pluck('id')->toArray();
+                    //     if(count($baskets) > 0){
+                    //         $item = Item::whereIn('basket_id',$baskets)->where('itemable_id',$model->id)->where('itemable_type','App\Offer')->first();
+                    //         if($item){
+                    //             return response()->json([
+                    //                 'status' => false,
+                    //                 'message' => 'لا يمكن تعطيل العرض لوجوده فى طلبات جارية ',
+                    //             ]);
+                    //         }
+                    //     }
+                    // }
                     $msg = 'تم الغاء اتاحة العرض';
                 } else {
                     $msg = 'تم إتاحة العرض';

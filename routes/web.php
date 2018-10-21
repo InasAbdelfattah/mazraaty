@@ -15,9 +15,19 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+Route::get('/', function () {
+    return redirect()->route('admin.login');
+});
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', function () {
+    return redirect()->route('home');
+});
+
+// Route::get('/', 'Admin\LoginController@login');
+
+ Auth::routes();
+
+// Route::get('/home', 'Admin\HomeController@index');
 
 
 Route::group(['prefix' => 'administrator'], function () {

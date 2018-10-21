@@ -1,14 +1,13 @@
 @extends('admin.layouts.master')
-
+@section('title','اتصل بنا')
 @section('content')
-    <form action="{{ route('administrator.settings.store') }}" data-parsley-validate="" novalidate="" method="post"
-          enctype="multipart/form-data">
+    <form action="{{ route('administrator.settings.store') }}" data-parsley-validate="" novalidate="" method="post" enctype="multipart/form-data">
 
     {{ csrf_field() }}
     <!-- Page-Title -->
         <div class="row">
             <div class="col-sm-12">
-                <h4 class="page-title">بيانات التواصل</h4>
+                <h4 class="page-title">اتصل بنا</h4>
             </div>
         </div>
 
@@ -18,7 +17,7 @@
 
                     <div id="errorsHere"></div>
 
-                    <h4 class="header-title m-t-0 m-b-30">روابط التواصل</h4>
+                    <h4 class="header-title m-t-0 m-b-30">اتصل بنا</h4>
                     <br/> <br>
                     <!-- hot numbers -->
                     <div class="form-group" id="hotNo">
@@ -30,7 +29,7 @@
                             <div class="row">
                                 <div class="col-lg-1">{{$j}} - </div>
                                 <div class="col-lg-8"><input type="text" name="{{$row->name}}"
-                                       value="{{$row->body}}" class="form-control" required placeholder="الرقم الموحد ..."/></div>
+                                       value="{{$row->body}}" class="form-control numbersOnly" required data-parsley-required-message="ه1ا الحقل الزامى" data-parsley-minlength="10" data-parsley-minlength-message="يجب الا يقل الحقل عن 10 ارقام" data-parsley-maxlength="25" data-parsley-maxlength-message="يجب الا يتجاوز الحقل 25 رقم" placeholder="الرقم الموحد ..."/></div>
                                 <div class="col-lg-3 removeElement" data-id="{{$row->id}}" data-type="model"><i class="fa fa-remove"></i></div>
                             </div>
                             <br/>
@@ -188,7 +187,7 @@
         console.log('v:',v)
         $('#mydiv').data('myval', v);
 
-        $('#hotNo').append('<div id="row'+v+'"><div class="row" data-id="row' + v + '"><div class="col-lg-1"> '+(v)+' - </div><div class="col-lg-8"><input type="text" name="hot_no' + v + '" class="form-control"></div><div class="col-lg-3 removeElement" data-id="'+ v + '" data-type="flight"><i class="fa fa-remove"></i></div></div><br/></div>');
+        $('#hotNo').append('<div id="row'+v+'"><div class="row" data-id="row' + v + '"><div class="col-lg-1"> '+(v)+' - </div><div class="col-lg-8"><input type="text" name="hot_no' + v + '" class="form-control numbersOnly" required data-parsley-required-message="ه1ا الحقل الزامى" data-parsley-minlength="10" data-parsley-minlength-message="يجب الا يقل الحقل عن 10 ارقام" data-parsley-maxlength="25" data-parsley-maxlength-message="يجب الا يتجاوز الحقل 25 رقم"></div><div class="col-lg-3 removeElement" data-id="'+ v + '" data-type="flight"><i class="fa fa-remove"></i></div></div><br/></div>');
     });
 
     $('#mywork').on('click', function (e) {

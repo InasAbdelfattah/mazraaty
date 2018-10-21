@@ -1,5 +1,12 @@
 @extends('admin.layouts.master')
 @section('title', 'إدارة العملاء بالتطبيق')
+@section('styles')
+<style>
+    #reasonId{
+        display:block;
+    }
+</style>
+@endsection
 @section('content')
 
     <!-- Page-Title -->
@@ -32,10 +39,10 @@
 
                         <form action="{{route('users.search')}}" method="get">
                             <input type="hidden" name="is_admin" value="0">
-                            <div class="col-lg-4">
+                            <div class="col-lg-3">
                                 <input type="text" name="phone" placeholder="رقم الجوال" class="form-control phone"/>
                             </div>
-                            <div class="col-lg-4"> 
+                            <!-- <div class="col-lg-3"> 
                                 <select name="city" class="form-control">
                                     <option value="" disabled selected>المدينة</option>
                                     @forelse($cities as $city)
@@ -43,6 +50,15 @@
                                     @empty
                                     <option value="" disabled>لا توجد مدن</option>
                                     @endforelse
+                                </select>
+                                
+                            </div> -->
+
+                            <div class="col-lg-3"> 
+                                <select name="is_suspend" class="form-control">
+                                    <option value="" disabled selected>حالة المستخدم</option>
+                                        <option value="0">مفعل</option>
+                                        <option value="1">محظور</option>
                                 </select>
                                 
                             </div>
@@ -69,7 +85,7 @@
                         
                         <th>اسم المستخدم</th>
                         <th>رقم الجوال</th>
-                        <th>المدينة</th>
+                        <!-- <th>المدينة</th> -->
                         <th>الحالة</th>
                         <th>تاريخ الاشتراك</th>
                         <!--<th>حالة الحذر</th>-->
@@ -99,7 +115,7 @@
                             <!--<td>{{ $user->username  }}</td>-->
                             
                             <td>{{ $user->phone }}</td>
-                            <td>{{ $user->city ? $user->city->name : '' }}</td>
+                            <!-- <td>{{ $user->city ? $user->city->name : '' }}</td> -->
                             
                             <td id="is_active{{$user->id}}">
                             
@@ -152,17 +168,40 @@
                                              <input type="hidden" name="userId" value="{{$user->id}}">
                                              <input type="hidden" name="is_active" value="0">
                                                     <div class="form-group ">
-                                                            
-                                                            <div>
-                                                                <label for="paid-signup">
-                                                                     سبب التعطيل 
-                                                                </label>
-                                                                <br>
-                                                                <textarea id="paid-signup" value="{{old('reason')}}" name="reason" id="reason" class="form-control"></textarea>
-                                                            </div>
+
+                                                        <label for="pass1">سبب الحظر*</label>
+                                                        <select class="form-control select2" name="type" id="reasonType">
+                                                            <option value="1">التزام مالى</option>
+                                                            <option value="2">شىء اخر</option>                                
+                                                        </select>
+                                                        <!-- <div class="checkbox checkbox-custom">
+                                                            <input id="checkbox-signup" type="checkbox" value="1"  required data-parsley-trigger="keyup"
+                                                                   data-parsley-required-message="لابد من اختيار  سبب التعطيل"
+                                                                   name="type" {{ old('type') ? 'checked' : '' }}>
+                                                            <label for="checkbox-signup">
+                                                                التزام مالى
+                                                            </label>
                                                         </div>
-            
-            
+
+                                                        <div class="checkbox checkbox-custom">
+                                                            <input id="checkbox-signup" type="checkbox" value="2"  required data-parsley-trigger="keyup"
+                                                                   data-parsley-required-message="لابد من اختيار  سبب التعطيل"
+                                                                   name="type" {{ old('type') ? 'checked' : '' }}>
+                                                            <label for="checkbox-signup">
+                                                                شىء اخر
+                                                            </label>
+                                                        </div> -->
+                                                    </div>
+                                                    <div id="reasonId">
+                                                        <div class="form-group">
+                                                                
+                                                            <label for="paid-signup">
+                                                                السبب 
+                                                            </label><br>
+                                                            <textarea id="paid-signup" value="{{old('reason')}}" name="reason" class="form-control"></textarea>
+                                                        </div>
+                                                    </div>
+                
                                                         <div class="form-group text-right m-t-20">
                                                             <button class="btn btn-primary waves-effect waves-light m-t-0"
                                                                     type="submit">
@@ -199,6 +238,22 @@
 <script src="http://malsup.github.com/jquery.form.js"></script>
 
     <script>
+
+        $('#reasonType').on('change', function(e){
+
+            var type = e.target.value;
+            console.log('type',type);
+
+            if(type == 2){
+                $("#reasonId").show();
+                $("#reasonId").css("display", "block");
+            }else{
+                $("#reasonId").hide();
+                $("#reasonId").css("display", "none");
+
+            }
+
+        });
 
         @if(session()->has('success'))
         setTimeout(function () {

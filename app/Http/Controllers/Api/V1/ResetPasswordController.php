@@ -36,13 +36,11 @@ class ResetPasswordController extends Controller
             $user->save();
             return response()->json([
                 'status' => 200,
-                'data' => [],
                 'message' => 'تم تغيير كلمة المرور.'
             ]);
         } else {
             return response()->json([
                 'status' => 400,
-                'data' => [],
                 'errors' =>['الهاتف او كود التاكيد غير صحيحة.'],
                 'message' => 'الهاتف او كود التاكيد غير صحيحة.',
             ]);
@@ -53,7 +51,8 @@ class ResetPasswordController extends Controller
     public function check(Request $request)
     {
         $validator = Validator::make($request->all(), [
-                'reset_code' => 'required'
+                'reset_code' => 'required',
+                'phone' => 'required'
             ]
         );
 
@@ -64,16 +63,18 @@ class ResetPasswordController extends Controller
             ]);
         }
 
-        $code = User::whereActionCode($request->reset_code)
-            ->first();
+        $code = User::where('phone',$request->phone)->where('action_code',$request->reset_code)->first();
+        // $code = User::whereActionCode($request->reset_code)
+        //     ->first();
         if ($code) {
             return response()->json([
                 'status' => 200,
-                //'message' => ''
+                'message' => 'الكود صحيح'
             ]);
         } else {
             return response()->json([
                 'status' => 400,
+                'errors' =>['الكود غير صحيح']
                // 'message' => 'activationError',
             ]);
         }
@@ -107,7 +108,8 @@ class ResetPasswordController extends Controller
         } else {
             return response()->json([
                 'status' => 400,
-                'message' => 'code or phone incorrect'
+                'message' => 'code or phone incorrect',
+                'errors' => ['code or phone incorrect']
             ]);
         }
     }

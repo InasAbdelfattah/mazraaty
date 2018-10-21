@@ -35,6 +35,11 @@
                             </div>
 
                             <div class="col-lg-3 col-xs-12">
+                                <label>المدينة :</label>
+                                <p>{{ $order->city }}</p>
+                            </div>
+
+                            <div class="col-lg-3 col-xs-12">
                                 <label>مكان التسليم :</label>
                                 <p>{{ $order->user_address }}</p>
                             </div>
@@ -88,9 +93,11 @@
                                             <th>{{ $item->product_name }}</th>
                                             <th>{{ $item->type == 'offer' ? 'عرض' : 'بدون عرض'}}</th>
                                             <th>{{$item->amount}}</th>
-                                            <th>{{ $item->type == 'product' ? $item->product_price : $item->offer_price}}</th>
+                                            <!-- <th>{{ $item->type == 'product' ? $item->product_price : $item->offer_price}}</th>
 
-                                            <th>{{ $item->type == 'product' ? $item->product_price* $item->amount : $item->offer_price * $item->amount}}</th>
+                                            <th>{{ $item->type == 'product' ? $item->product_price* $item->amount : $item->offer_price * $item->amount}}</th> -->
+                                            <th>{{ $item->item_price }}</th>
+                                            <th>{{ $item->item_price * $item->amount}}</th>
                                         </tr>
                                         
                                         
@@ -102,15 +109,19 @@
                                     </tr>
                                     <tr style="border: 1px solid #797979;">
                                         <th>تكلفة الطلب الاجمالية</th>
+                                        <th>القيمة المضافة</th>
                                         <th>تكلفة التوصيل</th>
                                         <th>الخصم</th>
                                         <th colspan="3">تكلفة الطلب بعد الخصم</th>
                                     </tr>
                                     <tr>
-                                        <th>{{$order->total_price}}</th>
-                                        <th>{{setting()->getBody('delivery')}}</th>
+                                        <th>{{$order->price}}</th>
+                                        <th>{{$order->tax}}</th>
+                                        <th>{{$order->delivery}}</th>
+                                        <!-- <th>{{setting()->getBody('delivery')}}</th> -->
                                         <th>{{$order->discount}}</th>
-                                        <th colspan="3">{{$order->total_price + setting()->getBody('delivery') - $order->discount}}</th>
+                                        <!-- <th colspan="3">{{$order->price + setting()->getBody('delivery') + setting()->getBody('tax') - $order->discount}}</th> -->
+                                        <th colspan="3">{{$order->total_price }}</th>
                                     </tr>
                                 </table>
                                 @endif

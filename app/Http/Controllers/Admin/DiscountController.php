@@ -12,6 +12,7 @@ use App\Libraries\PushNotification;
 use App\User;
 use App\Notification;
 use App\Order;
+use App\Device;
 
 class DiscountController extends Controller
 {
@@ -151,36 +152,42 @@ class DiscountController extends Controller
         //$data = ['title' => $title , 'body'=>$body];
         $data = [];
 
-        $r = $this->push->sendPushNotification(null , $data, $title, $body,'global');
+        $devices = Device::pluck('device')->toArray();
+        //return $devices;
+        $r = $this->push->sendPushNotification($devices , $data, $title, $request->body ,'multi');
+
+        //$r = $this->push->sendPushNotification(null , $data, $title, $body,'global');
         
         $users = User::whereDoesntHave('roles')->where('is_admin',0)->select('id')->get();
 
         $ids = $users->pluck('id');
 
-        $notif_data = [];
+        if(count($users) > 0){
+            $notif_data = [];
 
-        foreach ($users as $key => $user) {
+            foreach ($users as $key => $user) {
 
-            $notif_data[] = array(
-                'user_id' => $user->id,
-                'user_ids' => null,
-                'push_type' => 'global',
-                'target_id' => null,
-                'target_type' => 'coupon',
-                'title' => $title,
-                'body' => $body,
-                'image' => null,
-                'is_read' => 0,
-                'data' => '',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            );
+                $notif_data[] = array(
+                    'user_id' => $user->id,
+                    'user_ids' => null,
+                    'push_type' => 'global',
+                    'target_id' => null,
+                    'target_type' => 'coupon',
+                    'title' => $title,
+                    'body' => $body,
+                    'image' => null,
+                    'is_read' => 0,
+                    'data' => '',
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
+                );
 
+            }
+
+            Notification::insert($notif_data);
+
+            //return $r;
         }
-
-        Notification::insert($notif_data);
-
-        //return $r;
 
         session()->flash('success', 'لقد تم إضافة كود خصم بنجاح');
         return redirect(route('discounts.index'));
@@ -277,9 +284,11 @@ class DiscountController extends Controller
 
             $discounts = Coupon::whereDate('from','>=',$request->from_date)->whereDate('from','<=',$request->to_date)->get();
         }else{
-
-            return back()->with(compact('discounts'))->with('error','من فضلك يرجى اختيار فترة زمنية صحيحة');
-
+            $discounts = [] ;
+            //return back()->with(compact('discounts'))->with('error','من فضلك يرجى اختيار فترة زمنية صحيحة');
+            session()->flash('error', 'من فضلك يرجى اختيار فترة زمنية صحيحة');
+            $type = 'search';
+            return view('admin.discounts.index' , compact('discounts' ,'type'));
         }
         
         $type = 'search';
@@ -305,11 +314,12 @@ class DiscountController extends Controller
             
         });
 
-        
         }else{
-
-            return back()->with(compact('discounts'))->with('error','من فضلك يرجى اختيار فترة زمنية صحيحة');
-
+            $discounts = [] ;
+            //return back()->with(compact('discounts'))->with('error','من فضلك يرجى اختيار فترة زمنية صحيحة');
+            session()->flash('error', 'من فضلك يرجى اختيار فترة زمنية صحيحة');
+            $type = 'search';
+            return view('admin.discounts.users',compact('discounts','type'));
         }
         
         $type = 'search';

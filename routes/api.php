@@ -17,6 +17,8 @@ use Illuminate\Http\Request;
 //     return $request->user();
 // });
 
+Route::get('/activation-code-api/{phone}', 'Api\V1\ForgotPasswordController@getActivationCodeApi');
+
 Route::group(['prefix' => 'v1'], function () {
 
     // Complate Agent information for agent after activation code is successfully.
@@ -50,11 +52,14 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::get('orders/getBasket', 'Api\V1\OrderController@getBasket');
     Route::post('orders/saveBasket', 'Api\V1\OrderController@saveBasket');
+    Route::post('orders/update-item', 'Api\V1\OrderController@updateBasket');
+    Route::post('orders/delete-item', 'Api\V1\OrderController@deleteItem');
 });
 
 Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function () {
 
     Route::get('profile', 'Api\V1\UsersController@profile');
+    Route::post('renew-device', 'Api\V1\LoginController@renewPlayerId');
     Route::get('user-addresses', 'Api\V1\UsersController@getUserAddresses');
     Route::get('delete-address', 'Api\V1\UsersController@deleteAddress');
 
@@ -71,6 +76,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function () {
 
     Route::get('orders/user-recent-order', 'Api\V1\OrderController@getUserRecentOrder');
     Route::get('orders/user-orders', 'Api\V1\OrderController@getUserOrders');
+    Route::get('orders/user-finished-orders', 'Api\V1\OrderController@getUserFinishedOrders');
     Route::get('order-details', 'Api\V1\OrderController@getOrderDetails');
     Route::post('orders/save-new-order', 'Api\V1\OrderController@saveOrder');
     Route::post('user/logout', 'Api\V1\UsersController@logout');

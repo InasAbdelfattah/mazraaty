@@ -75,6 +75,6 @@
 
 @section('scripts')
     <script>
-        CKEDITOR.replace( 'answer' );
+        //CKEDITOR.replace( 'answer' );
     </script>
 @endsection

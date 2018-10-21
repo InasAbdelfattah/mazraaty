@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Category;
-use App\CategoryArea;
-use App\City;
+use App\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
@@ -217,8 +216,28 @@ class CategoriesController extends Controller
             return abort(401);
         }
 
+
+
         $category = Category::findOrFail($id);
+
+        if($request->status == 0){
+                
+                if($category->parent_id == 0):
+                	//if ($category->products->count() > 0) :
+                	$products = Product::where('category_id',$category->id)->where('status',1)->get();
+                	if ($products->count() > 0) :
+	                    return redirect()->route('categories.index')->with('error', 'لا يمكنك تعطيل القسم الرئيسى لاستخدامه فى منتجات مفعلة');
+	                endif;
+                else:
+                	$products = Product::where('subcategory_id',$category->id)->where('status',1)->get();
+                	if ($products->count() > 0) :
+	                    return redirect()->route('subcategories')->with('error', 'لا يمكنك تعطيل القسم الفرعى لاستخدامه فى منتجات مفعلة');
+	                endif;
+                endif;
+        }
+
         $category->name = $request->name;
+
         $category->status = $request->status;
         $category->parent_id = ($request->parent_id != null) ? $request->parent_id: 0;
 
@@ -242,7 +261,7 @@ class CategoriesController extends Controller
 
         if ($category->save()) {
               
-            session()->flash('success', 'لقد تم تعديل القسم بنجاح' . $category->name);
+            session()->flash('success', 'لقد تم تعديل القسم بنجاح ');
 
             if($category->parent_id == 0):
                 return redirect(route('categories.index'));
@@ -395,15 +414,28 @@ class CategoriesController extends Controller
 
             if($model->status != $request->status) {
                 if ($request->status == 1) {
-                    $msg = 'تم تفعيل نوع البطاقة';
+                    $msg = 'تم تفعيل القسم';
 
                 } elseif ($request->status == 0) {
-                    if ($model->products->count() > 0) {
-                        return response()->json([
+                	if($model->parent_id == 0):
+	                	//if ($category->products->count() > 0) :
+	                	$products = Product::where('category_id',$model->id)->where('status',1)->get();
+	                	if ($products->count() > 0) :
+		                    return response()->json([
                             'status' => false,
-                            'message' => "عفواً, لا يمكنك تعطيل القسم ($model->name) نظراً لوجود منتجات ملتحقة بها "
+                            'message' => "عفواً, لا يمكنك تعطيل القسم الرئيسى : ($model->name) نظراً لوجود منتجات ملتحقة به "
                         ]);
-                    }
+		                endif;
+	                else:
+	                	$products = Product::where('subcategory_id',$model->id)->where('status',1)->get();
+	                	if ($products->count() > 0) :
+		                    return response()->json([
+                            'status' => false,
+                            'message' => "عفواً, لا يمكنك تعطيل القسم الفرعى :  ($model->name) نظراً لوجود منتجات ملتحقة به "
+                        ]);
+		                endif;
+	                endif;
+                
                     $msg = 'تم تعطيل القسم';
                 }
                 $model->status = $request->status;

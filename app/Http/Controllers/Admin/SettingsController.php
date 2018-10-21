@@ -15,6 +15,7 @@ use Config;
 use Image;
 use Session;
 use UploadImage;
+use Validator;
 
 class SettingsController extends Controller
 {
@@ -149,6 +150,22 @@ class SettingsController extends Controller
         //dd($request);
         if (!Gate::allows('settings_manage')) {
             return abort(401);
+        }
+
+        $rules = [
+            'support_no' => 'regex:/(05)[0-9]{8}/',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            //dd($validator->errors());
+
+           // return redirect()->back()->withErrors($validator)->withInput();
+
+            $valErrors = $validator->messages();
+            return redirect()->back()->withInput()
+                ->withErrors($validator->errors());
         }
 
    

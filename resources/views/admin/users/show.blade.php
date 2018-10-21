@@ -20,14 +20,14 @@
                 <div class="row">
                     <div class="col-xs-6">
                         <div class="form-group">
-                            <label for="userName">الاسم</label>
+                            <label for="userName">اسم المستخدم</label>
                             <p>{{ $user->name }}</p>
                         </div>
                     </div>
 
                     <div class="col-xs-6">
                         <div class="form-group">
-                            <label for="userName">الهاتف</label>
+                            <label for="userName">رقم الجوال</label>
                             <p>{{ $user->phone }}</p>
                         </div>
                     </div>
@@ -60,22 +60,24 @@
                     <div class="col-xs-6">
                         <div class="form-group">
                             <label>عدد الطلبات التى قام بها</label>
+                            @if($user->orders)
                             <p>{{$user->orders->count()}}</p>
+                            @endif
                         </div>
                     </div>
                     @endif
-                    <div class="col-xs-6">
+                    <!-- <div class="col-xs-6">
                         <div class="form-group">
                             <label for="pass1">عدد مرات الدخول على حسابه</label>
                             <p>{{$login ? $login->logins_count : 0}}</p>
 
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="col-xs-6">
                         <div class="form-group">
                             <label for="pass1">اخر تاريخ وقت قام بالدخول على حسابه</label>
-                            <p>{{$login ? $login->updated_at : ''}}</p>
+                            <p>{{$login ? $login->updated_at : 0}}</p>
 
                         </div>
                     </div>
@@ -100,12 +102,24 @@
                         <div class="col-xs-6">
                             <div class="form-group">
                                 <label for="pass1">عناوين العميل : </label>
-                                @forelse($user->addresses->pluck('address') as $address)
-                                  <p>- {{$address}}</p>
+
+                                @if(count($user_addresses) > 0)
+                                @forelse($user_addresses as $address)
+                                  <p>- {{$address->address}}</p>
                                 @empty
                                     <p> لا توجد عناوين مسجلو للعميل</p>
-                                @endforelse 
+                                @endforelse
+                                @endif 
                             
+                            </div>
+                        </div>
+                    @endif
+
+                    @if($user->is_admin == 0)
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label for="pass1">حالة العميل : </label>
+                                <p>{{$user->is_suspend == 0 ? 'مفعل' : 'محظور'}}</p>
                             </div>
                         </div>
                     @endif

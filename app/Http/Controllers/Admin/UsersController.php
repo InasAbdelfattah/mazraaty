@@ -12,6 +12,8 @@ use App\Http\Requests\Admin\UpdateUsersRequest;
 //use UploadImage;
 use App\UserLogin;
 use App\City;
+use App\Order;
+use App\UserAddress;
 use Validator;
 
 class UsersController extends Controller
@@ -37,8 +39,9 @@ class UsersController extends Controller
 
 
         $users = User::with('roles')->where('is_admin',1)->where('is_suspend',0)->get();
+        $type = 'admins';
 
-        return view('admin.users.index', compact('users'));
+        return view('admin.users.index', compact('users','admins'));
     }
 
     public function getSuspendedAdmins()
@@ -49,8 +52,9 @@ class UsersController extends Controller
 
 
         $users = User::with('roles')->where('is_admin',1)->where('is_suspend',1)->get();
-        
-        return view('admin.users.suspended_admins', compact('users'));
+        $type = 'admins';
+
+        return view('admin.users.suspended_admins', compact('users','type'));
     }
 
     /**
@@ -146,9 +150,10 @@ class UsersController extends Controller
         //$login = UserLogin::where('user_id',$id)->first();
         $login = UserLogin::where('user_id',$user->id)->first();
         $user_cards = null;
+        $user_addresses = UserAddress::where('user_id',$id)->get();
         
 
-        return view('admin.users.show', compact('user', 'roles' , 'login','user_cards'));
+        return view('admin.users.show', compact('user', 'roles' , 'login','user_cards','user_addresses'));
     }
 
 
@@ -421,8 +426,9 @@ class UsersController extends Controller
 
         $users = User::where('is_admin',0)->where('is_active',1)->get();
         $cities = City::all();
+        $type = 'users';
         
-        return view('admin.users.users', compact('users' ,'cities'));
+        return view('admin.users.users', compact('users' ,'cities','type'));
     }
 
     public function searchUsers(Request $request)
@@ -432,15 +438,45 @@ class UsersController extends Controller
         }
         
         $query = User::where('is_admin',$request->is_admin)->where('is_active',1)->select();
-        if($request->city):
-            $query->where('city_id',$request->city);
-        endif;
+        //dd($query);
+        
+
+        // if($request->city):
+        //     $query->join('user_addresses','users.id','user_addresses.user_id')->where('user_addresses.city',$request->city);
+        // endif;
 
         if($request->phone):
             $query->where('phone',$request->phone);
         endif;
 
+        if($request->is_suspend != ''):
+            $query->where('is_suspend',$request->is_suspend);
+        endif;
+
         $users = $query->get();
+
+        if($request->city):
+            //$query->where('city_id',$request->city);
+
+           //  $users = $users->map(function ($user) use ($request) {
+           //     //$data = json_decode(json_encode($user),true);
+           //     $value = UserAddress::where('user_id',$user->id)->where('city',$request->city)->first();
+           //    // return $user= array_filter($data,function($value){
+           //    //      return isset($value);
+           //    //  });
+           //     return $value;
+           // });
+
+            $users = $users->map(function($user) use($request){
+               //$data = json_decode(json_encode($user),true);
+               $data = UserAddress::where('user_id',$user->id)->where('city',2)->first();
+              return $user= array_filter($users,function($data){
+                   return isset($data);
+               });
+           });
+            dd($users);
+
+        endif;
 
         $cities = City::all();
         $type='search';
@@ -578,7 +614,15 @@ class UsersController extends Controller
 
         if ($model) {
             if($model->is_suspend == 0){
-                if($request->reason == ''){
+                $orders = Order::where('user_id',$model->id)->whereIn('status',[0,1])->get();
+                if(count($orders) > 0){
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'لا يمكن حظر المستخدم لوجود طلبات جارية له',
+                    ]);
+                }
+                
+                if($request->type ==2 && $request->reason == ''){
 
                 //array_push($suspended_users, $user->id);
                     return response()->json([
@@ -586,17 +630,24 @@ class UsersController extends Controller
                         'message' => 'يرجى ادخال السبب',
                     ]);
                 }
+                
             }
 
             
             if ($model->is_suspend == 1) {
                 $model->is_suspend = 0;
+
                 $msg = 'تم تفعيل المستخدم';
 
             } elseif ($model->is_suspend == 0) {
                 $model->is_suspend = 1;
-                $model->suspend_reason = $request->reason;
+                if($request->type == 2):
+                    $model->suspend_reason = $request->reason;
+                else:
+                    $model->suspend_reason = 'التزام مالى';
+                endif;
                 $msg = 'تم تعطيل المستخدم';
+                $model->api_token = str_random(60);
             }
 
             $data=[];

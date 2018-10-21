@@ -11,6 +11,8 @@ use App\Device;
 use App\Setting;
 use App\City;
 use App\Basket;
+use App\UserAddress;
+use App\UserLogin;
 
 class LoginController extends Controller
 {
@@ -44,6 +46,24 @@ class LoginController extends Controller
         if ($user = Auth::attempt(['phone' => $request->phone, 'password' => $request->password ])) {
 
             $user = auth()->user();
+            if($request->plateform):
+                $user->plateform = $request->plateform;
+                $user->save();
+            endif;
+
+            $this->manageDevices($request, auth()->user());
+
+            $login = UserLogin::where('user_id',$user->id)->first();
+            if($login){
+                $login->logins_count = $login->logins_count + 1;
+                $login->save();
+            }else{
+                $newLogin = new UserLogin();
+                $newLogin->user_id = $user->id ;
+                $newLogin->logins_count = 1 ;
+                $newLogin->save();
+            }
+
 
             if($request->playerId):
 
@@ -64,10 +84,19 @@ class LoginController extends Controller
             if (!$user->is_active):
 
                 return response()->json([
-                    'status' => 400,
+                    'status' => 200,
                     'message' => 'هذا الحساب غير مفعل',
-                    'errors' => ['هذا الحساب غير مفعل'],
                     'data' => $data
+                ]);
+
+            endif;
+
+            if ($user->is_suspend ==1 ):
+                $msg = 'تم حظر المستخدم بسبب : '.$user->suspend_reason .' برجاء التواصل مع الادارة على الرقم : '.setting()->getBody('support_no');
+                return response()->json([
+                    'status' => 402,
+                    'message' => $msg,
+                    'errors' => [$msg],
                 ]);
 
             endif;
@@ -81,8 +110,13 @@ class LoginController extends Controller
 
             $user->photo = $user->image ? $request->root() . '/' . $this->public_path . $user->image :'' ;
             
-            $user->cityName = $user->city != null ? $user->city->name : '';
-            
+            //$user->cityName = $user->city != null ? $user->city->name : '';
+            $user->addresses = UserAddress::where('user_id',$user->id)->select('id as addressId','city','address')->get();
+
+            $user->addresses->map(function ($q) {
+                $city = City::where('id',$q->city)->select('name')->first();
+                $q->cityName = $city ? $city->name : '' ;
+            });
             $data =  json_decode(json_encode($user),true);
             $data  =array_filter($data, function($value){
                return isset($value);
@@ -101,6 +135,21 @@ class LoginController extends Controller
             ]);
         }
     
+    }
+
+    public function renewPlayerId(Request $request){
+        $user = auth()->user();
+
+        if(! $user):
+             return response()->json([
+                'status' => 400,
+                'errors' => ['مستخدم غير مسجل بالتطبيق'] ,
+            ]);
+        endif;
+        $this->manageDevices($request, $user);
+        return response()->json([
+            'status' => 200,
+        ]);
     }
 
     /**
