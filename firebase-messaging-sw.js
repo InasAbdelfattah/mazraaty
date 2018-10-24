@@ -2,12 +2,12 @@ importScripts('https://www.gstatic.com/firebasejs/4.10.1/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/4.10.1/firebase-messaging.js');
 
 var config = {
-    apiKey: "AIzaSyDGAdzRX-G_A-Apr560xFKkUhftDC_y7so",
-    authDomain: "otlbha-project.firebaseapp.com",
-    databaseURL: "https://otlbha-project.firebaseio.com",
-    projectId: "otlbha-project",
-    storageBucket: "otlbha-project.appspot.com",
-    messagingSenderId: "455185106819"
+    // apiKey: "AAAA8vC9dcc:APA91bHGtILjO8TtBCFEweYKUAz90PwlSMQZN-jaaEa-xjNcEHEJPuo1o8tNPSHTBxdVrffincJbBYv9kvCN-wQWx6dcD5657UG1fhS_VHRXgCitSVRYmKS72ksmiLjx6-RyiyvkV38J",
+    // authDomain: "otlbha-project.firebaseapp.com",
+    // databaseURL: "https://otlbha-project.firebaseio.com",
+    // projectId: "otlbha-project",
+    // storageBucket: "otlbha-project.appspot.com",
+    messagingSenderId: "1043421033927"
 };
 firebase.initializeApp(config);
 const messaging = firebase.messaging();

@@ -426,10 +426,10 @@ class OrderController extends Controller
     }
 
     public function getExport(Request $request){
+        
         \Excel::create('الطلبات', function($excel) use($request){
 
         $excel->sheet('Sheet 1', function($sheet) use($request){
-
 
             $query=\DB::table('orders')->join('baskets','orders.basket_id','baskets.id')->join('users','orders.user_id','users.id')->join('user_addresses','orders.address_id','user_addresses.id')->select();
 
@@ -440,8 +440,6 @@ class OrderController extends Controller
             if ($request->status != -1) :
                 $query->where('orders.status', $request->status);
             endif;
-
-            
 
             $orders = $query->select('orders.*','baskets.id as basket_id' ,'users.id as user_id' , 'users.name as user_name' , 'user_addresses.address as user_address')->orderBy('id','Desc')->get();
 
@@ -468,7 +466,6 @@ class OrderController extends Controller
         $data[] = array('وقت وتاريخ الطلب', 'رقم الطلب', 'اسم المستخدم', 'حالة الطلب');
         $sheet->fromArray(array($data), null, 'A1', false, false);
 
-
         // Add data rows
                 foreach($orders as $order) {
                  $data[] = array(
@@ -478,9 +475,6 @@ class OrderController extends Controller
                     $order->order_status ,                    
                 );
             }
-            /*print_r($data);
-        die();*/
-            //$sheet->fromArray($data); 
             $sheet->fromArray($data, null, 'A1', false, false);
         });
     })->download('xls');

@@ -1,4 +1,4 @@
-<?php
+﻿ <?php
 
 namespace App\Http\Controllers\Api\V1;
 
@@ -1044,8 +1044,8 @@ class OrderController extends Controller
             $basket->save();
         endif;
 
-        $model = Item::where('basket_id',$basket->id)->where('type',$request->type)->where('itemable_id',$request->item_id)->first();
-	if(!$model){
+        //$model = Item::where('basket_id',$basket->id)->where('type',$request->type)->where('itemable_id',$request->item_id)->first();
+	//if(!$model){
         $model = new Item;
         $model->itemable_id = $request->item_id;
         if($request->type == 'offer'):
@@ -1059,12 +1059,9 @@ class OrderController extends Controller
             $product = Product::find($request->item_id);
             $model->item_price = $product ? $product->price : ''; 
         endif;
-    	$model->basket_id = $basket->id;
-        $model->amount = $request->amount;
-	}else{
+	$model->basket_id = $basket->id;
+	//}
         $model->amount = $model->amount + $request->amount;
-    }
-        
         $model->save();
 	
                

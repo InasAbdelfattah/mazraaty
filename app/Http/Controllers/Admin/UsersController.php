@@ -689,4 +689,20 @@ class UsersController extends Controller
         }
     }
 
+    public function updateUserDevice(Request $request)
+    {
+
+        if ($request->token) {
+            //$devices = Device::where('device',$request->token)->toArray();
+            
+            $devices = Device::where('device',$request->token)->where('user_id',$request->id)->first();
+            if ( !$devices) {
+                $device = new Device;
+                $device->device = $request->token;
+                $device->user_id = $request->id;
+                $device->save();
+            }
+        }
+    }
+
 }

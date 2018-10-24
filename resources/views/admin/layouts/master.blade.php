@@ -52,7 +52,7 @@
     @if(auth()->check())
         <script>
             var userId = '{{ auth()->id() }}';
-            // {{-- var url = '{{ route('user.update.token') }}'; --}}
+            var url = '{{ route('user.update.token') }}'; 
             var lang = '{{ config('app.locale') }}';
         </script>
     @endif

@@ -6,12 +6,12 @@ $.ajaxSetup({
 
 // Initialize Firebase
 var config = {
-    // apiKey: "AAAA8vC9dcc:APA91bHGtILjO8TtBCFEweYKUAz90PwlSMQZN-jaaEa-xjNcEHEJPuo1o8tNPSHTBxdVrffincJbBYv9kvCN-wQWx6dcD5657UG1fhS_VHRXgCitSVRYmKS72ksmiLjx6-RyiyvkV38J",
-    // authDomain: "otlbha-project.firebaseapp.com",
-    // databaseURL: "https://otlbha-project.firebaseio.com",
-    // projectId: "otlbha-project",
-    // storageBucket: "otlbha-project.appspot.com",
-    messagingSenderId: "1043421033927"
+    apiKey: "AIzaSyDGAdzRX-G_A-Apr560xFKkUhftDC_y7so",
+    authDomain: "otlbha-project.firebaseapp.com",
+    databaseURL: "https://otlbha-project.firebaseio.com",
+    projectId: "otlbha-project",
+    storageBucket: "otlbha-project.appspot.com",
+    messagingSenderId: "455185106819"
 };
 
 firebase.initializeApp(config);
@@ -44,7 +44,7 @@ firebase.initializeApp(config);
 
 
 const messaging = firebase.messaging();
-//messaging.usePublicVapidKey("BPXd_w4pQhb_6R8kZ2d7vF3fALsy91R4w3cbKYPsh_bcfkcB9-mrsg5_efq7WSoaWt3iUSflQMYBnSoJ44d-8_s");
+messaging.usePublicVapidKey("BPXd_w4pQhb_6R8kZ2d7vF3fALsy91R4w3cbKYPsh_bcfkcB9-mrsg5_efq7WSoaWt3iUSflQMYBnSoJ44d-8_s");
 messaging.requestPermission()
     .then(function () {
         console.log('Notification permission granted.');
@@ -108,18 +108,6 @@ function getToken() {
 }
 
 function Listen() {
-
-    // messaging.setBackgroundMessageHandler(function(payload) {
-    //     console.log('[firebase-messaging-sw.js] Received background message ', payload);
-    //     const notificationTitle = 'Background Message from mazraty';
-    //     const notificationOptions = {
-    //        body: 'Background Message body.',
-    //        icon: '/firebase-logo.png'
-    //     };
-
-    //     return self.registration.showNotification(notificationTitle,notificationOptions);
-    // });
-
     messaging.onMessage(function (payload) {
 
         console.log(payload);
